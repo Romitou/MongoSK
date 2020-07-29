@@ -1,0 +1,9 @@
+name: MongoSK
+version: "1.0"
+description: Use MongoDB with Skript!
+website: https://github.com/Romitou/SkMongo
+author: Romitou
+api-version: "1.15"
+main: fr.romitou.mongosk.MongoSK
+depend:
+  - Skript
