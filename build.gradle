@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+}
+
+group 'fr.romitou.mongosk'
+version '1.0'
+
+sourceCompatibility = 1.8
+compileJava.options.encoding = 'UTF-8'
+
+configurations {
+    extraLibs
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url = 'https://repo.destroystokyo.com/repository/maven-public/' }
+    maven { url = 'https://papermc.io/repo/repository/maven-public/' }
+    maven { url = 'https://jitpack.io' }
+}
+
+dependencies {
+    extraLibs('org.mongodb:mongodb-driver-sync:4.1.0-rc0')
+    compileOnly('com.destroystokyo.paper:paper-api:1.15.2-R0.1-SNAPSHOT')
+    implementation('com.github.SkriptLang:Skript:2.5-alpha6') {
+        exclude group: 'com.sk89q.worldguard', module: 'worldguard-legacy'
+        exclude group: 'net.milkbowl.vault', module: 'Vault'
+    }
+    configurations.compile.extendsFrom(configurations.extraLibs)
+}
+
+jar {
+    from {
+        configurations.extraLibs.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
