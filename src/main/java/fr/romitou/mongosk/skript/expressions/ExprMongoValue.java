@@ -1,6 +1,9 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -14,6 +17,11 @@ import com.mongodb.client.model.Filters;
 * This expression is not complete, but actually functional to GET data.
 * TODO: allow to DELETE and SET a document.
 */
+
+@Name("Mongo Value")
+@Examples("set {_points} to mongo value \"points\" where \"player\" is \"Romitou\" in collection \"playerdata\" and database \"MongoSK\"")
+@Since("1.0")
+
 public class ExprMongoValue extends SimpleExpression<String> {
 
     private Expression<String> query, whereQuery, whereValue, collection, database;

@@ -1,12 +1,20 @@
 package fr.romitou.mongosk.skript.conditions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import fr.romitou.mongosk.utils.MongoManager;
 import org.bukkit.event.Event;
+
+@Name("Is Connected")
+@Examples({"if mongodb client is connected:",
+    "\tsend \"I love MongoDB, and you?\""})
+@Since("1.0")
 
 public class CondIsConnected extends Condition {
 

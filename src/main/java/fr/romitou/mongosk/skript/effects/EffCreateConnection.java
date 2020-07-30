@@ -1,6 +1,9 @@
 package fr.romitou.mongosk.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -8,6 +11,11 @@ import ch.njol.util.Kleenean;
 import org.bukkit.event.Event;
 
 import fr.romitou.mongosk.utils.MongoManager;
+
+@Name("Create Connection")
+@Examples({"on script laod:",
+    "\tconnect to the mongodb server \"mongodb://127.0.0.1\""})
+@Since("1.0")
 
 public class EffCreateConnection extends Effect {
 
