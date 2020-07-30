@@ -9,13 +9,13 @@ import org.bukkit.event.Event;
 
 import fr.romitou.mongosk.utils.MongoManager;
 
-public class EffConnectDatabase extends Effect {
+public class EffCreateConnection extends Effect {
 
     private Expression<String> connection;
 
     static {
         Skript.registerEffect(
-                EffConnectDatabase.class,
+                EffCreateConnection.class,
                 "[create [a]] connect[ion] to [the] mongo[db] server %string%"
         );
     }
@@ -29,7 +29,7 @@ public class EffConnectDatabase extends Effect {
 
     @Override
     protected void execute(Event e) {
-        MongoManager.createMongoClient(connection.getSingle(e), false);
+        MongoManager.createClient(connection.getSingle(e));
     }
 
     @Override
