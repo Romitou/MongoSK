@@ -25,8 +25,7 @@ public class MongoSK extends JavaPlugin {
             addon = Skript.registerAddon(this);
             try {
                 addon.loadClasses("fr.romitou.mongosk.skript");
-                MongoSetup();
-                Skript.info("We have a important message ; MongoSK is successfully loaded.");
+                Skript.info("MongoSK is successfully loaded.");
             } catch (IOException e) {
                 Skript.error("Wait, this is anormal. Please report this error on GitHub.");
                 e.printStackTrace();
@@ -35,11 +34,6 @@ public class MongoSK extends JavaPlugin {
             Skript.error("Uh oh. There was an error when enabling MongoSK : Skript is not installed or doesn't accept registrations.");
             pm.disablePlugin(this);
         }
-    }
-
-    private void MongoSetup() {
-        Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
-        mongoLogger.setLevel(Level.SEVERE);
     }
 
     public static SkriptAddon getAddon() {
