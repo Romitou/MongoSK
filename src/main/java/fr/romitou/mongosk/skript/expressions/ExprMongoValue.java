@@ -1,6 +1,7 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
@@ -9,13 +10,15 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+import com.mongodb.client.model.Updates;
 import fr.romitou.mongosk.utils.MongoManager;
 import org.bukkit.event.Event;
 import com.mongodb.client.model.Filters;
 
 /*
-* This expression is not complete, but actually functional to GET data.
-* TODO: allow to DELETE and SET a document.
+* This expression is not complete, but actually functional to GET and SET data.
+* TODO: Take into account the types of values.
+*  Example: return an integer if the value is an integer.
 */
 
 @Name("Mongo Value")
@@ -49,18 +52,54 @@ public class ExprMongoValue extends SimpleExpression<String> {
     @Override
     protected String[] get(Event e) {
         if (!MongoManager.isConnected()) {
-            Skript.error("[MongoSK] You cannot make a query while you're not connected to a host!");
+            MongoManager.queryError();
             return null;
         }
-        final String document;
-        document = MongoManager
-                .getClient()
-                .getDatabase(database.getSingle(e))
-                .getCollection(collection.getSingle(e))
-                .find(Filters.eq(whereQuery.getSingle(e), whereValue.getSingle(e)))
-                .first()
-                .getString(query.getSingle(e));
+
+        String document;
+        try {
+            document = MongoManager
+                    .getClient()
+                    .getDatabase(database.getSingle(e))
+                    .getCollection(collection.getSingle(e))
+                    .find(Filters.eq(whereQuery.getSingle(e), whereValue.getSingle(e)))
+                    .first()
+                    .getString(query.getSingle(e));
+        } catch (IllegalArgumentException | NullPointerException ex) {
+            MongoManager.queryError(ex);
+            return null;
+        }
+
         return new String[] { document };
+    }
+
+    @Override
+    public Class<?>[] acceptChange(Changer.ChangeMode mode) {
+        if (mode != Changer.ChangeMode.SET) return null;
+        return new Class[] { String.class };
+    }
+
+    @Override
+    public void change(Event e, Object[] delta, Changer.ChangeMode mode) {
+        if (mode == Changer.ChangeMode.SET) {
+            if (!MongoManager.isConnected()) {
+                MongoManager.queryError();
+                return;
+            }
+            try {
+                MongoManager
+                        .getClient()
+                        .getDatabase(database.getSingle(e))
+                        .getCollection(collection.getSingle(e))
+                        .updateOne(
+                                Filters.eq(whereQuery.getSingle(e), whereValue.getSingle(e)),
+                                Updates.set(query.getSingle(e), delta[0])
+                        );
+            } catch (IllegalArgumentException | NullPointerException ex) {
+                MongoManager.queryError(ex);
+            }
+        }
+
     }
 
     @Override
