@@ -8,6 +8,9 @@ public class MongoManager {
 
     private static MongoClient mongoClient;
 
+    /**
+     * @param connectionString The connection address.
+     */
     public static void createClient(String connectionString) {
         try {
             mongoClient = MongoClients.create(connectionString);
@@ -19,10 +22,6 @@ public class MongoManager {
 
     public static MongoClient getClient() {
         return mongoClient;
-    }
-
-    public static void closeClient() {
-        mongoClient.close();
     }
 
     /*
@@ -37,6 +36,17 @@ public class MongoManager {
         } catch (NullPointerException ex) {
             return false;
         }
+    }
+
+    public static void queryError() {
+        Skript.error("You cannot make a query while you're not connected to a host!");
+    }
+
+    /**
+     * @param ex The exception.
+     */
+    public static void queryError(Exception ex) {
+        Skript.error("Oops! Please check either host is reachable or collection and database exist (" + ex.getLocalizedMessage() + ").");
     }
 
 }
