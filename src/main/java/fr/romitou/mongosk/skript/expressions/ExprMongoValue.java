@@ -25,14 +25,14 @@ import com.mongodb.client.model.Filters;
 @Examples("set {_points} to mongo value \"points\" where \"player\" is \"Romitou\" in collection \"playerdata\" and database \"MongoSK\"")
 @Since("1.0")
 
-public class ExprMongoValue extends SimpleExpression<String> {
+public class ExprMongoValue extends SimpleExpression<Object> {
 
     private Expression<String> query, whereQuery, whereValue, collection, database;
 
     static {
         Skript.registerExpression(
                 ExprMongoValue.class,
-                String.class,
+                Object.class,
                 ExpressionType.SIMPLE,
                 "mongo[db] value %string% where %string% is %string% in collection %string% and database %string%"
         );
@@ -50,13 +50,13 @@ public class ExprMongoValue extends SimpleExpression<String> {
     }
 
     @Override
-    protected String[] get(Event e) {
+    protected Object[] get(Event e) {
         if (!MongoManager.isConnected()) {
             MongoManager.queryError();
             return null;
         }
 
-        String document;
+        Object document;
         try {
             document = MongoManager
                     .getClient()
@@ -64,19 +64,19 @@ public class ExprMongoValue extends SimpleExpression<String> {
                     .getCollection(collection.getSingle(e))
                     .find(Filters.eq(whereQuery.getSingle(e), whereValue.getSingle(e)))
                     .first()
-                    .getString(query.getSingle(e));
+                    .get(query.getSingle(e));
         } catch (IllegalArgumentException | NullPointerException ex) {
             MongoManager.queryError(ex);
             return null;
         }
 
-        return new String[] { document };
+        return new Object[] { document };
     }
 
     @Override
     public Class<?>[] acceptChange(Changer.ChangeMode mode) {
         if (mode != Changer.ChangeMode.SET) return null;
-        return new Class[] { String.class };
+        return new Class[] { Object.class };
     }
 
     @Override
