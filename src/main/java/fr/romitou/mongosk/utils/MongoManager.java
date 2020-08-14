@@ -32,6 +32,12 @@ public class MongoManager {
         return databaseNames;
     }
 
+    public static ArrayList<String> getCollectionsFromDatabase(String databaseName) {
+        ArrayList<String> collectionNames = new ArrayList<>();
+        mongoClient.getDatabase(databaseName).listCollectionNames().forEach(collectionNames::add);
+        return collectionNames;
+    }
+
     /*
      * To check if the mongoClient is connected, we ask him to list databases.
      * If an error is catching, we deduct either the host is not reachable or
