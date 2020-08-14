@@ -34,7 +34,7 @@ public class ExprMongoValue extends SimpleExpression<Object> {
                 ExprMongoValue.class,
                 Object.class,
                 ExpressionType.SIMPLE,
-                "mongo[db] value %string% where %string% is %string% in collection %string% and database %string%"
+                "mongo[db] value %string% where %string% is %object% in collection %string% and database %string%"
         );
     }
 
