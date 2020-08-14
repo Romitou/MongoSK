@@ -21,11 +21,11 @@ on script load:
 on join:
     # We search a document where "player" equals to the name of
     # the player, then set "last_join" value of the document to now.
-    set mongo value "last_join" where "player" is name of player to now
+    set mongo value "last_join" where "player" is name of player in collection "player_data" and database "mongosk" to now 
 
     # We search a document where "player" equals to the name of
     # the player, then set {_money} to "money" value of the document.    
-    set {_money} to mongo value "money" where "player" is name of player
+    set {_money} to mongo value "money" where "player" is name of player in collection "player_data" and database "mongosk"
 
     send "You have %{_money}%$ on your account."
 
