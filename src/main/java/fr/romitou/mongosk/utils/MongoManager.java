@@ -4,6 +4,8 @@ import ch.njol.skript.Skript;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
+import java.util.ArrayList;
+
 public class MongoManager {
 
     private static MongoClient mongoClient;
@@ -22,6 +24,12 @@ public class MongoManager {
 
     public static MongoClient getClient() {
         return mongoClient;
+    }
+
+    public static ArrayList<String> getDatabases() {
+        ArrayList<String> databaseNames = new ArrayList<>();
+        mongoClient.listDatabaseNames().forEach(databaseNames::add);
+        return databaseNames;
     }
 
     /*
