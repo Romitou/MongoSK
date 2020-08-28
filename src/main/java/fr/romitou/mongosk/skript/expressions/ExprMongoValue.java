@@ -10,24 +10,22 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import fr.romitou.mongosk.utils.MongoManager;
 import org.bukkit.event.Event;
-import com.mongodb.client.model.Filters;
 
 /*
-* This expression is not complete, but actually functional to GET and SET data.
-* TODO: Take into account the types of values.
-*  Example: return an integer if the value is an integer.
-*/
+ * This expression is not complete, but actually functional to GET and SET data.
+ * TODO: Take into account the types of values.
+ *  Example: return an integer if the value is an integer.
+ */
 
 @Name("Mongo Value")
 @Examples("set {_points} to mongo value \"points\" where \"player\" is \"Romitou\" in collection \"playerdata\" and database \"MongoSK\"")
 @Since("1.0")
 
 public class ExprMongoValue extends SimpleExpression<Object> {
-
-    private Expression<String> query, whereQuery, whereValue, collection, database;
 
     static {
         Skript.registerExpression(
@@ -37,6 +35,8 @@ public class ExprMongoValue extends SimpleExpression<Object> {
                 "mongo[db] value %string% where %string% is %object% in collection %string% and database %string%"
         );
     }
+
+    private Expression<String> query, whereQuery, whereValue, collection, database;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -70,13 +70,13 @@ public class ExprMongoValue extends SimpleExpression<Object> {
             return null;
         }
 
-        return new Object[] { document };
+        return new Object[]{document};
     }
 
     @Override
     public Class<?>[] acceptChange(Changer.ChangeMode mode) {
         if (mode != Changer.ChangeMode.SET) return null;
-        return new Class[] { Object.class };
+        return new Class[]{Object.class};
     }
 
     @Override

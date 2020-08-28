@@ -35,7 +35,7 @@ public class EffCreateCollection extends Effect {
 
     @Override
     public String toString(Event e, boolean debug) {
-        return "create a mongodb collection named " + collection.toString(e,debug) + " in database " + database.toString(e, debug);
+        return "create a mongodb collection named " + collection.toString(e, debug) + " in database " + database.toString(e, debug);
     }
 
 }

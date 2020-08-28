@@ -8,18 +8,15 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
-import org.bukkit.event.Event;
-
 import fr.romitou.mongosk.utils.MongoManager;
+import org.bukkit.event.Event;
 
 @Name("Create Connection")
 @Examples({"on script laod:",
-    "\tconnect to the mongodb server \"mongodb://127.0.0.1\""})
+        "\tconnect to the mongodb server \"mongodb://127.0.0.1\""})
 @Since("1.0")
 
 public class EffCreateConnection extends Effect {
-
-    private Expression<String> connection;
 
     static {
         Skript.registerEffect(
@@ -27,6 +24,8 @@ public class EffCreateConnection extends Effect {
                 "[create [a]] connect[ion] to [the] mongo[db] server %string%"
         );
     }
+
+    private Expression<String> connection;
 
     @SuppressWarnings("unchecked")
     @Override

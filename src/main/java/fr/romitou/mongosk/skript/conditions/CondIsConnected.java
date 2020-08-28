@@ -13,7 +13,7 @@ import org.bukkit.event.Event;
 
 @Name("Is Connected")
 @Examples({"if mongodb client is connected:",
-    "\tsend \"I love MongoDB, and you?\""})
+        "\tsend \"I love MongoDB, and you?\""})
 @Since("1.0")
 
 public class CondIsConnected extends Condition {

@@ -2,19 +2,24 @@ package fr.romitou.mongosk;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
-import com.mongodb.client.MongoClient;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MongoSK extends JavaPlugin {
 
     private static SkriptAddon addon;
     private static MongoSK instance;
+
+    public static SkriptAddon getAddon() {
+        return addon;
+    }
+
+    public static MongoSK getInstance() {
+        return instance;
+    }
 
     @Override
     public void onEnable() {
@@ -34,14 +39,6 @@ public class MongoSK extends JavaPlugin {
             Skript.error("Uh oh. There was an error when enabling MongoSK : Skript is not installed or doesn't accept registrations.");
             pm.disablePlugin(this);
         }
-    }
-
-    public static SkriptAddon getAddon() {
-        return addon;
-    }
-
-    public static MongoSK getInstance() {
-        return instance;
     }
 
 }
