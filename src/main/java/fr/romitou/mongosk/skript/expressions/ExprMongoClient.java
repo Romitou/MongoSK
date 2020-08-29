@@ -7,33 +7,30 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoDatabase;
+import fr.romitou.mongosk.skript.MongoManager;
 import org.bukkit.event.Event;
 
-public class ExprMongoDatabase extends SimpleExpression<MongoDatabase> {
+public class ExprMongoClient extends SimpleExpression<MongoClient> {
 
     static {
-        Skript.registerExpression(ExprMongoDatabase.class, MongoDatabase.class, ExpressionType.SIMPLE, "[mongo[db]] database [(named|with name|called)] %string% (of|with) %mongoclient%");
+        Skript.registerExpression(ExprMongoClient.class, MongoClient.class, ExpressionType.SIMPLE, "[mongo[db]] client [(named|with name|called)] %string%");
     }
 
     private Expression<String> exprName;
-    private Expression<MongoClient> exprClient;
 
     @SuppressWarnings("unchecked")
     @Override
     public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
         exprName = (Expression<String>) exprs[0];
-        exprClient = (Expression<MongoClient>) exprs[1];
         return true;
     }
 
     @Override
-    protected MongoDatabase[] get(Event e) {
+    protected MongoClient[] get(Event e) {
         String name = exprName.getSingle(e);
-        MongoClient client = exprClient.getSingle(e);
-        if (name == null || client == null)
+        if (name == null)
             return null;
-        return new MongoDatabase[]{client.getDatabase(name)};
+        return new MongoClient[]{MongoManager.getClient(name)};
     }
 
     @Override
@@ -42,13 +39,13 @@ public class ExprMongoDatabase extends SimpleExpression<MongoDatabase> {
     }
 
     @Override
-    public Class<? extends MongoDatabase> getReturnType() {
-        return MongoDatabase.class;
+    public Class<? extends MongoClient> getReturnType() {
+        return MongoClient.class;
     }
 
     @Override
     public String toString(Event e, boolean debug) {
-        return "mongo database named " + exprName.toString(e, debug) + " with " + exprClient.toString();
+        return "mongo client named " + exprName.toString(e, debug);
     }
 
 }

@@ -4,6 +4,7 @@ import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.Parser;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.registrations.Classes;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
@@ -92,6 +93,35 @@ public class Types {
 
                     @Override
                     public Document parse(String s, ParseContext context) {
+                        return null;
+                    }
+
+                })
+        );
+
+        Classes.registerClass(new ClassInfo<>(MongoClient.class, "mongoclient")
+                .user("(mongo[db]( |-)?)?client")
+                .name("MongoDB Client")
+                .description("Represents a MongoDB client.")
+                .since("1.0.0")
+                .parser(new Parser<MongoClient>() {
+                    @Override
+                    public String toString(MongoClient o, int flags) {
+                        return o.toString() + " client";
+                    }
+
+                    @Override
+                    public String toVariableNameString(MongoClient o) {
+                        return o.toString();
+                    }
+
+                    @Override
+                    public String getVariableNamePattern() {
+                        return ".+";
+                    }
+
+                    @Override
+                    public MongoClient parse(String s, ParseContext context) {
                         return null;
                     }
 

@@ -13,27 +13,27 @@ import org.bukkit.event.Event;
 public class ExprMongoCollection extends SimpleExpression<MongoCollection> {
 
     static {
-        Skript.registerExpression(ExprMongoCollection.class, MongoCollection.class, ExpressionType.SIMPLE, "collection [named] %string% in %mongodatabase%");
+        Skript.registerExpression(ExprMongoCollection.class, MongoCollection.class, ExpressionType.SIMPLE, "[mongo[db]] collection [(named|with name|called)] %string% in %mongodatabase%");
     }
 
-    private Expression<String> name;
-    private Expression<MongoDatabase> database;
+    private Expression<String> exprName;
+    private Expression<MongoDatabase> exprDatabase;
 
     @SuppressWarnings("unchecked")
     @Override
     public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
-        name = (Expression<String>) exprs[0];
-        database = (Expression<MongoDatabase>) exprs[1];
+        exprName = (Expression<String>) exprs[0];
+        exprDatabase = (Expression<MongoDatabase>) exprs[1];
         return true;
     }
 
     @Override
     protected MongoCollection[] get(Event e) {
-        String mongoName = name.getSingle(e);
-        MongoDatabase mongoDatabase = database.getSingle(e);
-        if (mongoName == null || mongoDatabase == null)
+        String name = exprName.getSingle(e);
+        MongoDatabase database = exprDatabase.getSingle(e);
+        if (name == null || database == null)
             return null;
-        return new MongoCollection[]{mongoDatabase.getCollection(mongoName)};
+        return new MongoCollection[]{database.getCollection(name)};
     }
 
     @Override
@@ -48,7 +48,7 @@ public class ExprMongoCollection extends SimpleExpression<MongoCollection> {
 
     @Override
     public String toString(Event e, boolean debug) {
-        return "collection " + name.toString(e, debug) + " in " + database.toString(e, debug);
+        return "mongo collection " + exprName.toString(e, debug) + " in " + exprDatabase.toString(e, debug);
     }
 
 }

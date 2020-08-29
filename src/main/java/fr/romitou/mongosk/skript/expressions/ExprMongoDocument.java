@@ -14,30 +14,33 @@ import org.bukkit.event.Event;
 public class ExprMongoDocument extends SimpleExpression<Document> {
 
     static {
-        Skript.registerExpression(ExprMongoDocument.class, Document.class, ExpressionType.SIMPLE, "(1|first) [mongo[db]] document where %string% (is|equals to) %object% in %mongocollection%");
+        Skript.registerExpression(ExprMongoDocument.class, Document.class, ExpressionType.SIMPLE, "[first] [mongo[db]] document where %string% (is|equals to) %object% (of|in) %mongocollection%");
     }
 
-    private Expression<String> whereName;
-    private Expression<Object> whereValue;
-    private Expression<MongoCollection> collection;
+    private Expression<String> exprWhereName;
+    private Expression<Object> exprWhereValue;
+    private Expression<MongoCollection> exprCollection;
 
     @SuppressWarnings("unchecked")
     @Override
     public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
-        whereName = (Expression<String>) exprs[0];
-        whereValue = (Expression<Object>) exprs[1];
-        collection = (Expression<MongoCollection>) exprs[2];
+        exprWhereName = (Expression<String>) exprs[0];
+        exprWhereValue = (Expression<Object>) exprs[1];
+        exprCollection = (Expression<MongoCollection>) exprs[2];
         return true;
     }
 
     @Override
     protected Document[] get(Event e) {
-        String wn = whereName.getSingle(e);
-        Object wv = whereValue.getSingle(e);
-        MongoCollection c = collection.getSingle(e);
-        if (wn == null || wv == null || c == null)
+        String whereName = exprWhereName.getSingle(e);
+        Object whereValue = exprWhereValue.getSingle(e);
+        MongoCollection collection = exprCollection.getSingle(e);
+        if (whereName == null || whereValue == null || collection == null)
             return null;
-        return new Document[]{(Document) c.find(Filters.eq(wn, wv)).first()};
+        Document document = (Document) collection.find(Filters.eq(whereName, whereValue)).first();
+        if (document == null)
+            return null;
+        return new Document[]{document};
     }
 
     @Override
@@ -52,7 +55,7 @@ public class ExprMongoDocument extends SimpleExpression<Document> {
 
     @Override
     public String toString(Event e, boolean debug) {
-        return "mongo document where " + whereName.toString(e, debug) + " is " + whereValue.toString(e, debug);
+        return "first mongo document where " + exprWhereName.toString(e, debug) + " is " + exprWhereValue.toString(e, debug) + " of " + exprCollection.toString(e, debug);
     }
 
 }
