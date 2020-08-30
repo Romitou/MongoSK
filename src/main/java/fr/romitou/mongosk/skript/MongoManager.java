@@ -20,4 +20,8 @@ public class MongoManager {
         clients.put(name, client);
     }
 
+    public static void removeClient(MongoClient client) {
+        clients.values().remove(client);
+    }
+
 }
