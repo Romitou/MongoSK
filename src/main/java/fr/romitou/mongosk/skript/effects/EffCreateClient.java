@@ -9,11 +9,7 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClients;
 import fr.romitou.mongosk.skript.MongoManager;
-import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bukkit.event.Event;
-
-import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
-import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 public class EffCreateClient extends Effect {
 
@@ -43,9 +39,6 @@ public class EffCreateClient extends Effect {
             MongoManager.addClient(MongoClients.create(
                     MongoClientSettings
                             .builder()
-                            .codecRegistry(
-                                    fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
-                                            fromProviders(PojoCodecProvider.builder().automatic(true).build())))
                             .applyConnectionString(new ConnectionString(uri))
                             .build()
             ), name);
