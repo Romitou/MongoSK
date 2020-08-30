@@ -6,33 +6,33 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
-import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoDatabase;
 import org.bukkit.event.Event;
 
 import java.util.ArrayList;
 
-public class ExprMongoDatabases extends SimpleExpression<String> {
+public class ExprCollections extends SimpleExpression<String> {
 
     static {
-        Skript.registerExpression(ExprMongoDatabases.class, String.class, ExpressionType.SIMPLE, "[all] [mongo[db]] databases (of|from) %mongoclient%");
+        Skript.registerExpression(ExprCollections.class, String.class, ExpressionType.SIMPLE, "[all] [mongo[db]] collections (of|from) %mongodatabase%");
     }
 
-    private Expression<MongoClient> exprClient;
+    private Expression<MongoDatabase> exprDatabase;
 
     @SuppressWarnings("unchecked")
     @Override
     public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
-        exprClient = (Expression<MongoClient>) exprs[0];
+        exprDatabase = (Expression<MongoDatabase>) exprs[0];
         return true;
     }
 
     @Override
     protected String[] get(Event e) {
-        MongoClient client = exprClient.getSingle(e);
-        if (client == null)
+        MongoDatabase database = exprDatabase.getSingle(e);
+        if (database == null)
             return null;
         ArrayList<String> list = new ArrayList<>();
-        client.listDatabaseNames().forEach(list::add);
+        database.listCollectionNames().forEach(list::add);
         return list.toArray(new String[0]);
     }
 
@@ -48,7 +48,7 @@ public class ExprMongoDatabases extends SimpleExpression<String> {
 
     @Override
     public String toString(Event e, boolean debug) {
-        return "all mongo databases from " + exprClient.toString(e, debug);
+        return "all mongo collections from " + exprDatabase.toString(e, debug);
     }
 
 }

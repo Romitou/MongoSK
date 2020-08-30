@@ -10,10 +10,10 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.bukkit.event.Event;
 
-public class ExprMongoDatabase extends SimpleExpression<MongoDatabase> {
+public class ExprDatabase extends SimpleExpression<MongoDatabase> {
 
     static {
-        Skript.registerExpression(ExprMongoDatabase.class, MongoDatabase.class, ExpressionType.SIMPLE, "[mongo[db]] database [(named|with name|called)] %string% (of|with) %mongoclient%");
+        Skript.registerExpression(ExprDatabase.class, MongoDatabase.class, ExpressionType.SIMPLE, "[mongo[db]] database [(named|with name|called)] %string% (of|with) %mongoclient%");
     }
 
     private Expression<String> exprName;

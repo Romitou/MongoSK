@@ -15,10 +15,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ExprMongoValue extends SimpleExpression<Object> {
+public class ExprValue extends SimpleExpression<Object> {
 
     static {
-        Skript.registerExpression(ExprMongoValue.class, Object.class, ExpressionType.SIMPLE, "[mongo[db]] (1¦value|2¦list) %string% (of|from) %mongodocument%");
+        Skript.registerExpression(ExprValue.class, Object.class, ExpressionType.SIMPLE, "[mongo[db]] (1¦value|2¦list) %string% (of|from) %mongodocument%");
     }
 
     private Expression<String> exprValue;
@@ -64,7 +64,7 @@ public class ExprMongoValue extends SimpleExpression<Object> {
             return;
         switch (mode) {
             case SET:
-                document.put(value, deltaList);
+                document.put(value, deltaList.size() == 1 ? delta[0] : deltaList);
                 break;
             case DELETE:
                 document.put(value, null);

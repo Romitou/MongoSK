@@ -11,10 +11,10 @@ import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bukkit.event.Event;
 
-public class ExprMongoDocument extends SimpleExpression<Document> {
+public class ExprDocument extends SimpleExpression<Document> {
 
     static {
-        Skript.registerExpression(ExprMongoDocument.class, Document.class, ExpressionType.SIMPLE, "[first] [mongo[db]] document where %string% (is|equals to) %object% (of|in) %mongocollection%");
+        Skript.registerExpression(ExprDocument.class, Document.class, ExpressionType.SIMPLE, "[first] [mongo[db]] document where %string% (is|equals to) %object% (of|in) %mongocollection%");
     }
 
     private Expression<String> exprWhereName;
