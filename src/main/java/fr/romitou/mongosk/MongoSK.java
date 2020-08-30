@@ -2,6 +2,8 @@ package fr.romitou.mongosk;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
+import com.mongodb.client.MongoClient;
+import fr.romitou.mongosk.skript.MongoManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,9 +37,13 @@ public class MongoSK extends JavaPlugin {
                 e.printStackTrace();
             }
         } else {
-            Skript.error("Skript is not installed or doesn't accept registrations.");
+            Skript.error("Skript isn't installed or doesn't accept registrations.");
             pm.disablePlugin(this);
         }
     }
 
+    @Override
+    public void onDisable() {
+        MongoManager.getClients().values().forEach(MongoClient::close);
+    }
 }
