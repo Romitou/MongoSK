@@ -1,8 +1,24 @@
 name: Java CI
 on: [push, pull_request]
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        java: [8, 11, 14]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.1
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v1.3.0
+        with:
+          java-version: ${{ matrix.java }}
+      - name: Build with Gradle
+        run: ./gradlew clean build
   build:
     runs-on: ubuntu-latest
+    needs: [test]
     steps:
       - name: Checkout
         uses: actions/checkout@v2.3.1
@@ -16,4 +32,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: MongoSK
-          path: build/libs/MongoSK-1.0.jar
+          path: build/libs/**
