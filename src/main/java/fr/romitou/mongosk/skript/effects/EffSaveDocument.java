@@ -41,7 +41,7 @@ public class EffSaveDocument extends Effect {
         if (document.length == 0 || collection == null)
             return;
         Arrays.stream(document).forEach(doc -> {
-            Bson filter = Filters.eq("_id", (ObjectId) doc.get("_id"));
+            Bson filter = Filters.eq("_id", doc.get("_id") == null ? new ObjectId() : doc.get("_id"));
             if ((collection.find(filter).first() != null)) {
                 collection.replaceOne(filter, doc);
             } else {
