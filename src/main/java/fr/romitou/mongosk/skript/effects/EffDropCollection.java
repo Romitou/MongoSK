@@ -6,6 +6,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import com.mongodb.client.MongoCollection;
+import fr.romitou.mongosk.MongoSK;
 import org.bukkit.event.Event;
 
 public class EffDropCollection extends Effect {
@@ -25,6 +26,10 @@ public class EffDropCollection extends Effect {
 
     @Override
     protected void execute(Event e) {
+        if (!MongoSK.getConfigFile().getBoolean("allow-drop.collections")) {
+            Skript.error("You cannot delete a collection. Go to the plugin configuration and enable the option, which was initially disabled for security reasons.");
+            return;
+        }
         MongoCollection collection = exprCollection.getSingle(e);
         if (collection == null)
             return;

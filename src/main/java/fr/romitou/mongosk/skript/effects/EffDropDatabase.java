@@ -6,6 +6,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import com.mongodb.client.MongoDatabase;
+import fr.romitou.mongosk.MongoSK;
 import org.bukkit.event.Event;
 
 public class EffDropDatabase extends Effect {
@@ -25,6 +26,10 @@ public class EffDropDatabase extends Effect {
 
     @Override
     protected void execute(Event e) {
+        if (!MongoSK.getConfigFile().getBoolean("allow-drop.databases")) {
+            Skript.error("You cannot delete a database. Go to the plugin configuration and enable the option, which was initially disabled for security reasons.");
+            return;
+        }
         MongoDatabase database = exprDatabase.getSingle(e);
         if (database == null)
             return;
