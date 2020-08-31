@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -11,6 +15,13 @@ import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bukkit.event.Event;
 
+@Name("Mongo Document")
+@Description("This expression allows you to retrieve a document according to a specific value from a specific collection.")
+@Examples({"set {_client} to client named \"default\"" +
+        "set {_database} to database named \"mongosk\" with {_client}" +
+        "set {_collection} to collection named \"example\" from {_database}" +
+        "set {_document} to first document where \"points\" is \"10\" in {_collection}"})
+@Since("1.0.0")
 public class ExprDocument extends SimpleExpression<Document> {
 
     static {

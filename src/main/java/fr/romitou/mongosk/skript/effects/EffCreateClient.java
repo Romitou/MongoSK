@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -11,6 +15,10 @@ import com.mongodb.client.MongoClients;
 import fr.romitou.mongosk.skript.MongoManager;
 import org.bukkit.event.Event;
 
+@Name("Create Mongo Client")
+@Description("This effect allows you to create a new client, a new connection to a Mongo host. The name you will give to this client will help you to identify it more easily later.")
+@Examples("create a new mongo client to host \"mongodb://127.0.0.1\" as \"mongosk\"")
+@Since("1.0.0")
 public class EffCreateClient extends Effect {
 
     static {

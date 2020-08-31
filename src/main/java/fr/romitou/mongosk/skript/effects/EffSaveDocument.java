@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -14,10 +18,17 @@ import org.bukkit.event.Event;
 
 import java.util.Arrays;
 
+@Name("Save Mongo Document")
+@Description("This effect allows you to save one or more documents in a Mongo collection. The document will be replaced by the new one if the identifier \"_id\" already exists. Otherwise it will be created.")
+@Examples({"set {_collection} to collection named \"example\" of database \"mongosk\" with client \"test\"" +
+        "set {_doc} to document where \"player\" is \"Romitou\" in {_collection}" +
+        "set value \"points\" of {_doc} to 1" +
+        "save {_doc} in {_collection}"})
+@Since("1.0.0")
 public class EffSaveDocument extends Effect {
 
     static {
-        Skript.registerEffect(EffSaveDocument.class, "save [mongo[db]] [document] %mongodocuments% in %mongocollection%");
+        Skript.registerEffect(EffSaveDocument.class, "save [mongo[db]] [document] %mongodocuments% (in|into) %mongocollection%");
     }
 
     private Expression<Document> exprDocument;

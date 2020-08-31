@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -9,6 +13,11 @@ import com.mongodb.client.MongoCollection;
 import fr.romitou.mongosk.MongoSK;
 import org.bukkit.event.Event;
 
+@Name("Drop Mongo Collection")
+@Description("This effect allows you to delete a Mongo collection. This action is irreversible! Disabled by default: go to the MongoSK configuration to enable this effect.")
+@Examples({"set {_collection} to collection named \"example\" in database \"mongosk\" of client \"mongosk\"" +
+        "drop without going back {_collection}"})
+@Since("1.0.0")
 public class EffDropCollection extends Effect {
 
     static {

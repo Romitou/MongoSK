@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -9,6 +13,13 @@ import ch.njol.util.Kleenean;
 import org.bson.Document;
 import org.bukkit.event.Event;
 
+@Name("New Mongo Document")
+@Description("This expression allows you to create a new Mongo document. You will then be able to edit it and save it in the collection you want.")
+@Examples({"set {_new} to new mongo document" +
+        "set value \"player\" of {_new} to name of player" +
+        "add random integer between 1 and 10 to list \"random\" of {_new}" +
+        "save {_new} in collection named \"example\" from database named \"mongosk\" with client named \"default\""})
+@Since("1.0.0")
 public class ExprNewDocument extends SimpleExpression<Document> {
 
     static {

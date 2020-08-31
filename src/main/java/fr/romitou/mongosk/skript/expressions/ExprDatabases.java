@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -11,6 +15,13 @@ import org.bukkit.event.Event;
 
 import java.util.ArrayList;
 
+@Name("Mongo Databases")
+@Description("This expression allows you to retrieve the names of the databases of a Mongo client.")
+@Examples({"loop all databases from client named \"test\":" +
+        "\tbroadcast loop-value" +
+        "" +
+        "set {_databases::*} to  all databases from client named \"test\""})
+@Since("1.0.0")
 public class ExprDatabases extends SimpleExpression<String> {
 
     static {

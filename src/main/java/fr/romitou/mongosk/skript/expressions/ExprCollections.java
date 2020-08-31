@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -11,10 +15,17 @@ import org.bukkit.event.Event;
 
 import java.util.ArrayList;
 
+@Name("Mongo Collections")
+@Description("This expression allows you to retrieve collection names from a Mongo database.")
+@Examples({"loop all collections from database \"mongosk\" with client \"test\":" +
+        "\tbroadcast loop-value" +
+        "" +
+        "set {_collections::*} to all collections from database \"mongosk\" with client \"test\""})
+@Since("1.0.0")
 public class ExprCollections extends SimpleExpression<String> {
 
     static {
-        Skript.registerExpression(ExprCollections.class, String.class, ExpressionType.SIMPLE, "[all] [mongo[db]] collections (of|from) %mongodatabase%");
+        Skript.registerExpression(ExprCollections.class, String.class, ExpressionType.SIMPLE, "[all] [mongo[db]] collections [name[s]] (of|from) %mongodatabase%");
     }
 
     private Expression<MongoDatabase> exprDatabase;

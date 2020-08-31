@@ -1,8 +1,17 @@
 package fr.romitou.mongosk.skript.expressions;
 
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import com.mongodb.client.MongoDatabase;
 
+@Name("Mongo Database Name")
+@Description("This expression allows you to retrieve the name of a Mongo database.")
+@Examples({"set {_database} to database named \"mongosk\" with client named \"default\"" +
+        "send name of {_database}"})
+@Since("1.0.0")
 public class ExprDatabaseName extends SimplePropertyExpression<MongoDatabase, String> {
 
     static {

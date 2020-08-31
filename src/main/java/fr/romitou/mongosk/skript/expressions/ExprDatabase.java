@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -10,6 +14,12 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.bukkit.event.Event;
 
+@Name("Mongo Database")
+@Description("This expression allows you to retrieve a Mongo database from a specific client.")
+@Examples({"set {_client} to client named \"default\"" +
+        "set {_database} to database named \"mongosk\" with {_client}" +
+        "send \"The name of this database is %{_database}'s name%.\""})
+@Since("1.0.0")
 public class ExprDatabase extends SimpleExpression<MongoDatabase> {
 
     static {

@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -9,6 +13,10 @@ import com.mongodb.client.MongoDatabase;
 import fr.romitou.mongosk.MongoSK;
 import org.bukkit.event.Event;
 
+@Name("Drop Mongo Database")
+@Description("This effect allows you to delete a Mongo database. This action is irreversible! Disabled by default: go to the MongoSK configuration to enable this effect.")
+@Examples("drop without going back database named \"mongosk\" of client \"mongosk\"")
+@Since("1.0.0")
 public class EffDropDatabase extends Effect {
 
     static {
