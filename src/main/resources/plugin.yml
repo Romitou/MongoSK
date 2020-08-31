@@ -1,9 +1,8 @@
 name: MongoSK
-version: "1.0"
-description: Use MongoDB with Skript!
-website: https://github.com/Romitou/SkMongo
+version: "1.0.0"
+description: The MongoDB database management addon.
+website: https://github.com/Romitou/MongoSK
 author: Romitou
-api-version: "1.15"
 main: fr.romitou.mongosk.MongoSK
 depend:
   - Skript
