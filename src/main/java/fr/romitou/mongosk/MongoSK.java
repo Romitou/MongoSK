@@ -21,13 +21,8 @@ public class MongoSK extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Bukkit.getLogger().info("This plugin is in beta, it may be that some things are not going well. If you encounter any error, please report it!");
 
-        // Register configuration.
-        this.saveDefaultConfig();
-        config = this.getConfig();
-
-        // Register addon to Skript.
+        // Register add-on.
         PluginManager pm = Bukkit.getPluginManager();
         if ((pm.getPlugin("Skript") != null) && Skript.isAcceptRegistrations()) {
             SkriptAddon addon = Skript.registerAddon(this);
@@ -41,6 +36,14 @@ public class MongoSK extends JavaPlugin {
             Skript.error("Skript isn't installed or doesn't accept registrations.");
             pm.disablePlugin(this);
         }
+
+        // Load or create configuration.
+        this.saveDefaultConfig();
+        config = this.getConfig();
+
+        // Register Metrics (<3).
+        Metrics metrics = new Metrics(this, 8537);
+        metrics.addCustomChart(new Metrics.SimplePie("skript_version", () -> Skript.getVersion().toString()));
     }
 
     @Override
