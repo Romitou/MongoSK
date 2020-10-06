@@ -15,7 +15,7 @@ import com.mongodb.client.MongoDatabase;
 public class ExprDatabaseName extends SimplePropertyExpression<MongoDatabase, String> {
 
     static {
-        register(ExprDatabaseName.class, String.class, "[mongo[db]] name", "mongodatabases");
+        register(ExprDatabaseName.class, String.class, "mongo[db] name", "mongodatabases");
     }
 
     @Override
