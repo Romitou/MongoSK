@@ -18,7 +18,7 @@ import org.bukkit.event.Event;
 @Description("This expression allows you to retrieve a Mongo database from a specific client.")
 @Examples({"set {_client} to client named \"default\"" +
         "set {_database} to database named \"mongosk\" with {_client}" +
-        "send \"The name of this database is %{_database}'s name%.\""})
+        "send \"The name of this database is %{_database}'s mongo name%.\""})
 @Since("1.0.0")
 public class ExprDatabase extends SimpleExpression<MongoDatabase> {
 
@@ -41,9 +41,9 @@ public class ExprDatabase extends SimpleExpression<MongoDatabase> {
     protected MongoDatabase[] get(Event e) {
         String name = exprName.getSingle(e);
         MongoClient client = exprClient.getSingle(e);
-        if (name == null || client == null)
-            return null;
-        return new MongoDatabase[]{client.getDatabase(name)};
+        return (name == null || client == null)
+            ? new MongoDatabase[0]
+            : new MongoDatabase[]{client.getDatabase(name)};
     }
 
     @Override

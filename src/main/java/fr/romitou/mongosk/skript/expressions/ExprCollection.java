@@ -41,9 +41,9 @@ public class ExprCollection extends SimpleExpression<MongoCollection> {
     protected MongoCollection[] get(Event e) {
         String name = exprName.getSingle(e);
         MongoDatabase database = exprDatabase.getSingle(e);
-        if (name == null || database == null)
-            return null;
-        return new MongoCollection[]{database.getCollection(name)};
+        return (name == null || database == null)
+                ? new MongoCollection[0]
+                : new MongoCollection[]{database.getCollection(name)};
     }
 
     @Override

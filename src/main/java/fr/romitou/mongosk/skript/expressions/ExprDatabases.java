@@ -18,7 +18,7 @@ import java.util.ArrayList;
 @Name("Mongo Databases")
 @Description("This expression allows you to retrieve the names of the databases of a Mongo client.")
 @Examples({"loop all databases from client named \"test\":" +
-        "\tbroadcast loop-value" +
+        "\tbroadcast \"%loop-value\"" +
         "" +
         "set {_databases::*} to  all databases from client named \"test\""})
 @Since("1.0.0")
@@ -41,7 +41,7 @@ public class ExprDatabases extends SimpleExpression<String> {
     protected String[] get(Event e) {
         MongoClient client = exprClient.getSingle(e);
         if (client == null)
-            return null;
+            return new String[0];
         ArrayList<String> list = new ArrayList<>();
         client.listDatabaseNames().forEach(list::add);
         return list.toArray(new String[0]);

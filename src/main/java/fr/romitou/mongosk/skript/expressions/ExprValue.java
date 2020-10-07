@@ -53,12 +53,12 @@ public class ExprValue extends SimpleExpression<Object> {
         String value = exprValue.getSingle(e);
         Document document = exprDocument.getSingle(e);
         if (value == null || document == null)
-            return null;
+            return new Object[0];
         if (parseMark == 1) {
             return new Object[]{document.get(value)};
         } else {
             List<Object> list = document.getList(value, Object.class);
-            return (list != null) ? list.toArray() : null;
+            return (list == null) ? new Object[0] : list.toArray();
         }
     }
 

@@ -47,11 +47,11 @@ public class ExprDocument extends SimpleExpression<Document> {
         Object whereValue = exprWhereValue.getSingle(e);
         MongoCollection collection = exprCollection.getSingle(e);
         if (whereName == null || whereValue == null || collection == null)
-            return null;
+            return new Document[0];
         Document document = (Document) collection.find(Filters.eq(whereName, whereValue)).first();
-        if (document == null)
-            return null;
-        return new Document[]{document};
+        return (document == null)
+            ? new Document[0]
+            : new Document[]{document};
     }
 
     @Override

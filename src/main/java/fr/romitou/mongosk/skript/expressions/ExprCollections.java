@@ -41,7 +41,7 @@ public class ExprCollections extends SimpleExpression<String> {
     protected String[] get(Event e) {
         MongoDatabase database = exprDatabase.getSingle(e);
         if (database == null)
-            return null;
+            return new String[0];
         ArrayList<String> list = new ArrayList<>();
         database.listCollectionNames().forEach(list::add);
         return list.toArray(new String[0]);

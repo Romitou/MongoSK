@@ -37,9 +37,9 @@ public class ExprClient extends SimpleExpression<MongoClient> {
     @Override
     protected MongoClient[] get(Event e) {
         String name = exprName.getSingle(e);
-        if (name == null)
-            return null;
-        return new MongoClient[]{MongoManager.getClient(name)};
+        return (name == null)
+                ? new MongoClient[0]
+                : new MongoClient[]{MongoManager.getClient(name)};
     }
 
     @Override
