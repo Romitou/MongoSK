@@ -21,12 +21,12 @@ import java.util.List;
 
 @Name("Mongo Value")
 @Description("This expression allows you to retrieve and modify certain values of a document. If you define an already existing entry, it will be replaced. Lists are supported.")
-@Examples({"set {_document} to first document where \"points\" is \"10\" in {_collection}" +
-        "set {test::%value \"test\" of {_document}%} to true" +
-        "loop list \"example\" of {_document}:" +
-        "\tbroadcast \"%loop-value%\"" +
-        "set list \"example\" of {_document} to 10, 54 and 203" +
-        "add 41 to list \"example\" of {_document}" +
+@Examples({"set {_document} to first document where \"points\" is \"10\" in {_collection}",
+        "set {test::%value \"test\" of {_document}%} to true",
+        "loop list \"example\" of {_document}:",
+        "\tbroadcast \"%loop-value%\"",
+        "set list \"example\" of {_document} to 10, 54 and 203",
+        "add 41 to list \"example\" of {_document}",
         "save {_document} in collection named \"example\" from database named \"mongosk\" with client named \"default\""})
 @Since("1.0.0")
 public class ExprValue extends SimpleExpression<Object> {

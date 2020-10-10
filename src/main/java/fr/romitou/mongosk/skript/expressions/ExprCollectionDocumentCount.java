@@ -9,7 +9,7 @@ import com.mongodb.client.MongoCollection;
 
 @Name("Mongo Collection Document Count")
 @Description("This expression allows you to retrieve the number of documents in a Mongo collection.")
-@Examples({"set {_collection} to collection named \"example\" from database named \"mongosk\" with client named \"default\"" +
+@Examples({"set {_collection} to collection named \"example\" from database named \"mongosk\" with client named \"default\"",
         "send \"%{_collection}'s document count%\""})
 @Since("1.0.0")
 public class ExprCollectionDocumentCount extends SimplePropertyExpression<MongoCollection, Integer> {

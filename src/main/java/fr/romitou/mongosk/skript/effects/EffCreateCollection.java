@@ -16,7 +16,7 @@ import org.bukkit.event.Event;
 
 @Name("Create Mongo Collection")
 @Description("This effect allows you to simply create a new Mongo collection in a database. The name must comply with the Mongo rules and those of your host.")
-@Examples({"set {_database} to mongo database named \"mongosk\" of client named \"mongosk\"" +
+@Examples({"set {_database} to mongo database named \"mongosk\" of client named \"mongosk\"",
         "create a new mongo collection named \"example\" in {_database}"})
 @Since("1.0.0")
 public class EffCreateCollection extends Effect {

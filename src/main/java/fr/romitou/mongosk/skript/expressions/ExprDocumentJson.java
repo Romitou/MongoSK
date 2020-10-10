@@ -9,7 +9,7 @@ import org.bson.Document;
 
 @Name("Mongo Document Json")
 @Description("This expression allows to get the JSON content of a Mongo document.")
-@Examples({"set {_document} to first document where \"points\" is \"10\" in {_collection}" +
+@Examples({"set {_document} to first document where \"points\" is \"10\" in {_collection}",
         "broadcast {_document}'s mongo json"})
 @Since("1.0.1")
 public class ExprDocumentJson extends SimplePropertyExpression<Document, String> {

@@ -16,7 +16,7 @@ import org.bukkit.event.Event;
 
 @Name("Mongo Client")
 @Description("This expression allows you to retrieve a Mongo client by name, initially defined in the creation effect.")
-@Examples({"create a new mongo client to host \"mongodb://127.0.0.1\" as \"mongosk\"" +
+@Examples({"create a new mongo client to host \"mongodb://127.0.0.1\" as \"mongosk\"",
         "set {_client} to client named \"mongosk\""})
 @Since("1.0.0")
 public class ExprClient extends SimpleExpression<MongoClient> {

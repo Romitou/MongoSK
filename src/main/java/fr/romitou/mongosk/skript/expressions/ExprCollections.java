@@ -17,9 +17,9 @@ import java.util.ArrayList;
 
 @Name("Mongo Collections")
 @Description("This expression allows you to retrieve collection names from a Mongo database.")
-@Examples({"loop all collections from database \"mongosk\" with client \"test\":" +
-        "\tbroadcast loop-value" +
-        "" +
+@Examples({"loop all collections from database \"mongosk\" with client \"test\":",
+        "\tbroadcast loop-value",
+        "",
         "set {_collections::*} to all collections from database \"mongosk\" with client \"test\""})
 @Since("1.0.0")
 public class ExprCollections extends SimpleExpression<String> {

@@ -15,7 +15,7 @@ import org.bukkit.event.Event;
 
 @Name("Drop Mongo Collection")
 @Description("This effect allows you to delete a Mongo collection. This action is irreversible! Disabled by default: go to the MongoSK configuration to enable this effect.")
-@Examples({"set {_collection} to collection named \"example\" in database \"mongosk\" of client \"mongosk\"" +
+@Examples({"set {_collection} to collection named \"example\" in database \"mongosk\" of client \"mongosk\"",
         "drop without going back {_collection}"})
 @Since("1.0.0")
 public class EffDropCollection extends Effect {

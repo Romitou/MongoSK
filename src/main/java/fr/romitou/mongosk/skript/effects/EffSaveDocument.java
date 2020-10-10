@@ -20,9 +20,9 @@ import java.util.Arrays;
 
 @Name("Save Mongo Document")
 @Description("This effect allows you to save one or more documents in a Mongo collection. The document will be replaced by the new one if the identifier \"_id\" already exists. Otherwise it will be created.")
-@Examples({"set {_collection} to collection named \"example\" of database \"mongosk\" with client \"test\"" +
-        "set {_doc} to document where \"player\" is \"Romitou\" in {_collection}" +
-        "set value \"points\" of {_doc} to 1" +
+@Examples({"set {_collection} to collection named \"example\" of database \"mongosk\" with client \"test\"",
+        "set {_doc} to document where \"player\" is \"Romitou\" in {_collection}",
+        "set value \"points\" of {_doc} to 1",
         "save {_doc} in {_collection}"})
 @Since("1.0.0")
 public class EffSaveDocument extends Effect {

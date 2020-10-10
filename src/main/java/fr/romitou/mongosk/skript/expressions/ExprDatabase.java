@@ -16,8 +16,8 @@ import org.bukkit.event.Event;
 
 @Name("Mongo Database")
 @Description("This expression allows you to retrieve a Mongo database from a specific client.")
-@Examples({"set {_client} to client named \"default\"" +
-        "set {_database} to database named \"mongosk\" with {_client}" +
+@Examples({"set {_client} to client named \"default\"",
+        "set {_database} to database named \"mongosk\" with {_client}",
         "send \"The name of this database is %{_database}'s mongo name%.\""})
 @Since("1.0.0")
 public class ExprDatabase extends SimpleExpression<MongoDatabase> {
