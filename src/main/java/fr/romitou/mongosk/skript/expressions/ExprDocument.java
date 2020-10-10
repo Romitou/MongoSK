@@ -50,8 +50,8 @@ public class ExprDocument extends SimpleExpression<Document> {
             return new Document[0];
         Document document = (Document) collection.find(Filters.eq(whereName, whereValue)).first();
         return (document == null)
-            ? new Document[0]
-            : new Document[]{document};
+                ? new Document[0]
+                : new Document[]{document};
     }
 
     @Override

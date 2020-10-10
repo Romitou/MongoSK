@@ -42,8 +42,8 @@ public class ExprDatabase extends SimpleExpression<MongoDatabase> {
         String name = exprName.getSingle(e);
         MongoClient client = exprClient.getSingle(e);
         return (name == null || client == null)
-            ? new MongoDatabase[0]
-            : new MongoDatabase[]{client.getDatabase(name)};
+                ? new MongoDatabase[0]
+                : new MongoDatabase[]{client.getDatabase(name)};
     }
 
     @Override

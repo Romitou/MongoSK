@@ -16,6 +16,14 @@ public class MongoSK extends JavaPlugin {
     private static FileConfiguration config;
     private static PluginManager pluginManager;
 
+    public static FileConfiguration getConfigFile() {
+        return config;
+    }
+
+    public static PluginManager getPluginManager() {
+        return pluginManager;
+    }
+
     @Override
     public void onEnable() {
 
@@ -46,13 +54,5 @@ public class MongoSK extends JavaPlugin {
     @Override
     public void onDisable() {
         MongoManager.getClients().values().forEach(MongoClient::close);
-    }
-
-    public static FileConfiguration getConfigFile() {
-        return config;
-    }
-
-    public static PluginManager getPluginManager() {
-        return pluginManager;
     }
 }
