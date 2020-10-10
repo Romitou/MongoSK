@@ -11,8 +11,11 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.skript.MongoManager;
+import fr.romitou.mongosk.skript.events.bukkit.ClientCreateEvent;
 import org.bukkit.event.Event;
 
 @Name("Create Mongo Client")
@@ -44,12 +47,9 @@ public class EffCreateClient extends Effect {
         if (uri == null || name == null)
             return;
         try {
-            MongoManager.addClient(MongoClients.create(
-                    MongoClientSettings
-                            .builder()
-                            .applyConnectionString(new ConnectionString(uri))
-                            .build()
-            ), name);
+            MongoClient mongoClient = MongoClients.create(MongoClientSettings.builder().applyConnectionString(new ConnectionString(uri)).build());
+            MongoManager.addClient(mongoClient, name);
+            MongoSK.getPluginManager().callEvent(new ClientCreateEvent(mongoClient));
         } catch (IllegalArgumentException ex) {
             Skript.error("Something went wrong. " + ex.getMessage());
         }

@@ -12,6 +12,8 @@ import ch.njol.util.Kleenean;
 import com.mongodb.MongoCommandException;
 import com.mongodb.MongoNamespace;
 import com.mongodb.client.MongoDatabase;
+import fr.romitou.mongosk.MongoSK;
+import fr.romitou.mongosk.skript.events.bukkit.CollectionCreateEvent;
 import org.bukkit.event.Event;
 
 @Name("Create Mongo Collection")
@@ -45,6 +47,7 @@ public class EffCreateCollection extends Effect {
         try {
             MongoNamespace.checkCollectionNameValidity(name);
             database.createCollection(name);
+            MongoSK.getPluginManager().callEvent(new CollectionCreateEvent(database.getCollection(name)));
         } catch (IllegalArgumentException | MongoCommandException ex) {
             Skript.error("Ups! There was an error. " + ex.getMessage());
         }

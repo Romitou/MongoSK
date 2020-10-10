@@ -11,9 +11,10 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import fr.romitou.mongosk.MongoSK;
+import fr.romitou.mongosk.skript.events.bukkit.DocumentSaveEvent;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
 import org.bukkit.event.Event;
 
 import java.util.Arrays;
@@ -58,6 +59,7 @@ public class EffSaveDocument extends Effect {
             } else {
                 collection.replaceOne(filter, doc);
             }
+            MongoSK.getPluginManager().callEvent(new DocumentSaveEvent(doc));
         });
     }
 
