@@ -14,17 +14,14 @@ import java.io.IOException;
 public class MongoSK extends JavaPlugin {
 
     private static FileConfiguration config;
-
-    public static FileConfiguration getConfigFile() {
-        return config;
-    }
+    private static PluginManager pluginManager;
 
     @Override
     public void onEnable() {
 
         // Register add-on.
-        PluginManager pm = Bukkit.getPluginManager();
-        if ((pm.getPlugin("Skript") != null) && Skript.isAcceptRegistrations()) {
+        pluginManager = Bukkit.getPluginManager();
+        if ((pluginManager.getPlugin("Skript") != null) && Skript.isAcceptRegistrations()) {
             SkriptAddon addon = Skript.registerAddon(this);
             try {
                 addon.loadClasses("fr.romitou.mongosk.skript");
@@ -34,7 +31,7 @@ public class MongoSK extends JavaPlugin {
             }
         } else {
             Skript.error("Skript isn't installed or doesn't accept registrations.");
-            pm.disablePlugin(this);
+            pluginManager.disablePlugin(this);
         }
 
         // Load or create configuration.
@@ -49,5 +46,13 @@ public class MongoSK extends JavaPlugin {
     @Override
     public void onDisable() {
         MongoManager.getClients().values().forEach(MongoClient::close);
+    }
+
+    public static FileConfiguration getConfigFile() {
+        return config;
+    }
+
+    public static PluginManager getPluginManager() {
+        return pluginManager;
     }
 }

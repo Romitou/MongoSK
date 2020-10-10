@@ -7,6 +7,7 @@ import ch.njol.skript.registrations.Classes;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import fr.romitou.mongosk.Utils;
 import org.bson.Document;
 
 public class Types {
@@ -77,13 +78,13 @@ public class Types {
                 .parser(new Parser<Document>() {
 
                     @Override
-                    public String toString(Document o, int flags) {
-                        return o.toString() + " document";
+                    public String toString(Document document, int flags) {
+                        return (document.containsKey("name") ? document.getString("name") : "any") + " document";
                     }
 
                     @Override
-                    public String toVariableNameString(Document o) {
-                        return o.toString();
+                    public String toVariableNameString(Document document) {
+                        return document.containsKey("name") ? document.getString("name") : "any-document";
                     }
 
                     @Override
@@ -106,13 +107,13 @@ public class Types {
                 .since("1.0.0")
                 .parser(new Parser<MongoClient>() {
                     @Override
-                    public String toString(MongoClient o, int flags) {
-                        return o.toString() + " client";
+                    public String toString(MongoClient client, int flags) {
+                        return Utils.getKeyByValue(MongoManager.getClients(), client) + " client";
                     }
 
                     @Override
-                    public String toVariableNameString(MongoClient o) {
-                        return o.toString();
+                    public String toVariableNameString(MongoClient client) {
+                        return Utils.getKeyByValue(MongoManager.getClients(), client);
                     }
 
                     @Override
