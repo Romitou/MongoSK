@@ -1,6 +1,11 @@
 package fr.romitou.mongosk.skript;
 
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import fr.romitou.mongosk.codecs.CodecProvider;
+import org.bson.codecs.configuration.CodecRegistries;
 
 import java.util.HashMap;
 
@@ -22,6 +27,15 @@ public class MongoManager {
 
     public static void removeClient(MongoClient client) {
         clients.values().remove(client);
+    }
+
+    public static MongoClient buildClient(String uri) {
+        return MongoClients.create(MongoClientSettings
+                .builder()
+                .applyConnectionString(new ConnectionString(uri))
+                .codecRegistry(CodecRegistries.fromProviders(MongoClientSettings.getDefaultCodecRegistry(), new CodecProvider()))
+                .build()
+        );
     }
 
 }

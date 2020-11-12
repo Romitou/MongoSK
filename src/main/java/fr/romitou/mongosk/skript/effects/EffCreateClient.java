@@ -9,10 +9,7 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.skript.MongoManager;
 import fr.romitou.mongosk.skript.events.bukkit.ClientCreateEvent;
@@ -47,7 +44,7 @@ public class EffCreateClient extends Effect {
         if (uri == null || name == null)
             return;
         try {
-            MongoClient mongoClient = MongoClients.create(MongoClientSettings.builder().applyConnectionString(new ConnectionString(uri)).build());
+            MongoClient mongoClient = MongoManager.buildClient(uri);
             MongoManager.addClient(mongoClient, name);
             MongoSK.getPluginManager().callEvent(new ClientCreateEvent(mongoClient));
         } catch (IllegalArgumentException ex) {
