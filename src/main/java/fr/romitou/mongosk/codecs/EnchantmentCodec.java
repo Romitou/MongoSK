@@ -12,7 +12,7 @@ public class EnchantmentCodec implements Codec<Enchantment> {
     @Override
     public Enchantment decode(BsonReader reader, DecoderContext decoderContext) {
         reader.readStartDocument();
-        final String enchantment = reader.readString();
+        final String enchantment = reader.readString("enchantment");
         reader.readEndDocument();
         assert enchantment != null;
         return EnchantmentUtils.getByKey(enchantment);
@@ -21,7 +21,7 @@ public class EnchantmentCodec implements Codec<Enchantment> {
     @Override
     public void encode(BsonWriter writer, Enchantment enchantment, EncoderContext encoderContext) {
         writer.writeStartDocument();
-        writer.writeString(EnchantmentUtils.getKey(enchantment));
+        writer.writeString("enchantment", EnchantmentUtils.getKey(enchantment));
         writer.writeEndDocument();
     }
 

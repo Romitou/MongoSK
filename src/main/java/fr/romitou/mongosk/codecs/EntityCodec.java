@@ -14,7 +14,7 @@ public class EntityCodec implements Codec<Entity> {
     @Override
     public Entity decode(BsonReader reader, DecoderContext decoderContext) {
         reader.readStartDocument();
-        Entity entity = Bukkit.getEntity(UUID.fromString(reader.readString()));
+        Entity entity = Bukkit.getEntity(UUID.fromString(reader.readString("uuid")));
         reader.readEndDocument();
         assert entity != null;
         return entity;
@@ -23,7 +23,7 @@ public class EntityCodec implements Codec<Entity> {
     @Override
     public void encode(BsonWriter writer, Entity entity, EncoderContext encoderContext) {
         writer.writeStartDocument();
-        writer.writeString(entity.getUniqueId().toString());
+        writer.writeString("uuid", entity.getUniqueId().toString());
         writer.writeEndDocument();
     }
 

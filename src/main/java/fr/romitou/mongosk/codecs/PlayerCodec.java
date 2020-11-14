@@ -14,7 +14,7 @@ public class PlayerCodec implements Codec<OfflinePlayer> {
     @Override
     public OfflinePlayer decode(BsonReader reader, DecoderContext decoderContext) {
         reader.readStartDocument();
-        OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(reader.readString()));
+        OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(reader.readString("uuid")));
         reader.readEndDocument();
         return player;
     }
@@ -22,7 +22,7 @@ public class PlayerCodec implements Codec<OfflinePlayer> {
     @Override
     public void encode(BsonWriter writer, OfflinePlayer player, EncoderContext encoderContext) {
         writer.writeStartDocument();
-        writer.writeString(player.getUniqueId().toString());
+        writer.writeString("uuid", player.getUniqueId().toString());
         writer.writeEndDocument();
     }
 

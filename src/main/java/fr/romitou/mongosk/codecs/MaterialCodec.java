@@ -11,7 +11,7 @@ public class MaterialCodec implements Codec<Material> {
     @Override
     public Material decode(BsonReader reader, DecoderContext decoderContext) {
         reader.readStartDocument();
-        final int ordinal = reader.readInt32();
+        final int ordinal = reader.readInt32("ordinal");
         reader.readEndDocument();
         return Material.values()[ordinal];
     }
@@ -19,7 +19,7 @@ public class MaterialCodec implements Codec<Material> {
     @Override
     public void encode(BsonWriter writer, Material material, EncoderContext encoderContext) {
         writer.writeStartDocument();
-        writer.writeInt32(material.ordinal());
+        writer.writeInt32("ordinal", material.ordinal());
         writer.writeEndDocument();
     }
 

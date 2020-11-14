@@ -12,7 +12,7 @@ public class WorldCodec implements Codec<World> {
     @Override
     public World decode(BsonReader reader, DecoderContext decoderContext) {
         reader.readStartDocument();
-        final World world = Bukkit.getWorld(reader.readString());
+        final World world = Bukkit.getWorld(reader.readString("world"));
         reader.readEndDocument();
         assert world != null;
         return world;
@@ -21,7 +21,7 @@ public class WorldCodec implements Codec<World> {
     @Override
     public void encode(BsonWriter writer, World world, EncoderContext encoderContext) {
         writer.writeStartDocument();
-        writer.writeString(world.getName());
+        writer.writeString("world", world.getName());
         writer.writeEndDocument();
     }
 
