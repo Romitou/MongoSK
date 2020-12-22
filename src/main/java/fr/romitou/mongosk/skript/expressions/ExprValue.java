@@ -67,7 +67,7 @@ public class ExprValue extends SimpleExpression<Object> {
 
             } catch (ClassCastException ex) {
                 Skript.error("The mongodb document value is not a list!"); // I'm not sure whether or not this should return an error
-                return null;
+                return new Object[0];
             }
         }
     }
