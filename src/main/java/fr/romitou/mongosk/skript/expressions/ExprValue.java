@@ -58,7 +58,7 @@ public class ExprValue extends SimpleExpression<Object> {
             try {
                 return new Object[]{document.get(value)};
             } catch (NullPointerException ex) {
-                return null; // That document value doesn't exist;
+                return new Object[0]; // That document value doesn't exist;
             }
         } else {
             try {
