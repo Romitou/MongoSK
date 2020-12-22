@@ -41,9 +41,13 @@ public class ExprDatabase extends SimpleExpression<MongoDatabase> {
     protected MongoDatabase[] get(Event e) {
         String name = exprName.getSingle(e);
         MongoClient client = exprClient.getSingle(e);
-        return (name == null || client == null)
-                ? new MongoDatabase[0]
-                : new MongoDatabase[]{client.getDatabase(name)};
+        try {
+            return (name == null || client == null)
+                    ? new MongoDatabase[0]
+                    : new MongoDatabase[]{client.getDatabase(name)};
+        } catch (IllegalArgumentException ex) {
+            return new MongoDatabase[0]; // A MongoDB database with that name doesn't exist!
+        }
     }
 
     @Override

@@ -55,10 +55,20 @@ public class ExprValue extends SimpleExpression<Object> {
         if (value == null || document == null)
             return new Object[0];
         if (parseMark == 1) {
-            return new Object[]{document.get(value)};
+            try {
+                return new Object[]{document.get(value)};
+            } catch (NullPointerException ex) {
+                return new Object[0]; // That document value doesn't exist;
+            }
         } else {
-            List<Object> list = document.getList(value, Object.class);
-            return (list == null) ? new Object[0] : list.toArray();
+            try {
+                List<Object> list = document.getList(value, Object.class);
+                return (list == null) ? new Object[0] : list.toArray();
+
+            } catch (ClassCastException ex) {
+                Skript.error("The mongodb document value is not a list!"); // I'm not sure whether or not this should return an error
+                return new Object[0];
+            }
         }
     }
 

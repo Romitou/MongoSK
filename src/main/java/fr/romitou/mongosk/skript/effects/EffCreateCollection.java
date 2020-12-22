@@ -9,7 +9,6 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
-import com.mongodb.MongoCommandException;
 import com.mongodb.MongoNamespace;
 import com.mongodb.client.MongoDatabase;
 import fr.romitou.mongosk.MongoSK;
@@ -48,8 +47,8 @@ public class EffCreateCollection extends Effect {
             MongoNamespace.checkCollectionNameValidity(name);
             database.createCollection(name);
             MongoSK.getPluginManager().callEvent(new CollectionCreateEvent(database.getCollection(name)));
-        } catch (IllegalArgumentException | MongoCommandException ex) {
-            Skript.error("Ups! There was an error. " + ex.getMessage());
+        } catch (IllegalArgumentException ex) {
+            Skript.error("The defined MongoDB collection name is invalid!");
         }
     }
 

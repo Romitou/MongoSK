@@ -9,6 +9,7 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import fr.romitou.mongosk.MongoSK;
@@ -52,15 +53,19 @@ public class EffSaveDocument extends Effect {
         MongoCollection collection = exprCollection.getSingle(e);
         if (document.length == 0 || collection == null)
             return;
-        Arrays.stream(document).forEach(doc -> {
-            Bson filter = Filters.eq("_id", doc.get("_id"));
-            if (collection.find(filter).first() == null) {
-                collection.insertOne(doc);
-            } else {
-                collection.replaceOne(filter, doc);
-            }
-            MongoSK.getPluginManager().callEvent(new DocumentSaveEvent(doc));
-        });
+        try {
+            Arrays.stream(document).forEach(doc -> {
+                Bson filter = Filters.eq("_id", doc.get("_id"));
+                if (collection.find(filter).first() == null) {
+                    collection.insertOne(doc);
+                } else {
+                    collection.replaceOne(filter, doc);
+                }
+                MongoSK.getPluginManager().callEvent(new DocumentSaveEvent(doc));
+            });
+        } catch (MongoException ex) {
+            Skript.error("Exception encountered while saving the MongoDB document!\n" + ex.getMessage());
+        }
     }
 
     @Override
