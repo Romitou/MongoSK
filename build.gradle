@@ -22,8 +22,8 @@ repositories {
 
 dependencies {
     extraLibs('org.mongodb:mongodb-driver-sync:4.1.1')
-    compileOnly('com.destroystokyo.paper:paper-api:1.15.2-R0.1-SNAPSHOT')
-    implementation('com.github.SkriptLang:Skript:2.5') {
+    compileOnly('com.destroystokyo.paper:paper-api:1.16.4-R0.1-SNAPSHOT')
+    implementation('com.github.SkriptLang:Skript:2.5.3') {
         exclude group: 'com.sk89q.worldguard', module: 'worldguard-legacy'
         exclude group: 'net.milkbowl.vault', module: 'Vault'
     }
