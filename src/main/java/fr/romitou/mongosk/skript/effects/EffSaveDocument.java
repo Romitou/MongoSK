@@ -12,8 +12,6 @@ import ch.njol.util.Kleenean;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
-import fr.romitou.mongosk.MongoSK;
-import fr.romitou.mongosk.skript.events.bukkit.DocumentSaveEvent;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.event.Event;
@@ -61,7 +59,6 @@ public class EffSaveDocument extends Effect {
                 } else {
                     collection.replaceOne(filter, doc);
                 }
-                MongoSK.getPluginManager().callEvent(new DocumentSaveEvent(doc));
             });
         } catch (MongoException ex) {
             Skript.error("Exception encountered while saving the MongoDB document!\n" + ex.getMessage());

@@ -11,8 +11,6 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import com.mongodb.MongoNamespace;
 import com.mongodb.client.MongoDatabase;
-import fr.romitou.mongosk.MongoSK;
-import fr.romitou.mongosk.skript.events.bukkit.CollectionCreateEvent;
 import org.bukkit.event.Event;
 
 @Name("Create Mongo Collection")
@@ -46,7 +44,6 @@ public class EffCreateCollection extends Effect {
         try {
             MongoNamespace.checkCollectionNameValidity(name);
             database.createCollection(name);
-            MongoSK.getPluginManager().callEvent(new CollectionCreateEvent(database.getCollection(name)));
         } catch (IllegalArgumentException ex) {
             Skript.error("The defined MongoDB collection name is invalid!");
         }

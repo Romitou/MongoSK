@@ -10,9 +10,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import com.mongodb.client.MongoClient;
-import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.skript.MongoManager;
-import fr.romitou.mongosk.skript.events.bukkit.ClientCloseEvent;
 import org.bukkit.event.Event;
 
 @Name("Close Mongo Client")
@@ -40,7 +38,6 @@ public class EffCloseClient extends Effect {
         if (client == null)
             return;
         client.close();
-        MongoSK.getPluginManager().callEvent(new ClientCloseEvent(client));
         MongoManager.removeClient(client);
     }
 

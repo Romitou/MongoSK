@@ -11,7 +11,6 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import com.mongodb.client.MongoDatabase;
 import fr.romitou.mongosk.MongoSK;
-import fr.romitou.mongosk.skript.events.bukkit.DatabaseDropEvent;
 import org.bukkit.event.Event;
 
 @Name("Drop Mongo Database")
@@ -43,7 +42,6 @@ public class EffDropDatabase extends Effect {
         if (database == null)
             return;
         database.drop();
-        MongoSK.getPluginManager().callEvent(new DatabaseDropEvent(database));
     }
 
     @Override

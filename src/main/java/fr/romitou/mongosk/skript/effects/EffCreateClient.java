@@ -10,9 +10,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import com.mongodb.client.MongoClient;
-import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.skript.MongoManager;
-import fr.romitou.mongosk.skript.events.bukkit.ClientCreateEvent;
 import org.bukkit.event.Event;
 
 @Name("Create Mongo Client")
@@ -46,7 +44,6 @@ public class EffCreateClient extends Effect {
         try {
             MongoClient mongoClient = MongoManager.buildClient(uri);
             MongoManager.addClient(mongoClient, name);
-            MongoSK.getPluginManager().callEvent(new ClientCreateEvent(mongoClient));
         } catch (IllegalArgumentException ex) {
             Skript.error("Something went wrong. " + ex.getMessage());
         }

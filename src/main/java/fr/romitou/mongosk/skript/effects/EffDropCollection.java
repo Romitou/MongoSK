@@ -11,7 +11,6 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import com.mongodb.client.MongoCollection;
 import fr.romitou.mongosk.MongoSK;
-import fr.romitou.mongosk.skript.events.bukkit.CollectionDropEvent;
 import org.bukkit.event.Event;
 
 @Name("Drop Mongo Collection")
@@ -44,7 +43,6 @@ public class EffDropCollection extends Effect {
         if (collection == null)
             return;
         collection.drop();
-        MongoSK.getPluginManager().callEvent(new CollectionDropEvent(collection));
     }
 
     @Override
