@@ -1,4 +1,4 @@
-package fr.romitou.mongosk.skript.expressions;
+package fr.romitou.mongosk.skript.expressions.documents;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
@@ -29,10 +29,10 @@ import java.util.List;
         "add 41 to list \"example\" of {_document}",
         "save {_document} in collection named \"example\" from database named \"mongosk\" with client named \"default\""})
 @Since("1.0.0")
-public class ExprValue extends SimpleExpression<Object> {
+public class ExprDocumentValue extends SimpleExpression<Object> {
 
     static {
-        Skript.registerExpression(ExprValue.class, Object.class, ExpressionType.SIMPLE, "[mongo[db]] (1¦value|2¦list) %string% (of|from) %mongodocument%");
+        Skript.registerExpression(ExprDocumentValue.class, Object.class, ExpressionType.SIMPLE, "[mongo[db]] (1¦value|2¦list) %string% (of|from) %mongodocument%");
     }
 
     private Expression<String> exprValue;

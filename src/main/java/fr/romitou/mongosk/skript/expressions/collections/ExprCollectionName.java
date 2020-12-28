@@ -1,4 +1,4 @@
-package fr.romitou.mongosk.skript.expressions;
+package fr.romitou.mongosk.skript.expressions.collections;
 
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -15,7 +15,7 @@ import com.mongodb.client.MongoCollection;
 public class ExprCollectionName extends SimplePropertyExpression<MongoCollection, String> {
 
     static {
-        register(ExprDatabaseName.class, String.class, "mongo[db] name", "mongocollections");
+        register(ExprCollectionName.class, String.class, "mongo[db] name", "mongocollections");
     }
 
     @Override

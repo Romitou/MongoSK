@@ -1,4 +1,4 @@
-package fr.romitou.mongosk.skript.expressions;
+package fr.romitou.mongosk.skript.expressions.documents;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
