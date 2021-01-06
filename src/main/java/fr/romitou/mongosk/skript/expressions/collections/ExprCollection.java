@@ -46,7 +46,8 @@ public class ExprCollection extends SimpleExpression<MongoCollection> {
                     ? new MongoCollection[0]
                     : new MongoCollection[]{database.getCollection(name)};
         } catch (IllegalArgumentException ex) {
-            return new MongoCollection[0]; // A MongoDB collection with that name doesn't exist!
+            Skript.warning("The " + toString(e, false) + " was not found.");
+            return new MongoCollection[0];
         }
     }
 

@@ -46,7 +46,8 @@ public class ExprDatabase extends SimpleExpression<MongoDatabase> {
                     ? new MongoDatabase[0]
                     : new MongoDatabase[]{client.getDatabase(name)};
         } catch (IllegalArgumentException ex) {
-            return new MongoDatabase[0]; // A MongoDB database with that name doesn't exist!
+            Skript.warning("The " + toString(e, false) + " was not found.");
+            return new MongoDatabase[0];
         }
     }
 
