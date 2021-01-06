@@ -1,5 +1,6 @@
 package fr.romitou.mongosk.skript;
 
+import ch.njol.skript.Skript;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
@@ -29,13 +30,19 @@ public class MongoManager {
         clients.values().remove(client);
     }
 
-    public static MongoClient buildClient(String uri) {
-        return MongoClients.create(MongoClientSettings
-                .builder()
-                .applyConnectionString(new ConnectionString(uri))
-                .codecRegistry(CodecRegistries.fromProviders(MongoClientSettings.getDefaultCodecRegistry(), new CodecProvider()))
-                .build()
-        );
+    public static void buildClient(String uri, String clientName) {
+        try {
+            addClient(MongoClients.create(
+                    MongoClientSettings.builder()
+                            .applyConnectionString(new ConnectionString(uri))
+                            .codecRegistry(CodecRegistries.fromProviders(MongoClientSettings.getDefaultCodecRegistry(), new CodecProvider()))
+                            .build()
+                    ),
+                    clientName
+            );
+        } catch (IllegalArgumentException ex) {
+            Skript.error("Something went wrong during the '" + clientName + "' client creation. " + ex.getMessage());
+        }
     }
 
 }
