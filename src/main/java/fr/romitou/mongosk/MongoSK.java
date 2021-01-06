@@ -14,31 +14,29 @@ import java.io.IOException;
 public class MongoSK extends JavaPlugin {
 
     private static FileConfiguration config;
-    private static PluginManager pluginManager;
 
     public static FileConfiguration getConfigFile() {
         return config;
-    }
-
-    public static PluginManager getPluginManager() {
-        return pluginManager;
     }
 
     @Override
     public void onEnable() {
 
         // Register add-on.
-        pluginManager = Bukkit.getPluginManager();
-        if ((pluginManager.getPlugin("Skript") != null) && Skript.isAcceptRegistrations()) {
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        if (pluginManager.isPluginEnabled("Skript") && Skript.isAcceptRegistrations()) {
             SkriptAddon addon = Skript.registerAddon(this);
             try {
                 addon.loadClasses("fr.romitou.mongosk.skript");
             } catch (IOException e) {
-                Skript.error("Wait, this is anormal. Please report this error on GitHub.");
+                Skript.error("An error occurred while loading the MongoSK add-on. Please report this issue on GitHub. (" + this.getDescription().getWebsite() + ").");
                 e.printStackTrace();
+            } finally {
+                Utils.consoleLog("&fWelcome to &aMongoSK " + this.getDescription().getVersion() + "&f.");
+                Utils.consoleLog("&fIf you need help, do not hesitate to check the wiki at &ahttps://github.com/Romitou/MongoSK/wiki&f.");
             }
         } else {
-            Skript.error("Skript isn't installed or doesn't accept registrations.");
+            Utils.consoleLog("&cSkript isn't installed or doesn't accept registrations, disabling.");
             pluginManager.disablePlugin(this);
         }
 
