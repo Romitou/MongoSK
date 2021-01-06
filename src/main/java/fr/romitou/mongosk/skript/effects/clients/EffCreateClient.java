@@ -1,4 +1,4 @@
-package fr.romitou.mongosk.skript.effects;
+package fr.romitou.mongosk.skript.effects.clients;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
@@ -9,7 +9,6 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
-import com.mongodb.client.MongoClient;
 import fr.romitou.mongosk.skript.MongoManager;
 import org.bukkit.event.Event;
 
@@ -21,7 +20,7 @@ public class EffCreateClient extends Effect {
 
     static {
         Skript.registerEffect(EffCreateClient.class,
-                "connect to [the] mongo[db] [(server|host)] %string% (named|with name|as) %string%",
+                "connect to [the|a] mongo[db] [(server|host)] %string% (named|with name|as) %string%",
                 "create [a] [new] mongo[db] client to [(server|host)] %string% (named|with name|as) %string%");
     }
 
@@ -41,12 +40,7 @@ public class EffCreateClient extends Effect {
         String name = exprName.getSingle(e);
         if (uri == null || name == null)
             return;
-        try {
-            MongoClient mongoClient = MongoManager.buildClient(uri);
-            MongoManager.addClient(mongoClient, name);
-        } catch (IllegalArgumentException ex) {
-            Skript.error("Something went wrong. " + ex.getMessage());
-        }
+        MongoManager.buildClient(uri, name);
     }
 
     @Override

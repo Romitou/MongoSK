@@ -1,4 +1,4 @@
-package fr.romitou.mongosk.skript.effects;
+package fr.romitou.mongosk.skript.effects.collections;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
@@ -45,13 +45,13 @@ public class EffCreateCollection extends Effect {
             MongoNamespace.checkCollectionNameValidity(name);
             database.createCollection(name);
         } catch (IllegalArgumentException ex) {
-            Skript.error("The defined MongoDB collection name is invalid!");
+            Skript.error("The collection name '" + name + "' is invalid. A valid collection name is non-null and non-empty. The server may impose additional restrictions on collection names.");
         }
     }
 
     @Override
     public String toString(Event e, boolean debug) {
-        return "create a new mongo collection collection named " + exprName.toString(e, debug) + " in " + exprDatabase.toString(e, debug);
+        return "create a new mongo collection named " + exprName.toString(e, debug) + " in " + exprDatabase.toString(e, debug);
     }
 
 }

@@ -1,4 +1,4 @@
-package fr.romitou.mongosk.skript.effects;
+package fr.romitou.mongosk.skript.effects.clients;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
