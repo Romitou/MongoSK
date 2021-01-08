@@ -20,7 +20,7 @@ public class EffCreateClient extends Effect {
 
     static {
         Skript.registerEffect(EffCreateClient.class,
-                "connect to [the|a] mongo[db] [(server|host)] %string% (named|with name|as) %string%",
+                "connect to [the] mongo[db] [(server|host)] %string% (named|with name|as) %string%",
                 "create [a] [new] mongo[db] client to [(server|host)] %string% (named|with name|as) %string%");
     }
 

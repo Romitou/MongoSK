@@ -79,12 +79,12 @@ public class Types {
 
                     @Override
                     public String toString(Document document, int flags) {
-                        return (document.containsKey("name") ? document.getString("name") : "any") + " document";
+                        return document.getObjectId("_id").toString() + " document";
                     }
 
                     @Override
                     public String toVariableNameString(Document document) {
-                        return document.containsKey("name") ? document.getString("name") : "any-document";
+                        return document.getObjectId("_id").toString();
                     }
 
                     @Override
