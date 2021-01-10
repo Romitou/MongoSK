@@ -21,3 +21,12 @@ debug: false
 allow-drop:
   collections: false
   databases: false
+
+# These options can be enabled if you wish to try them out.
+# Be careful, some of them may be unstable, do not activate
+# them outside a development server.
+experimental:
+  # Codecs are used to serialize Java objects so that they can be saved in a document.
+  # Clearly, they make it possible to save Skript types other than what MongoDB supports.
+  # The restoration of the correct data from a document has not been implemented yet.
+  codecs: false

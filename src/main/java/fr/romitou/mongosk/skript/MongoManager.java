@@ -5,6 +5,7 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.codecs.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistries;
 
@@ -32,14 +33,15 @@ public class MongoManager {
 
     public static void buildClient(String uri, String clientName) {
         try {
-            addClient(MongoClients.create(
-                    MongoClientSettings.builder()
-                            .applyConnectionString(new ConnectionString(uri))
-                            .codecRegistry(CodecRegistries.fromProviders(MongoClientSettings.getDefaultCodecRegistry(), new CodecProvider()))
-                            .build()
-                    ),
-                    clientName
-            );
+            MongoClientSettings.Builder settings;
+            if (MongoSK.getConfigFile().getBoolean("experimental.codecs", false))
+                settings = MongoClientSettings.builder()
+                        .applyConnectionString(new ConnectionString(uri))
+                        .codecRegistry(CodecRegistries.fromProviders(MongoClientSettings.getDefaultCodecRegistry(), new CodecProvider()));
+            else
+                settings = MongoClientSettings.builder()
+                        .applyConnectionString(new ConnectionString(uri));
+            addClient(MongoClients.create(settings.build()), clientName);
         } catch (IllegalArgumentException ex) {
             Skript.error("Something went wrong during the '" + clientName + "' client creation. " + ex.getMessage());
         }

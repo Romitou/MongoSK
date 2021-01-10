@@ -19,8 +19,8 @@ public class CodecProvider implements org.bson.codecs.configuration.CodecProvide
         if (Entity.class.isAssignableFrom(clazz)) return (Codec<T>) new EntityCodec();
         if (Location.class.isAssignableFrom(clazz)) return (Codec<T>) new LocationCodec();
         if (Material.class.isAssignableFrom(clazz)) return (Codec<T>) new MaterialCodec();
-        if (OfflinePlayer.class.isAssignableFrom(clazz)) return (Codec<T>) new PlayerCodec();
-        if (Player.class.isAssignableFrom(clazz)) return (Codec<T>) new PlayerCodec();
+        if (OfflinePlayer.class.isAssignableFrom(clazz)) return (Codec<T>) new OfflinePlayerCodec();
+        if (Player.class.isAssignableFrom(clazz)) return (Codec<T>) new OfflinePlayerCodec();
         if (World.class.isAssignableFrom(clazz)) return (Codec<T>) new WorldCodec();
         return null;
     }

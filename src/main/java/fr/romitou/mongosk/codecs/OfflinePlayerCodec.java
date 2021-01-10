@@ -10,7 +10,7 @@ import org.bukkit.OfflinePlayer;
 
 import java.util.UUID;
 
-public class PlayerCodec implements Codec<OfflinePlayer> {
+public class OfflinePlayerCodec implements Codec<OfflinePlayer> {
     @Override
     public OfflinePlayer decode(BsonReader reader, DecoderContext decoderContext) {
         reader.readStartDocument();
