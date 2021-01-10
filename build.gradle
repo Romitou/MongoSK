@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'fr.romitou.mongosk'
-version '1.1.0'
+version '1.1.1'
 
 compileJava.options.encoding = 'UTF-8'
 
