@@ -45,8 +45,7 @@ public class ExprAllDocuments extends SimpleExpression<Document> {
         if (collection == null) return new Document[0];
         List<Document> list = new ArrayList<>();
         try {
-            FindIterable<Document> findIterable = collection.find();
-            findIterable.cursor().forEachRemaining(list::add);
+            collection.find().into(list);
         } catch (ClassCastException | NullPointerException ex) {
             Skript.error("An error occurred while retrieving all documents. " + ex.getMessage());
         }

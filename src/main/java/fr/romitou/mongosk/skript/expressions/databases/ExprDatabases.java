@@ -43,7 +43,7 @@ public class ExprDatabases extends SimpleExpression<String> {
         if (client == null)
             return new String[0];
         ArrayList<String> list = new ArrayList<>();
-        client.listDatabaseNames().forEach(list::add);
+        client.listDatabaseNames().into(list);
         return list.toArray(new String[0]);
     }
 

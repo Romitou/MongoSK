@@ -43,7 +43,7 @@ public class ExprCollections extends SimpleExpression<String> {
         if (database == null)
             return new String[0];
         ArrayList<String> list = new ArrayList<>();
-        database.listCollectionNames().forEach(list::add);
+        database.listCollectionNames().into(list);
         return list.toArray(new String[0]);
     }
 
