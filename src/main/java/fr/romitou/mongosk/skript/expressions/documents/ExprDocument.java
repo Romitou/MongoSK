@@ -29,7 +29,7 @@ import java.util.List;
 public class ExprDocument extends SimpleExpression<Document> {
 
     static {
-        Skript.registerExpression(ExprDocument.class, Document.class, ExpressionType.SIMPLE, "[(1¦first|2¦all)] [mongo[db]] document[s] [where] %mongofilter% (of|in) %mongocollection%");
+        Skript.registerExpression(ExprDocument.class, Document.class, ExpressionType.SIMPLE, "[(1¦first|2¦all)] [mongo[db]] document[s] [with filter] %mongofilter% (of|in) %mongocollection%");
     }
 
     private Expression<MongoFilter> exprMongoFilter;
