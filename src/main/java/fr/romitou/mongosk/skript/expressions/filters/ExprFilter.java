@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.expressions.filters;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -11,6 +15,13 @@ import com.mongodb.client.model.Filters;
 import fr.romitou.mongosk.objects.MongoFilter;
 import org.bukkit.event.Event;
 
+@Name("Mongo Filter")
+@Description("This expression will be used to create a filter that you can use when querying your database.")
+@Examples({"set {_filter} to new mongo filter where \"points\" is greater or equal to 100",
+        "set {_players::*} to all documents with filter {_filter} in {collection}",
+        "set {_players::*} to all documents where \"points\" is greater or equal to 100 in {collection}"
+})
+@Since("1.1.2")
 public class ExprFilter extends SimpleExpression<MongoFilter> {
 
     private static final String PATTERN_PREFIX = "[[a] [new] [mongo[db]] [filter]] where %string% ";
