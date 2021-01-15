@@ -12,7 +12,7 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
+import fr.romitou.mongosk.objects.MongoFilter;
 import org.bson.Document;
 import org.bukkit.event.Event;
 
@@ -29,33 +29,30 @@ import java.util.List;
 public class ExprDocument extends SimpleExpression<Document> {
 
     static {
-        Skript.registerExpression(ExprDocument.class, Document.class, ExpressionType.SIMPLE, "(1¦first|2¦all) [mongo[db]] document[s] where %string% (is|equals to) %object% (of|in) %mongocollection%");
+        Skript.registerExpression(ExprDocument.class, Document.class, ExpressionType.SIMPLE, "[(1¦first|2¦all)] [mongo[db]] document[s] [where] %mongofilter% (of|in) %mongocollection%");
     }
 
-    private Expression<String> exprWhereName;
-    private Expression<Object> exprWhereValue;
+    private Expression<MongoFilter> exprMongoFilter;
     private Expression<MongoCollection> exprCollection;
     private boolean isSingle;
 
     @SuppressWarnings("unchecked")
     @Override
     public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
-        exprWhereName = (Expression<String>) exprs[0];
-        exprWhereValue = (Expression<Object>) exprs[1];
-        exprCollection = (Expression<MongoCollection>) exprs[2];
-        isSingle = parseResult.mark == 1;
+        exprMongoFilter = (Expression<MongoFilter>) exprs[0];
+        exprCollection = (Expression<MongoCollection>) exprs[1];
+        isSingle = parseResult.mark == 0 || parseResult.mark == 1;
         return true;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     protected Document[] get(Event e) {
-        String whereName = exprWhereName.getSingle(e);
-        Object whereValue = exprWhereValue.getSingle(e);
+        MongoFilter filter = exprMongoFilter.getSingle(e);
         MongoCollection collection = exprCollection.getSingle(e);
-        if (whereName == null || whereValue == null || collection == null)
+        if (filter == null || filter.get() == null || collection == null)
             return new Document[0];
-        FindIterable<Document> findIterable = collection.find(Filters.eq(whereName, whereValue));
+        FindIterable<Document> findIterable = collection.find(filter.get());
         if (isSingle) {
             Document document = findIterable.first();
             return (document == null)
@@ -64,7 +61,7 @@ public class ExprDocument extends SimpleExpression<Document> {
         } else {
             List<Document> list = new ArrayList<>();
             try {
-                findIterable.cursor().forEachRemaining(list::add);
+                findIterable.into(list);
             } catch (ClassCastException | NullPointerException ex) {
                 Skript.error("An error occurred while retrieving " + toString(e, false) + ". " + ex.getMessage());
             }
@@ -84,7 +81,7 @@ public class ExprDocument extends SimpleExpression<Document> {
 
     @Override
     public String toString(Event e, boolean debug) {
-        return (isSingle ? "first mongo document" : "all mongo documents") + " where " + exprWhereName.toString(e, debug) + " is " + exprWhereValue.toString(e, debug) + " of " + exprCollection.toString(e, debug);
+        return (isSingle ? "first mongo document " : "all mongo documents ") + exprMongoFilter.toString(e, debug) + " in " + exprCollection.toString(e, debug);
     }
 
 }

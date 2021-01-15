@@ -8,6 +8,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import fr.romitou.mongosk.Utils;
+import fr.romitou.mongosk.objects.MongoFilter;
 import org.bson.Document;
 
 public class Types {
@@ -126,6 +127,34 @@ public class Types {
                         return null;
                     }
 
+                })
+        );
+
+        Classes.registerClass(new ClassInfo<>(MongoFilter.class, "mongofilter")
+                .user("(mongo[db]( |-)?)?filter")
+                .name("MongoDB Filter")
+                .description("Represents a MongoDB filter.")
+                .since("1.1.2")
+                .parser(new Parser<MongoFilter>() {
+                    @Override
+                    public String toString(MongoFilter filter, int flags) {
+                        return filter.toString() + " filter";
+                    }
+
+                    @Override
+                    public String toVariableNameString(MongoFilter filter) {
+                        return filter.get().toString();
+                    }
+
+                    @Override
+                    public String getVariableNamePattern() {
+                        return ".+";
+                    }
+
+                    @Override
+                    public MongoFilter parse(String s, ParseContext context) {
+                        return null;
+                    }
                 })
         );
 
