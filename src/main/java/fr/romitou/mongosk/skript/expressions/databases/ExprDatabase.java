@@ -23,7 +23,7 @@ import org.bukkit.event.Event;
 public class ExprDatabase extends SimpleExpression<MongoDatabase> {
 
     static {
-        Skript.registerExpression(ExprDatabase.class, MongoDatabase.class, ExpressionType.SIMPLE, "[mongo[db]] database [(named|with name|called)] %string% (of|with) %mongoclient%");
+        Skript.registerExpression(ExprDatabase.class, MongoDatabase.class, ExpressionType.SIMPLE, "[mongo[db]] database [(named|with name|called)] %string% (of|with|from) %mongoclient%");
     }
 
     private Expression<String> exprName;
