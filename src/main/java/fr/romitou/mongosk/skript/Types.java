@@ -9,6 +9,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import fr.romitou.mongosk.Utils;
 import fr.romitou.mongosk.objects.MongoFilter;
+import fr.romitou.mongosk.objects.MongoQuery;
 import org.bson.Document;
 
 public class Types {
@@ -153,6 +154,34 @@ public class Types {
 
                     @Override
                     public MongoFilter parse(String s, ParseContext context) {
+                        return null;
+                    }
+                })
+        );
+
+        Classes.registerClass(new ClassInfo<>(MongoQuery.class, "mongoquery")
+                .user("(mongo[db]( |-)?)?query")
+                .name("MongoDB Query")
+                .description("Represents a MongoDB query.")
+                .since("1.1.3")
+                .parser(new Parser<MongoQuery>() {
+                    @Override
+                    public String toString(MongoQuery query, int flags) {
+                        return query.toString() + " query";
+                    }
+
+                    @Override
+                    public String toVariableNameString(MongoQuery query) {
+                        return query.toString();
+                    }
+
+                    @Override
+                    public String getVariableNamePattern() {
+                        return ".+";
+                    }
+
+                    @Override
+                    public MongoQuery parse(String s, ParseContext context) {
                         return null;
                     }
                 })
