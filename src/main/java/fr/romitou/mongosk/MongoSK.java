@@ -24,7 +24,7 @@ public class MongoSK extends JavaPlugin {
 
         // Register add-on.
         PluginManager pluginManager = Bukkit.getPluginManager();
-        if (pluginManager.isPluginEnabled("Skript") && Skript.isAcceptRegistrations()) {
+        if (pluginManager.getPlugin("Skript") != null && Skript.isAcceptRegistrations()) {
             SkriptAddon addon = Skript.registerAddon(this);
             try {
                 addon.loadClasses("fr.romitou.mongosk.skript");
