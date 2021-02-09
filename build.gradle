@@ -1,19 +1,14 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 group 'fr.romitou.mongosk'
-version '1.1.2'
+version '2.0.0'
 
 compileJava.options.encoding = 'UTF-8'
 
-configurations {
-    extraLibs
-}
-
 repositories {
-    mavenCentral()
-    jcenter()
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url = 'https://repo.destroystokyo.com/repository/maven-public/' }
     maven { url = 'https://papermc.io/repo/repository/maven-public/' }
@@ -21,19 +16,11 @@ repositories {
 }
 
 dependencies {
-    extraLibs('org.mongodb:mongodb-driver-sync:4.2.0')
-    compileOnly('com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT')
-    implementation('com.github.SkriptLang:Skript:2.5.3') {
-        exclude group: 'com.sk89q.worldguard', module: 'worldguard-legacy'
-        exclude group: 'net.milkbowl.vault', module: 'Vault'
+    compile group: 'org.mongodb', name: 'mongodb-driver-reactivestreams', version: '4.2.0'
+    shadow group: 'com.destroystokyo.paper', name: 'paper-api', version: '1.16.5-R0.1-SNAPSHOT'
+    shadow group: 'com.github.SkriptLang', name: 'Skript', version: '2.5.3', {
+        exclude module: 'Vault'
+        exclude module: 'worldguard-legacy'
     }
-    configurations.compile.extendsFrom(configurations.extraLibs)
 }
 
-jar {
-    from {
-        configurations.extraLibs.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-}

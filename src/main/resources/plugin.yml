@@ -1,8 +1,7 @@
 name: MongoSK
-version: "1.1.2"
+version: 2.0.0
 description: The MongoDB database management addon.
 website: https://github.com/Romitou/MongoSK
 author: Romitou
 main: fr.romitou.mongosk.MongoSK
-softdepend:
-  - Skript
+softdepend: [Skript]

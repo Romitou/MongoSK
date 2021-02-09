@@ -15,7 +15,7 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew clean shadowJar
   build:
     runs-on: ubuntu-latest
     needs: [test]
@@ -27,7 +27,7 @@ jobs:
         with:
           java-version: 1.8
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew clean shadowJar
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
