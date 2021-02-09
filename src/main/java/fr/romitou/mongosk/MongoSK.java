@@ -10,11 +10,12 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MongoSK extends JavaPlugin {
 
-    private static List<MongoSKServer> mongoSKServers;
+    private static final List<MongoSKServer> mongoSKServers = new ArrayList<>();
     private static FileConfiguration configuration;
 
     @Override
