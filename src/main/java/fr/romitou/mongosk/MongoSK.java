@@ -2,7 +2,8 @@ package fr.romitou.mongosk;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
-import fr.romitou.mongosk.elements.MongoSKClient;
+import com.mongodb.reactivestreams.client.MongoClient;
+import fr.romitou.mongosk.elements.MongoSKServer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -10,15 +11,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 public class MongoSK extends JavaPlugin {
 
-    private static List<MongoSKClient> mongoSKClients;
-    private FileConfiguration configuration;
+    private static List<MongoSKServer> mongoSKServers;
+    private static FileConfiguration configuration;
 
     @Override
     public void onEnable() {
+        long start = System.currentTimeMillis();
 
         // Load the configuration.
         this.loadConfiguration();
@@ -48,7 +49,7 @@ public class MongoSK extends JavaPlugin {
             );
             return;
         }
-        Logger.info("MongoSK has been activated and the syntax has been loaded successfully!",
+        Logger.info("MongoSK has been activated and the syntaxes has been loaded successfully in " + (System.currentTimeMillis() - start) + "ms!",
                 "MongoSK version: " + this.getDescription().getVersion(),
                 "Skript version: " + skriptPlugin.getDescription().getVersion(),
                 "Server version: " + this.getServer().getVersion()
@@ -57,6 +58,11 @@ public class MongoSK extends JavaPlugin {
         // Register Metrics.
         // Learn more: https://bstats.org/getting-started
         this.registerMetrics();
+    }
+
+    @Override
+    public void onDisable() {
+        this.closeAllConnections();
     }
 
     private void registerMetrics() {
@@ -70,23 +76,26 @@ public class MongoSK extends JavaPlugin {
         this.saveDefaultConfig();
 
         // Load and store the config.
-        this.configuration = this.getConfig();
+        configuration = this.getConfig();
     }
 
-    public FileConfiguration getConfiguration() {
-        return this.configuration;
+    private void closeAllConnections() {
+        getMongoSKServers()
+            .stream()
+            .map(MongoSKServer::getMongoClient)
+            .forEach(MongoClient::close);
     }
 
-    public static List<MongoSKClient> getMongoSKClients() {
-        return mongoSKClients;
+    public static FileConfiguration getConfiguration() {
+        return configuration;
     }
 
-    public static void addMongoSKClient(MongoSKClient mongoSKClient) {
-        mongoSKClients.add(mongoSKClient);
+    public static List<MongoSKServer> getMongoSKServers() {
+        return mongoSKServers;
     }
 
-    public static Optional<MongoSKClient> getMongoSKClient(String clientName) {
-        return mongoSKClients.stream().filter(client -> client.getClientName().equals(clientName)).findFirst();
+    public static void addMongoSKServer(MongoSKServer mongoSKServer) {
+        mongoSKServers.add(mongoSKServer);
     }
 
 }
