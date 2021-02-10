@@ -63,6 +63,6 @@ public class ExprMongoCollection extends SimpleExpression<MongoSKCollection> {
     @Override
     @Nonnull
     public String toString(@Nullable Event e, boolean debug) {
-        return "";
+        return "mongosk collection named " + exprCollectionName.toString(e, debug) + " from " + exprMongoSKDatabase.toString(e, debug);
     }
 }

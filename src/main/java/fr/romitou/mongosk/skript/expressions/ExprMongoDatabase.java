@@ -62,6 +62,6 @@ public class ExprMongoDatabase extends SimpleExpression<MongoSKDatabase> {
     @Override
     @Nonnull
     public String toString(@Nullable Event e, boolean debug) {
-        return "the mongosk database named " + exprDatabaseName.toString(e, debug) + " from " + exprMongoSKServer.toString(e, debug);
+        return "mongosk database named " + exprDatabaseName.toString(e, debug) + " from " + exprMongoSKServer.toString(e, debug);
     }
 }
