@@ -36,7 +36,7 @@ public class ExprMongoServer extends SimpleExpression<MongoSKServer> {
                 ExprMongoServer.class,
                 MongoSKServer.class,
                 ExpressionType.COMBINED,
-                "[a] [new] mongo[sk] (client|server) (with|from) [connection (string|uri|address)] %string%"
+                "[[a] new] mongo[(sk|db)] (client|server) (with|from) [connection (string|uri|address)] %string%"
         );
     }
 
