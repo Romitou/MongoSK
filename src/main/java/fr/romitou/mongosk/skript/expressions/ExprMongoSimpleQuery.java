@@ -1,11 +1,15 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.classes.Changer;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+import ch.njol.util.coll.CollectionUtils;
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.UpdateResult;
 import com.mongodb.reactivestreams.client.FindPublisher;
 import fr.romitou.mongosk.SubscriberHelpers;
 import fr.romitou.mongosk.elements.MongoSKCollection;
@@ -59,6 +63,52 @@ public class ExprMongoSimpleQuery extends SimpleExpression<MongoSKDocument> {
             .stream()
             .map(document -> new MongoSKDocument(document, mongoSKCollection))
             .toArray(MongoSKDocument[]::new);
+    }
+
+    @Override
+    public Class<?>[] acceptChange(Changer.ChangeMode mode) {
+        switch (mode) {
+            case SET:
+                if (isFirstDocument) // MongoDB doesn't support replacing multiple documents
+                    return CollectionUtils.array(MongoSKDocument.class);
+            case DELETE:
+                return CollectionUtils.array();
+            default:
+                return new Class[0];
+        }
+    }
+
+    @Override
+    public void change(@Nonnull final Event e, Object[] delta, @Nonnull Changer.ChangeMode mode) {
+        MongoSKFilter mongoSKFilter = exprMongoSKFilter.getSingle(e);
+        MongoSKCollection mongoSKCollection = exprMongoSKCollection.getSingle(e);
+        if (mongoSKFilter == null || mongoSKCollection == null)
+            return;
+        switch (mode) {
+            case DELETE:
+                SubscriberHelpers.ObservableSubscriber<DeleteResult> deleteSubscriber = new SubscriberHelpers.OperationSubscriber<>();
+                if (isFirstDocument)
+                    mongoSKCollection.getMongoCollection()
+                        .deleteOne(mongoSKFilter.getFilter())
+                        .subscribe(deleteSubscriber);
+                else
+                    mongoSKCollection.getMongoCollection()
+                        .deleteMany(mongoSKFilter.getFilter())
+                        .subscribe(deleteSubscriber);
+                deleteSubscriber.await();
+                break;
+            case SET:
+                MongoSKDocument mongoSKDocument = (MongoSKDocument) delta[0];
+                if (mongoSKDocument == null)
+                    return;
+                SubscriberHelpers.ObservableSubscriber<UpdateResult> updateSubscriber = new SubscriberHelpers.OperationSubscriber<>();
+                mongoSKCollection.getMongoCollection()
+                    .replaceOne(mongoSKFilter.getFilter(), mongoSKDocument.getBsonDocument())
+                    .subscribe(updateSubscriber);
+                updateSubscriber.await();
+            default:
+                break;
+        }
     }
 
     @Override
