@@ -106,6 +106,6 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
     @Override
     @Nonnull
     public String toString(@Nullable Event e, boolean debug) {
-        return "null";
+        return "mongo " + (isSingle ? "value" : "list") + " named " + exprFieldName.toString(e, debug) + " of " + exprMongoSKDocument.toString(e, debug);
     }
 }
