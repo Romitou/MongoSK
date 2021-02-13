@@ -54,6 +54,6 @@ public class EffInsertMongoDocument extends Effect {
     @Override
     @Nonnull
     public String toString(@Nullable final Event e, boolean debug) {
-        return "save mongo document " + exprMongoSKDocument.toString(e, debug) + " into collection " + exprMongoSKCollection.toString(e, debug);
+        return "save mongo document " + exprMongoSKDocument.toString(e, debug) + " into " + exprMongoSKCollection.toString(e, debug);
     }
 }
