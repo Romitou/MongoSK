@@ -7,8 +7,8 @@ import java.util.Objects;
 
 public class MongoSKDocument {
 
-    private final Document bsonDocument;
-    private final MongoSKCollection baseCollection;
+    private Document bsonDocument;
+    private MongoSKCollection baseCollection;
 
     public MongoSKDocument(Document bsonDocument, @Nullable MongoSKCollection baseCollection) {
         this.bsonDocument = bsonDocument;
@@ -19,8 +19,16 @@ public class MongoSKDocument {
         return bsonDocument;
     }
 
+    public void setBsonDocument(Document bsonDocument) {
+        this.bsonDocument = bsonDocument;
+    }
+
     public MongoSKCollection getBaseCollection() {
         return baseCollection;
+    }
+
+    public void setBaseCollection(MongoSKCollection baseCollection) {
+        this.baseCollection = baseCollection;
     }
 
     @Override
