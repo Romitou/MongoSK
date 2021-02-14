@@ -3,6 +3,7 @@ package fr.romitou.mongosk;
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
 import com.mongodb.reactivestreams.client.MongoClient;
+import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import fr.romitou.mongosk.elements.MongoSKServer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -26,6 +27,7 @@ public class MongoSK extends JavaPlugin {
         this.loadConfiguration();
 
         // Make some safe checks to be sure Skript is installed, enabled, and ready to register this addon.
+        Logger.info("Checking the availability of Skript...");
         final PluginManager pluginManager = this.getServer().getPluginManager();
         final Plugin skriptPlugin = pluginManager.getPlugin("Skript");
         if (skriptPlugin == null || !skriptPlugin.isEnabled() || !Skript.isAcceptRegistrations()) {
@@ -39,6 +41,7 @@ public class MongoSK extends JavaPlugin {
         }
 
         // Register the SkriptAddon and try to load classes.
+        Logger.info("Registration of the MongoSK syntaxes...");
         try {
             SkriptAddon skriptAddon = Skript.registerAddon(this);
             skriptAddon.loadClasses("fr.romitou.mongosk.skript");
@@ -50,6 +53,17 @@ public class MongoSK extends JavaPlugin {
             );
             return;
         }
+
+        // Register MongoSK codecs.
+        if (getConfig().getBoolean("skript-adapters", false)) {
+            Logger.info("Loading MongoSK adapters and codecs...");
+            List<String> codecs = MongoSKAdapter.loadCodecs();
+            Logger.info("Loaded " + codecs.size() + " codecs!",
+                "Name of the loaded codecs: " + String.join(", ", codecs),
+                "If you have problems with these, do not hesitate to report them."
+            );
+        }
+
         Logger.info("MongoSK has been activated and the syntaxes has been loaded successfully in " + (System.currentTimeMillis() - start) + "ms!",
                 "MongoSK version: " + this.getDescription().getVersion(),
                 "Skript version: " + skriptPlugin.getDescription().getVersion(),

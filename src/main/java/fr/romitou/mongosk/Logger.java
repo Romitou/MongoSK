@@ -7,7 +7,7 @@ import java.util.Arrays;
 public class Logger {
 
     private final static String PREFIX = "&7[&2Mongo&aSK&7] ";
-    private final static Boolean DEBUG = MongoSK.getConfiguration().getBoolean("debug", false);
+    private final static Boolean DEBUG = MongoSK.getConfiguration().getBoolean("debug-mode", false);
 
     public static String getFormattedString(String message) {
         return ChatColor.translateAlternateColorCodes('&', PREFIX + message);
