@@ -63,9 +63,8 @@ public class ExprDocumentValue extends SimpleExpression<Object> {
             }
         } else {
             try {
-                ArrayList<Object> list = new ArrayList<>(document.getList(value, Object.class));
-                return list.toArray();
-
+                List<Object> list = document.getList(value, Object.class);
+                return list == null ? new Object[0] : list.toArray();
             } catch (NullPointerException ex) {
                 return new Object[0]; // That document list doesn't exist
             } catch (ClassCastException ex) {
@@ -101,19 +100,19 @@ public class ExprDocumentValue extends SimpleExpression<Object> {
                     ArrayList<Object> addList = new ArrayList<>(document.getList(value, Object.class));
                     addList.addAll(deltaList);
                     document.put(value, addList);
-                    break;
                 } catch (NullPointerException ex) {
-                    Skript.error("The mongodb document value des not contain the key" + value + "!"); // I'm not sure whether or not this should return an error
+                    document.put(value, deltaList);
                 }
+                break;
             case REMOVE:
                 try {
                     ArrayList<Object> removeList = new ArrayList<>(document.getList(value, Object.class));
                     deltaList.forEach(removeList::remove);
                     document.put(value, removeList);
-                    break;
                 } catch (NullPointerException ex) {
                     Skript.error("The mongodb document value des not contain the key" + value + "!"); // I'm not sure whether or not this should return an error
                 }
+                break;
             default:
                 break;
         }
