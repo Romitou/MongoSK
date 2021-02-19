@@ -34,7 +34,7 @@ public class MongoSK extends JavaPlugin {
             Logger.severe("Skript is not installed or does not accept registrations. Disabling.",
                     "Is Skript plugin present: " + (skriptPlugin != null),
                     "Is Skript enabled: " + (skriptPlugin != null && skriptPlugin.isEnabled()),
-                    "Is Skript accept registrations: " + (skriptPlugin != null && skriptPlugin.isEnabled() && Skript.isAcceptRegistrations())
+                    "Does Skript accept registrations: " + (skriptPlugin != null && skriptPlugin.isEnabled() && Skript.isAcceptRegistrations())
             );
             pluginManager.disablePlugin(this);
             return;
