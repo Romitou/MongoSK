@@ -64,8 +64,10 @@ public class ExprDocumentValue extends SimpleExpression<Object> {
         } else {
             try {
                 ArrayList<Object> list = new ArrayList<>(document.getList(value, Object.class));
-                return (list == null) ? new Object[0] : list.toArray();
+                return list.toArray();
 
+            } catch (NullPointerException ex) {
+                return new Object[0]; // That document list doesn't exist
             } catch (ClassCastException ex) {
                 Skript.error("The mongodb document value is not a list!"); // I'm not sure whether or not this should return an error
                 return new Object[0];
@@ -95,13 +97,21 @@ public class ExprDocumentValue extends SimpleExpression<Object> {
                 document.put(value, null);
                 break;
             case ADD:
-                ArrayList<Object> addList = new ArrayList<>(document.getList(value, Object.class));
-                addList.addAll(deltaList);
-                break;
+                try {
+                    ArrayList<Object> addList = new ArrayList<>(document.getList(value, Object.class));
+                    addList.addAll(deltaList);
+                    break;
+                } catch (NullPointerException ex) {
+                    Skript.error("The mongodb document value des not contain the key" + value + "!"); // I'm not sure whether or not this should return an error
+                }
             case REMOVE:
-                ArrayList<Object> removeList = new ArrayList<>(document.getList(value, Object.class));
-                deltaList.forEach(removeList::remove);
-                break;
+                try {
+                    ArrayList<Object> removeList = new ArrayList<>(document.getList(value, Object.class));
+                    deltaList.forEach(removeList::remove);
+                    break;
+                } catch (NullPointerException ex) {
+                    Skript.error("The mongodb document value des not contain the key" + value + "!"); // I'm not sure whether or not this should return an error
+                }
             default:
                 break;
         }
