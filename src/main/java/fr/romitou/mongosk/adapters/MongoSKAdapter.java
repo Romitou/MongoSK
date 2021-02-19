@@ -1,7 +1,6 @@
 package fr.romitou.mongosk.adapters;
 
-import fr.romitou.mongosk.adapters.codecs.BlockCodec;
-import fr.romitou.mongosk.adapters.codecs.MaterialCodec;
+import fr.romitou.mongosk.adapters.codecs.*;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -13,8 +12,14 @@ public class MongoSKAdapter {
     public static List<MongoSKCodec<?>> codecs = new ArrayList<>();
 
     public static List<String> loadCodecs() {
-        codecs.add(new MaterialCodec());
+        codecs.add(new BiomeCodec());
         codecs.add(new BlockCodec());
+        codecs.add(new DamageCauseCodec());
+        codecs.add(new EntityCodec());
+        codecs.add(new ItemTypeCodec());
+        codecs.add(new ItemStackCodec());
+        codecs.add(new MaterialCodec());
+        codecs.add(new PlayerCodec());
         return getCodecNames();
     }
 

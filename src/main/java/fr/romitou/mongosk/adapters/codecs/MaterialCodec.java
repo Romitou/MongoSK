@@ -5,21 +5,27 @@ import org.bson.Document;
 import org.bukkit.Material;
 
 import javax.annotation.Nonnull;
+import java.io.StreamCorruptedException;
 
 public class MaterialCodec implements MongoSKCodec<Material> {
 
-    @Override
     @Nonnull
-    public Material deserialize(Document document) {
-        int ordinal = document.get("ordinal", Integer.class);
-        return Material.values()[ordinal];
+    @Override
+    public Material deserialize(Document document) throws StreamCorruptedException {
+        String name = document.getString("name");
+        if (name == null)
+            throw new StreamCorruptedException("Cannot retrieve material name from document!");
+        Material material = Material.matchMaterial(name);
+        if (material == null)
+            throw new StreamCorruptedException("No material with the given name was found!");
+        return material;
     }
 
     @Nonnull
     @Override
     public Document serialize(Material material) {
         Document document = new Document();
-        document.put("ordinal", material.ordinal());
+        document.put("name", material.name());
         return document;
     }
 

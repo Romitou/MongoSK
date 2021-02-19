@@ -71,7 +71,7 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
                     try {
                         return new Object[]{codec.deserialize(doc)};
                     } catch (StreamCorruptedException ex) {
-                        Logger.severe("An error occurred during the deserialization of the " + doc.toJson() + " document!",
+                        Logger.severe("An error occurred during the deserialization of the document: " + ex.getMessage(),
                             "Requested codec: " + codecName,
                             "Original value class: " + doc.toString(),
                             "Document JSON: " + doc.toJson()
