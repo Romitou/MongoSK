@@ -100,6 +100,7 @@ public class ExprDocumentValue extends SimpleExpression<Object> {
                 try {
                     ArrayList<Object> addList = new ArrayList<>(document.getList(value, Object.class));
                     addList.addAll(deltaList);
+                    document.put(value, addList);
                     break;
                 } catch (NullPointerException ex) {
                     Skript.error("The mongodb document value des not contain the key" + value + "!"); // I'm not sure whether or not this should return an error
@@ -108,6 +109,7 @@ public class ExprDocumentValue extends SimpleExpression<Object> {
                 try {
                     ArrayList<Object> removeList = new ArrayList<>(document.getList(value, Object.class));
                     deltaList.forEach(removeList::remove);
+                    document.put(value, removeList);
                     break;
                 } catch (NullPointerException ex) {
                     Skript.error("The mongodb document value des not contain the key" + value + "!"); // I'm not sure whether or not this should return an error
