@@ -14,12 +14,27 @@ public class MongoSKAdapter {
     public static List<String> loadCodecs() {
         codecs.add(new BiomeCodec());
         codecs.add(new BlockCodec());
+        codecs.add(new ChunkCodec());
         codecs.add(new DamageCauseCodec());
+        codecs.add(new DateCodec());
         codecs.add(new EntityCodec());
-        codecs.add(new ItemTypeCodec());
+        codecs.add(new ExperienceCodec());
+        codecs.add(new GameModeCodec());
         codecs.add(new ItemStackCodec());
+        codecs.add(new ItemTypeCodec());
+        codecs.add(new LocationCodec());
         codecs.add(new MaterialCodec());
         codecs.add(new PlayerCodec());
+        codecs.add(new PotionEffectCodec());
+        codecs.add(new PotionEffectTypeCodec());
+        codecs.add(new SlotCodec());
+        codecs.add(new TimeCodec());
+        codecs.add(new TimePeriodCodec());
+        codecs.add(new TimespanCodec());
+        codecs.add(new VectorCodec());
+        codecs.add(new VisualEffectCodec());
+        codecs.add(new WeatherTypeCodec());
+        codecs.add(new WorldCodec());
         return getCodecNames();
     }
 
