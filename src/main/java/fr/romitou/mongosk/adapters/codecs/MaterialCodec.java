@@ -14,10 +14,10 @@ public class MaterialCodec implements MongoSKCodec<Material> {
     public Material deserialize(Document document) throws StreamCorruptedException {
         String name = document.getString("name");
         if (name == null)
-            throw new StreamCorruptedException("Cannot retrieve material name from document!");
+            throw new StreamCorruptedException("Cannot retrieve name field from document!");
         Material material = Material.matchMaterial(name);
         if (material == null)
-            throw new StreamCorruptedException("No material with the given name was found!");
+            throw new StreamCorruptedException("Cannot parse given material name!");
         return material;
     }
 

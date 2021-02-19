@@ -11,17 +11,17 @@ public class BiomeCodec implements MongoSKCodec<Biome> {
     @Nonnull
     @Override
     public Biome deserialize(Document document) throws StreamCorruptedException {
-        String biomeName = document.getString("biomeName");
-        if (biomeName == null)
-            throw new StreamCorruptedException("Cannot retrieve biome name from document!");
-        return Biome.valueOf(biomeName);
+        String name = document.getString("name");
+        if (name == null)
+            throw new StreamCorruptedException("Cannot retrieve name field from document!");
+        return Biome.valueOf(name);
     }
 
     @Nonnull
     @Override
     public Document serialize(Biome biome) {
         Document document = new Document();
-        document.put("biomeName", biome.name());
+        document.put("name", biome.name());
         return document;
     }
 

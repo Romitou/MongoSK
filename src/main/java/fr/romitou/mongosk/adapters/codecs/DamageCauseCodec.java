@@ -11,17 +11,17 @@ public class DamageCauseCodec implements MongoSKCodec<EntityDamageEvent.DamageCa
     @Nonnull
     @Override
     public EntityDamageEvent.DamageCause deserialize(Document document) throws StreamCorruptedException {
-        String damageCauseName = document.getString("damageCauseName");
-        if (damageCauseName == null)
-            throw new StreamCorruptedException("Cannot retrieve damage cause name from document!");
-        return EntityDamageEvent.DamageCause.valueOf(damageCauseName);
+        String name = document.getString("name");
+        if (name == null)
+            throw new StreamCorruptedException("Cannot retrieve name field from document!");
+        return EntityDamageEvent.DamageCause.valueOf(name);
     }
 
     @Nonnull
     @Override
     public Document serialize(EntityDamageEvent.DamageCause damageCause) {
         Document document = new Document();
-        document.put("damageCauseName", damageCause.name());
+        document.put("name", damageCause.name());
         return document;
     }
 

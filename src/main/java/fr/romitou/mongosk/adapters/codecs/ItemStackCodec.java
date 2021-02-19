@@ -1,6 +1,5 @@
 package fr.romitou.mongosk.adapters.codecs;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.variables.SerializedVariable;
@@ -12,9 +11,11 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 
+/**
+ * This class uses binaries fields with Skript serializers and deserializers.
+ * The reason is that storing in binary will take up less space than storing all fields raw.
+ */
 public class ItemStackCodec implements MongoSKCodec<ItemStack> {
-
-    private static final Boolean IS_LEGACY = !Skript.isRunningMinecraft(1, 13);
 
     @Nonnull
     @Override
@@ -22,10 +23,10 @@ public class ItemStackCodec implements MongoSKCodec<ItemStack> {
         Binary binary = (Binary) document.get("binary");
         ClassInfo<?> classInfo = Classes.getExactClassInfo(ItemStack.class);
         if (binary == null || classInfo == null)
-            throw new StreamCorruptedException("Cannot retrieve binary field or ItemStack class info!");
+            throw new StreamCorruptedException("Cannot retrieve binary field from document or Skript's ItemType class info!");
         Object deserialized = Classes.deserialize(classInfo, binary.getData());
         if (!(deserialized instanceof ItemStack))
-            throw new StreamCorruptedException("Deserialized object is not an ItemStack!");
+            throw new StreamCorruptedException("Cannot parse given binary to get an ItemStack!");
         return (ItemStack) deserialized;
     }
 

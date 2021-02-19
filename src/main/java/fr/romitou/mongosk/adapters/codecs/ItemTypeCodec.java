@@ -12,8 +12,8 @@ import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 
 /**
- * This class uses binaries fields with Skript serializers and deserializers in order to take up less database space.
- * Serialising fields in plain text like other codecs would be useless and counterproductive.
+ * This class uses binaries fields with Skript serializers and deserializers.
+ * The reason is that storing in binary will take up less space than storing all fields raw.
  */
 public class ItemTypeCodec implements MongoSKCodec<ItemType> {
     @Nonnull
@@ -22,10 +22,10 @@ public class ItemTypeCodec implements MongoSKCodec<ItemType> {
         Binary binary = (Binary) document.get("binary");
         ClassInfo<?> classInfo = Classes.getExactClassInfo(ItemType.class);
         if (binary == null || classInfo == null)
-            throw new StreamCorruptedException("Cannot retrieve binary field or ItemType class info!");
+            throw new StreamCorruptedException("Cannot retrieve binary field from document or Skript's ItemType class info!");
         Object deserialized = Classes.deserialize(classInfo, binary.getData());
         if (!(deserialized instanceof ItemType))
-            throw new StreamCorruptedException("Deserialized object is not an ItemType!");
+            throw new StreamCorruptedException("Cannot parse given binary to get an ItemType!");
         return (ItemType) deserialized;
     }
 

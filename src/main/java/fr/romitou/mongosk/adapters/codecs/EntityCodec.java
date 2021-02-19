@@ -13,14 +13,14 @@ public class EntityCodec implements MongoSKCodec<Entity> {
     @Nonnull
     @Override
     public Entity deserialize(Document document) throws StreamCorruptedException {
-        String entityId = document.getString("entityId");
-        if (entityId == null)
-            throw new StreamCorruptedException("Cannot retrieve entity ID from document!");
+        String id = document.getString("id");
+        if (id == null)
+            throw new StreamCorruptedException("Cannot retrieve id field from document!");
         try {
-            UUID uuid = UUID.fromString(entityId);
+            UUID uuid = UUID.fromString(id);
             Entity entity = Bukkit.getEntity(uuid);
             if (entity == null)
-                throw new StreamCorruptedException("No entity was found with this ID (" + entityId + ")!");
+                throw new StreamCorruptedException("Cannot parse given entity ID!");
             return entity;
         } catch (IllegalArgumentException ex) {
             throw new StreamCorruptedException(ex.getMessage());
@@ -31,7 +31,7 @@ public class EntityCodec implements MongoSKCodec<Entity> {
     @Override
     public Document serialize(Entity entity) {
         Document document = new Document();
-        document.put("entityId", String.valueOf(entity.getEntityId()));
+        document.put("id", String.valueOf(entity.getEntityId()));
         return document;
     }
 

@@ -15,7 +15,7 @@ public class PlayerCodec implements MongoSKCodec<OfflinePlayer> {
     public OfflinePlayer deserialize(Document document) throws StreamCorruptedException {
         String rawUuid = document.getString("uuid");
         if (rawUuid == null)
-            throw new StreamCorruptedException("Cannot retrieve UUID from document!");
+            throw new StreamCorruptedException("Cannot retrieve UUID field from document!");
         try {
             UUID uuid = UUID.fromString(rawUuid);
             return Bukkit.getOfflinePlayer(uuid);

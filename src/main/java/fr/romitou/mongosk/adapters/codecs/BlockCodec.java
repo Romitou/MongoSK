@@ -18,10 +18,10 @@ public class BlockCodec implements MongoSKCodec<Block> {
             y = document.getInteger("y"),
             z = document.getInteger("z");
         if (worldName == null)
-            throw new StreamCorruptedException("Document values are invalid!");
+            throw new StreamCorruptedException("Cannot retrieve x, y, z fields and world field from document!");
         World world = Bukkit.getWorld(worldName);
         if (world == null)
-            throw new StreamCorruptedException("Cannot retrieve world " + worldName + "!");
+            throw new StreamCorruptedException("Cannot parse given world name!");
         return world.getBlockAt(x, y, z);
     }
 
