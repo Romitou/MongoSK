@@ -81,12 +81,12 @@ public class Types {
 
                     @Override
                     public String toString(Document document, int flags) {
-                        return document.getObjectId("_id").toString() + " document";
+                        return document.toJson() + " document";
                     }
 
                     @Override
                     public String toVariableNameString(Document document) {
-                        return document.getObjectId("_id").toString();
+                        return document.toJson();
                     }
 
                     @Override
