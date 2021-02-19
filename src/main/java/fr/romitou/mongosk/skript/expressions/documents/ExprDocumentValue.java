@@ -1,5 +1,12 @@
 package fr.romitou.mongosk.skript.expressions.documents;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.bson.Document;
+import org.bukkit.event.Event;
+
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
@@ -12,12 +19,6 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
-import org.bson.Document;
-import org.bukkit.event.Event;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Name("Mongo Value")
 @Description("This expression allows you to retrieve and modify certain values of a document. If you define an already existing entry, it will be replaced. Lists are supported.")
@@ -62,7 +63,7 @@ public class ExprDocumentValue extends SimpleExpression<Object> {
             }
         } else {
             try {
-                List<Object> list = document.getList(value, Object.class);
+                ArrayList<Object> list = new ArrayList<>(document.getList(value, Object.class));
                 return (list == null) ? new Object[0] : list.toArray();
 
             } catch (ClassCastException ex) {
@@ -94,17 +95,11 @@ public class ExprDocumentValue extends SimpleExpression<Object> {
                 document.put(value, null);
                 break;
             case ADD:
-                List<Object> addList = document.getList(value, Object.class);
-                if (addList == null) {
-                    document.put(value, deltaList);
-                    return;
-                }
+                ArrayList<Object> addList = new ArrayList<>(document.getList(value, Object.class));
                 addList.addAll(deltaList);
                 break;
             case REMOVE:
-                List<Object> removeList = document.getList(value, Object.class);
-                if (removeList == null)
-                    return;
+                ArrayList<Object> removeList = new ArrayList<>(document.getList(value, Object.class));
                 deltaList.forEach(removeList::remove);
                 break;
             default:
