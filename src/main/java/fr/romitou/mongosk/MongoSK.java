@@ -34,6 +34,9 @@ public class MongoSK extends JavaPlugin {
             } finally {
                 Utils.consoleLog("&fWelcome to &aMongoSK " + this.getDescription().getVersion() + "&f.");
                 Utils.consoleLog("&fIf you need help, do not hesitate to check the wiki at &ahttps://github.com/Romitou/MongoSK/wiki&f.");
+                Skript.warning("Beware! The support of all the first versions of MongoSK (1.X.X) will be dropped on March 31, 2021.");
+                Skript.warning("A new version (2.X.X) has been released and you should upgrade to this major new version.");
+                Skript.warning("More information can be found here: https://github.com/Romitou/MongoSK/discussions/23");
             }
         } else {
             Utils.consoleLog("&cSkript isn't installed or doesn't accept registrations, disabling.");
