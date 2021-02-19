@@ -6,6 +6,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import com.mongodb.client.result.InsertManyResult;
+import fr.romitou.mongosk.Logger;
 import fr.romitou.mongosk.SubscriberHelpers;
 import fr.romitou.mongosk.elements.MongoSKCollection;
 import fr.romitou.mongosk.elements.MongoSKDocument;
@@ -42,6 +43,7 @@ public class EffInsertMongoDocument extends Effect {
         MongoSKCollection mongoSKCollection = exprMongoSKCollection.getSingle(e);
         if (mongoSKDocuments.length == 0 || mongoSKCollection == null)
             return;
+        long insertQuery = System.currentTimeMillis();
         SubscriberHelpers.ObservableSubscriber<InsertManyResult> observableSubscriber = new SubscriberHelpers.OperationSubscriber<>();
         mongoSKCollection.getMongoCollection()
             .insertMany(Arrays.stream(mongoSKDocuments)
@@ -49,6 +51,7 @@ public class EffInsertMongoDocument extends Effect {
                 .collect(Collectors.toList()))
             .subscribe(observableSubscriber);
         observableSubscriber.await();
+        Logger.debug("Insert query executed in " + (System.currentTimeMillis() - insertQuery) + "ms.");
     }
 
     @Override

@@ -11,6 +11,7 @@ import ch.njol.util.coll.CollectionUtils;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.mongodb.reactivestreams.client.FindPublisher;
+import fr.romitou.mongosk.Logger;
 import fr.romitou.mongosk.SubscriberHelpers;
 import fr.romitou.mongosk.elements.MongoSKCollection;
 import fr.romitou.mongosk.elements.MongoSKDocument;
@@ -51,12 +52,14 @@ public class ExprMongoSimpleQuery extends SimpleExpression<MongoSKDocument> {
         MongoSKCollection mongoSKCollection = exprMongoSKCollection.getSingle(e);
         if (mongoSKFilter == null || mongoSKCollection == null)
             return new MongoSKDocument[0];
+        long getQuery = System.currentTimeMillis();
         FindPublisher<Document> findPublisher = mongoSKCollection.getMongoCollection().find(mongoSKFilter.getFilter());
         SubscriberHelpers.ObservableSubscriber<Document> observableSubscriber = new SubscriberHelpers.OperationSubscriber<>();
         if (isFirstDocument)
             findPublisher.first().subscribe(observableSubscriber);
         else
             findPublisher.subscribe(observableSubscriber);
+        Logger.debug("Simple get query executed in " + (System.currentTimeMillis() - getQuery) + "ms.");
         return observableSubscriber
             .await()
             .getReceived()
@@ -86,6 +89,7 @@ public class ExprMongoSimpleQuery extends SimpleExpression<MongoSKDocument> {
             return;
         switch (mode) {
             case DELETE:
+                long deleteQuery = System.currentTimeMillis();
                 SubscriberHelpers.ObservableSubscriber<DeleteResult> deleteSubscriber = new SubscriberHelpers.OperationSubscriber<>();
                 if (isFirstDocument)
                     mongoSKCollection.getMongoCollection()
@@ -96,8 +100,10 @@ public class ExprMongoSimpleQuery extends SimpleExpression<MongoSKDocument> {
                         .deleteMany(mongoSKFilter.getFilter())
                         .subscribe(deleteSubscriber);
                 deleteSubscriber.await();
+                Logger.debug("Simple delete query executed in " + (System.currentTimeMillis() - deleteQuery) + "ms.");
                 break;
             case SET:
+                long replaceQuery = System.currentTimeMillis();
                 MongoSKDocument mongoSKDocument = (MongoSKDocument) delta[0];
                 if (mongoSKDocument == null)
                     return;
@@ -106,6 +112,7 @@ public class ExprMongoSimpleQuery extends SimpleExpression<MongoSKDocument> {
                     .replaceOne(mongoSKFilter.getFilter(), mongoSKDocument.getBsonDocument())
                     .subscribe(updateSubscriber);
                 updateSubscriber.await();
+                Logger.debug("Simple replace query executed in " + (System.currentTimeMillis() - replaceQuery) + "ms.");
             default:
                 break;
         }
