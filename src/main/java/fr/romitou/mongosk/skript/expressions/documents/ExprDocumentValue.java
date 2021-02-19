@@ -1,5 +1,12 @@
 package fr.romitou.mongosk.skript.expressions.documents;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.bson.Document;
+import org.bukkit.event.Event;
+
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
@@ -12,12 +19,6 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
-import org.bson.Document;
-import org.bukkit.event.Event;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Name("Mongo Value")
 @Description("This expression allows you to retrieve and modify certain values of a document. If you define an already existing entry, it will be replaced. Lists are supported.")
@@ -58,13 +59,14 @@ public class ExprDocumentValue extends SimpleExpression<Object> {
             try {
                 return new Object[]{document.get(value)};
             } catch (NullPointerException ex) {
-                return new Object[0]; // That document value doesn't exist;
+                return new Object[0]; // That document value doesn't exist
             }
         } else {
             try {
                 List<Object> list = document.getList(value, Object.class);
-                return (list == null) ? new Object[0] : list.toArray();
-
+                return list == null ? new Object[0] : list.toArray();
+            } catch (NullPointerException ex) {
+                return new Object[0]; // That document list doesn't exist
             } catch (ClassCastException ex) {
                 Skript.error("The mongodb document value is not a list!"); // I'm not sure whether or not this should return an error
                 return new Object[0];
@@ -94,18 +96,22 @@ public class ExprDocumentValue extends SimpleExpression<Object> {
                 document.put(value, null);
                 break;
             case ADD:
-                List<Object> addList = document.getList(value, Object.class);
-                if (addList == null) {
+                try {
+                    ArrayList<Object> addList = new ArrayList<>(document.getList(value, Object.class));
+                    addList.addAll(deltaList);
+                    document.put(value, addList);
+                } catch (NullPointerException ex) {
                     document.put(value, deltaList);
-                    return;
                 }
-                addList.addAll(deltaList);
                 break;
             case REMOVE:
-                List<Object> removeList = document.getList(value, Object.class);
-                if (removeList == null)
-                    return;
-                deltaList.forEach(removeList::remove);
+                try {
+                    ArrayList<Object> removeList = new ArrayList<>(document.getList(value, Object.class));
+                    deltaList.forEach(removeList::remove);
+                    document.put(value, removeList);
+                } catch (NullPointerException ex) {
+                    Skript.error("The mongodb document value des not contain the key" + value + "!"); // I'm not sure whether or not this should return an error
+                }
                 break;
             default:
                 break;
