@@ -5,16 +5,16 @@
 ## ⭐️ What's new in 2.0?
 A new major version of MongoSK is now available! Now let's take a look at what's new.
 
-- ⚡️ **Database queries are executed asynchronously**
+- ⚡️ **Database queries are executed asynchronously**<br/>
   *The code has been rewritten using the [mongodb-driver-reactivestreams](https://github.com/mongodb/mongo-java-driver-reactivestreams) library*
 
-- ⚙️ **Automatic and intelligent transformation of all sorts of data**
+- ⚙️ **Automatic and intelligent transformation of all sorts of data**<br/>
   *You can now store all types of Skript as items, players, blocks, etc. MongoSK does the job for you!*
 
-- 🔊 **Simple and understandable debugging to quickly identify problems**
+- 🔊 **Simple and understandable debugging to quickly identify problems**<br/>
   *The information are relevant and useful for both novice users and developers of the plugin*
 
-- 🤙 **More logical and smart syntaxes**
+- 🤙 **More logical and smart syntaxes**<br/>
   *Syntaxes have been reworked to be more consistent and logical*
 
 ⚠️ The support of the MongoSK 1 versions __will be dropped__ at March 31, 2021. We strongly recommend that you update. If you already have a script with MongoSK 1, you can find the update instructions on this [discussion](https://github.com/Romitou/MongoSK/discussions/23).
@@ -27,10 +27,15 @@ Then, all you have to do is install this add-on! To do so, go to the [releases](
 ## 🕵️ Support and documentation
 - **Discord server (faster):** https://discord.com/invite/6jeQkRcMkk
 - **GitHub Discussions:** https://github.com/Romitou/MongoSK/discussions
-
-[![SkriptHubViewTheDocs](https://skript-mc.fr/forum/uploads/monthly_2020_09/119910059_skmcdoc.png.07a0fc0bc09b4f601f79881922a915bb.png#left =200x)](https://skript-mc.fr/documentation/mongosk/)
-[![SkriptHubViewTheDocs](http://skripthub.net/static/addon/ViewTheDocsButton.png =200x)](http://skripthub.net/docs/?addon=MongoSK)
-[![Get on skUnity](https://skunity.com/branding/buttons/get_on_docs_3.png =200x) ](https://docs.skunity.com/syntax/search/addon:mongosk)
+<a href="https://skript-mc.fr/documentation/mongosk/">
+ <img src="https://skript-mc.fr/forum/uploads/monthly_2020_09/119910059_skmcdoc.png.07a0fc0bc09b4f601f79881922a915bb.png" height="100">
+</a>
+<a href="http://skripthub.net/docs/?addon=MongoSK">
+ <img src="http://skripthub.net/static/addon/ViewTheDocsButton.png" height="100">
+</a>
+<a href="https://docs.skunity.com/syntax/search/addon:mongosk">
+ <img src="https://skunity.com/branding/buttons/get_on_docs_3.png" height="100">
+</a>
 
 ## 📄 Licenses
 
