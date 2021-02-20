@@ -35,6 +35,29 @@ public class ExprMongoFilter extends SimpleExpression<MongoSKFilter> {
     private Expression<Object> exprObject;
     private MongoSKComparator mongoSKComparator;
 
+    private static Bson getFilter(MongoSKComparator comparator, String field, Object value) {
+        switch (comparator) {
+            case EXISTS:
+                return Filters.exists(field, true);
+            case NOT_EXIST:
+                return Filters.exists(field, false);
+            case LESS_THAN:
+                return Filters.lt(field, value);
+            case LESS_THAN_OR_EQUAL:
+                return Filters.lte(field, value);
+            case GREATER_THAN:
+                return Filters.gt(field, value);
+            case GREATER_THAN_OR_EQUAL:
+                return Filters.gte(field, value);
+            case EQUALS:
+                return Filters.eq(field, value);
+            case NOT_EQUAL:
+                return Filters.ne(field, value);
+            default:
+                return null;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
@@ -60,20 +83,6 @@ public class ExprMongoFilter extends SimpleExpression<MongoSKFilter> {
             return new MongoSKFilter[0];
         MongoSKFilter mongoSKFilter = new MongoSKFilter(filter, toString(e, false));
         return new MongoSKFilter[]{mongoSKFilter};
-    }
-
-    private static Bson getFilter(MongoSKComparator comparator, String field, Object value) {
-        switch (comparator) {
-            case EXISTS: return Filters.exists(field, true);
-            case NOT_EXIST: return Filters.exists(field, false);
-            case LESS_THAN: return Filters.lt(field, value);
-            case LESS_THAN_OR_EQUAL: return Filters.lte(field, value);
-            case GREATER_THAN: return Filters.gt(field, value);
-            case GREATER_THAN_OR_EQUAL: return Filters.gte(field, value);
-            case EQUALS: return Filters.eq(field, value);
-            case NOT_EQUAL: return Filters.ne(field, value);
-            default: return null;
-        }
     }
 
     @Override

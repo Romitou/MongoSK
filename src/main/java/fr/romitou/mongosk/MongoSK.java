@@ -19,6 +19,18 @@ public class MongoSK extends JavaPlugin {
     private static final List<MongoSKServer> mongoSKServers = new ArrayList<>();
     private static FileConfiguration configuration;
 
+    public static FileConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public static List<MongoSKServer> getMongoSKServers() {
+        return mongoSKServers;
+    }
+
+    public static void addMongoSKServer(MongoSKServer mongoSKServer) {
+        mongoSKServers.add(mongoSKServer);
+    }
+
     @Override
     public void onEnable() {
         long start = System.currentTimeMillis();
@@ -32,9 +44,9 @@ public class MongoSK extends JavaPlugin {
         final Plugin skriptPlugin = pluginManager.getPlugin("Skript");
         if (skriptPlugin == null || !skriptPlugin.isEnabled() || !Skript.isAcceptRegistrations()) {
             Logger.severe("Skript is not installed or does not accept registrations. Disabling.",
-                    "Is Skript plugin present: " + (skriptPlugin != null),
-                    "Is Skript enabled: " + (skriptPlugin != null && skriptPlugin.isEnabled()),
-                    "Does Skript accept registrations: " + (skriptPlugin != null && skriptPlugin.isEnabled() && Skript.isAcceptRegistrations())
+                "Is Skript plugin present: " + (skriptPlugin != null),
+                "Is Skript enabled: " + (skriptPlugin != null && skriptPlugin.isEnabled()),
+                "Does Skript accept registrations: " + (skriptPlugin != null && skriptPlugin.isEnabled() && Skript.isAcceptRegistrations())
             );
             pluginManager.disablePlugin(this);
             return;
@@ -47,9 +59,9 @@ public class MongoSK extends JavaPlugin {
             skriptAddon.loadClasses("fr.romitou.mongosk.skript");
         } catch (IOException e) {
             Logger.severe("MongoSK could not load and register some syntax elements.",
-                    "Try to update your version of Skript and MongoSK, and try again only with these two plugins.",
-                    "If the problem persists, please open an exit on GitHub.",
-                    "More information about this exception: " + e.getMessage()
+                "Try to update your version of Skript and MongoSK, and try again only with these two plugins.",
+                "If the problem persists, please open an exit on GitHub.",
+                "More information about this exception: " + e.getMessage()
             );
             return;
         }
@@ -65,9 +77,9 @@ public class MongoSK extends JavaPlugin {
         }
 
         Logger.info("MongoSK has been activated and the syntaxes has been loaded successfully in " + (System.currentTimeMillis() - start) + "ms!",
-                "MongoSK version: " + this.getDescription().getVersion(),
-                "Skript version: " + skriptPlugin.getDescription().getVersion(),
-                "Server version: " + this.getServer().getVersion()
+            "MongoSK version: " + this.getDescription().getVersion(),
+            "Skript version: " + skriptPlugin.getDescription().getVersion(),
+            "Server version: " + this.getServer().getVersion()
         );
 
         // Register Metrics.
@@ -99,18 +111,6 @@ public class MongoSK extends JavaPlugin {
             .stream()
             .map(MongoSKServer::getMongoClient)
             .forEach(MongoClient::close);
-    }
-
-    public static FileConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    public static List<MongoSKServer> getMongoSKServers() {
-        return mongoSKServers;
-    }
-
-    public static void addMongoSKServer(MongoSKServer mongoSKServer) {
-        mongoSKServers.add(mongoSKServer);
     }
 
 }

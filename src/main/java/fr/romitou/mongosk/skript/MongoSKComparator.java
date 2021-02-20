@@ -19,6 +19,7 @@ public enum MongoSKComparator {
     EXISTS("(exists|is (set|defined))");
 
     private final String pattern;
+
     MongoSKComparator(String pattern) {
         this.pattern = pattern;
     }

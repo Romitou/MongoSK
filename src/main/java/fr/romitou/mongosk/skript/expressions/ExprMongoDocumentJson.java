@@ -16,7 +16,12 @@ import javax.annotation.Nullable;
 public class ExprMongoDocumentJson extends SimplePropertyExpression<MongoSKDocument, String> {
 
     static {
-        register(ExprMongoDocumentJson.class, String.class, "mongo[(db|sk)] json", "mongoskdocuments");
+        register(
+            ExprMongoDocumentJson.class,
+            String.class,
+            "mongo[(db|sk)] json",
+            "mongoskdocuments"
+        );
     }
 
     @Override

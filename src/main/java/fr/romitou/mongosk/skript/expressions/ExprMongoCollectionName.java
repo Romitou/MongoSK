@@ -8,7 +8,12 @@ import javax.annotation.Nonnull;
 public class ExprMongoCollectionName extends SimplePropertyExpression<MongoSKCollection, String> {
 
     static {
-        register(ExprMongoCollectionName.class, String.class, "mongo[(db|sk)] name", "mongoskcollections");
+        register(
+            ExprMongoCollectionName.class,
+            String.class,
+            "mongo[(db|sk)] name",
+            "mongoskcollections"
+        );
     }
 
     @Nonnull

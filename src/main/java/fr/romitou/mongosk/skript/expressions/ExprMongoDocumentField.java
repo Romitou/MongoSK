@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 
 public class ExprMongoDocumentField extends SimpleExpression<Object> {
 
+    private final static String documentField = MongoSK.getConfiguration().getString("document-field", "__MongoSK__");
+
     static {
         Skript.registerExpression(
             ExprMongoDocumentField.class,
@@ -33,8 +35,6 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
             "mongo[(sk|db)] (1¦(field|value)|2¦(array|list)) [named] %string% of %mongoskdocument%"
         );
     }
-
-    private final static String documentField = MongoSK.getConfiguration().getString("document-field", "__MongoSK__");
 
     private Expression<String> exprFieldName;
     private Expression<MongoSKDocument> exprMongoSKDocument;
@@ -48,6 +48,7 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
         isSingle = parseResult.mark == 1;
         return true;
     }
+
     @Override
     protected Object[] get(@Nonnull final Event e) {
         String fieldName = exprFieldName.getSingle(e);

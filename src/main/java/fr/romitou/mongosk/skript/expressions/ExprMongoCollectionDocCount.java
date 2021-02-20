@@ -9,7 +9,12 @@ import javax.annotation.Nonnull;
 public class ExprMongoCollectionDocCount extends SimplePropertyExpression<MongoSKCollection, Integer> {
 
     static {
-        register(ExprMongoCollectionDocCount.class, Integer.class, "mongo[(db|sk)] [estimated] doc[ument][s] count", "mongoskcollections");
+        register(
+            ExprMongoCollectionDocCount.class,
+            Integer.class,
+            "mongo[(db|sk)] [estimated] doc[ument][s] count",
+            "mongoskcollections"
+        );
     }
 
     @Nonnull
