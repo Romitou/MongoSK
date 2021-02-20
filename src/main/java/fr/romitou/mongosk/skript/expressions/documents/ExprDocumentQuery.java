@@ -27,7 +27,7 @@ import org.bukkit.event.Event;
 public class ExprDocumentQuery extends SimpleExpression<MongoQuery> {
 
     static {
-        Skript.registerExpression(ExprDocumentQuery.class, MongoQuery.class, ExpressionType.SIMPLE, "[mongo[db]] document[s] [(1¦[with filter] %-mongofilter%)] (of|in|from) %mongocollection%");
+        Skript.registerExpression(ExprDocumentQuery.class, MongoQuery.class, ExpressionType.SIMPLE, "[(1¦[with filter] %-mongofilter%)] (of|in|from) %mongocollection%");
     }
 
     private Expression<MongoFilter> exprMongoFilter;
