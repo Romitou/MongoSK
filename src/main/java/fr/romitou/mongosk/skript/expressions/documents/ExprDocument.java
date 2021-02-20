@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class ExprDocument extends SimpleExpression<Document> {
 
     static {
-        Skript.registerExpression(ExprDocument.class, Document.class, ExpressionType.SIMPLE, "[(1¦first|2¦all)] [mongo[db]] [document[s]] [(of|from|with) [query]] %mongoquery%");
+        Skript.registerExpression(ExprDocument.class, Document.class, ExpressionType.SIMPLE, "[(1¦first|2¦all)] [mongo[db]] document[s] [(of|from|with) [query]] %mongoquery%");
     }
 
     private Expression<MongoQuery> exprMongoQuery;
