@@ -10,6 +10,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
 import fr.romitou.mongosk.Logger;
@@ -61,7 +62,12 @@ public class ExprMongoServer extends SimpleExpression<MongoSKServer> {
             Logger.severe("Your connection string is invalid: " + exception.getMessage().toLowerCase(Locale.ROOT));
             return new MongoSKServer[0];
         }
-        MongoClient mongoClient = MongoClients.create(connectionString);
+
+        MongoClientSettings settings = MongoClientSettings.builder()
+            .applyConnectionString(connectionString)
+            .build();
+
+        MongoClient mongoClient = MongoClients.create(settings);
         String displayedName = connectionString.getApplicationName() == null
             ? connectionString.getHosts().get(0)
             : connectionString.getApplicationName();
