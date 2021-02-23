@@ -2,6 +2,10 @@ package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -23,6 +27,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Name("Mongo document field")
+@Description("This expression is extremely important because it allows you to manage the values and lists of your documents. " +
+    "You can define lists, add items to lists, set values, or delete them. If Skript adapters are enabled, you can " +
+    "specify any type of data, and they will be automatically transformed by MongoSK so that they can be registered. " +
+    "So you can store players, blocks, items for example.")
+@Examples({"command test:",
+    "\ttrigger:",
+    "\t\tset {_doc} to first mongo document from {mycollection}",
+    "\t\tif mongo value \"player\" of {_doc} is not set:",
+    "\t\t\tset mongo value \"player\" of {_doc} to player",
+    "\t\tset {_player} to mongo value \"player\" of {_doc}",
+    "\t\tsend \"test\" to {_player}"})
+@Since("2.0.0")
 public class ExprMongoDocumentField extends SimpleExpression<Object> {
 
     private final static String documentField = MongoSK.getConfiguration().getString("document-field", "__MongoSK__");

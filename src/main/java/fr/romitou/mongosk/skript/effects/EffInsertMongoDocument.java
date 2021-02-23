@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -17,6 +21,14 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+@Name("Insert Mongo document")
+@Description("Insert your Mongo document in the collection you want, with an automatically generated unique " +
+    "identifier if not specified or already existing. This will not replace existing documents with the same " +
+    "identifier, but will insert a new one.")
+@Examples({"set {_document} to a new mongo document",
+    "set mongo field \"playerName\" of {_document} to \"Romitou\"",
+    "insert mongo document {_document} into collection {mycollection}"})
+@Since("2.0.0")
 public class EffInsertMongoDocument extends Effect {
 
     static {

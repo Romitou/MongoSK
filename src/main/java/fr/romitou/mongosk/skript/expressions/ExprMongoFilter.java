@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -16,6 +20,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 
+@Name("Mongo filter")
+@Description("Create custom Mongo filters to target a certain type of data in your queries to your collections." +
+    "The comparators are the same as for Skript.")
+@Examples({"set {_filter} to a new mongosk filter where field \"example\" is true",
+    "set {_doc} to first mongo document with filter {_filter} of {mycollection}",
+    "",
+    "set {_doc} to all mongo documents with mongosk filter where \"example\" equals true of {mycollection}"})
+@Since("2.0.0")
 public class ExprMongoFilter extends SimpleExpression<MongoSKFilter> {
 
     private static final String BASE_PATTERN = "[a [new]] mongo[(db|sk)] filter [where] field %string% ";

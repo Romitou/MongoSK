@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import fr.romitou.mongosk.Logger;
@@ -13,6 +17,13 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@Name("Mongo document JSON")
+@Description("Retrieve the JSON representation of the document. This expression can be useful to use it with " +
+    "skript-json and convert the document to a Skript variable, and vice versa. " +
+    "You can also define the JSON of the document.")
+@Examples({"set {_json} do {_document}'s mongo json",
+    "set mongo json of {_document} to \"\"\"example\"\": true\""})
+@Since("2.0.0")
 public class ExprMongoDocumentJson extends SimplePropertyExpression<MongoSKDocument, String> {
 
     static {

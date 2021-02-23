@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -15,6 +19,12 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@Name("Mongo collection")
+@Description("Retrieve a specific collection via its name from a database on your Mongo server. " +
+    "You must specify the database where your collection is located.")
+@Examples({"set {_collection} to mongo collection named \"myCollection\" of {mydatabase}",
+    "set {_documents::*} to all mongo documents of {_collection}"})
+@Since("2.0.0")
 public class ExprMongoCollection extends SimpleExpression<MongoSKCollection> {
 
     static {

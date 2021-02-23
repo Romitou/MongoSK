@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -15,6 +19,11 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@Name("All Mongo databases")
+@Description("Quickly retrieve all the databases contained in a Mongo server.")
+@Examples({"set {_databases::*} to all mongo databases of {myserver}",
+    "broadcast \"Databases of my server: %{_databases::*}'s mongo names%\""})
+@Since("2.0.0")
 public class ExprAllMongoDatabases extends SimpleExpression<MongoSKDatabase> {
 
     static {

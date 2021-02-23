@@ -2,6 +2,10 @@ package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -22,6 +26,20 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@Name("Mongo simple query")
+@Description("Use this expression if you want to make simple requests, easily and quickly. " +
+    "To do so, you must specify the type of your query: are you looking for several documents or the first document in " +
+    "the collection? Then you can use a filter to specify the type of data you are looking for. " +
+    "Finally, you need to specify where the query should ask for the data, i.e. in which collection." +
+    "" +
+    "You also have the possibility to modify already existing documents and delete documents, " +
+    "in the same way as for making your queries.")
+@Examples({"set {_docs::*} to all mongo documents of {mycollection}",
+    "set {_filter} to mongosk filter where field \"example\" is true",
+    "set {_mydoc} to first mongo document with filter {_filter} of {mycollection}",
+    "set first mongo document with mongosk filter where field \"_id\" equals \"507f1f77bcf86cd799439011\" to {_mydoc}",
+    "delete all mongosk documents of {mycollection}"})
+@Since("2.0.0")
 public class ExprMongoSimpleQuery extends SimpleExpression<MongoSKDocument> {
 
     static {
@@ -29,7 +47,7 @@ public class ExprMongoSimpleQuery extends SimpleExpression<MongoSKDocument> {
             ExprMongoSimpleQuery.class,
             MongoSKDocument.class,
             ExpressionType.COMBINED,
-            "(1¦first|2¦all) mongo[(sk|db)] document[s] (with|by) [filter] %mongoskfilter% (of|from) %mongoskcollection%"
+            "(1¦first|2¦all) mongo[(sk|db)] document[s] [(with|by) [filter] %-mongoskfilter%] (of|from) %mongoskcollection%"
         );
     }
 
@@ -50,10 +68,12 @@ public class ExprMongoSimpleQuery extends SimpleExpression<MongoSKDocument> {
     protected MongoSKDocument[] get(@Nonnull final Event e) {
         MongoSKFilter mongoSKFilter = exprMongoSKFilter.getSingle(e);
         MongoSKCollection mongoSKCollection = exprMongoSKCollection.getSingle(e);
-        if (mongoSKFilter == null || mongoSKCollection == null)
+        if (mongoSKCollection == null)
             return new MongoSKDocument[0];
         long getQuery = System.currentTimeMillis();
-        FindPublisher<Document> findPublisher = mongoSKCollection.getMongoCollection().find(mongoSKFilter.getFilter());
+        FindPublisher<Document> findPublisher = mongoSKFilter == null
+            ? mongoSKCollection.getMongoCollection().find()
+            : mongoSKCollection.getMongoCollection().find(mongoSKFilter.getFilter());
         SubscriberHelpers.ObservableSubscriber<Document> observableSubscriber = new SubscriberHelpers.OperationSubscriber<>();
         if (isFirstDocument)
             findPublisher.first().subscribe(observableSubscriber);
@@ -132,6 +152,6 @@ public class ExprMongoSimpleQuery extends SimpleExpression<MongoSKDocument> {
     @Override
     @Nonnull
     public String toString(@Nullable final Event e, final boolean debug) {
-        return (isFirstDocument ? "first mongosk document" : "all mongosk documents") + " where " + exprMongoSKFilter.toString(e, debug) + " of " + exprMongoSKCollection.toString(e, debug);
+        return (isFirstDocument ? "first mongosk document" : "all mongosk documents") + (exprMongoSKFilter == null ? "" : " where " + exprMongoSKFilter.toString(e, debug))  + " of " + exprMongoSKCollection.toString(e, debug);
     }
 }
