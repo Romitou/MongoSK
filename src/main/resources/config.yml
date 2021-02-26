@@ -16,8 +16,11 @@ debug-mode: false
 
 # Skript adapters are used to save data in your documents that were not initially supported by BSON or MongoDB.
 # If you only save data supported by BSON or MongoDB, you can disable this.
-skript-adapters: true
-
-# The prefix and the field used by MongoSK in the storage of your documents.
-# This field must be unique and not conflict with existing entries in your documents.
-document-field: "__MongoSK__"
+skript-adapters:
+    enabled: true
+    # If an object cannot be converted and in order to avoid Mongo errors due to an incompatible type, automatically
+    # remove it from the request. It is not advisable to disable it unless you know what you are doing.
+    safe-data: true
+    # The prefix and the field used by MongoSK in the storage of your documents.
+    # This field must be unique and not conflict with existing entries in your documents.
+    document-field: "__MongoSK__"
