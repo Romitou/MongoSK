@@ -1,9 +1,11 @@
 package fr.romitou.mongosk.adapters;
 
+import com.mongodb.MongoClientSettings;
 import fr.romitou.mongosk.Logger;
 import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.adapters.codecs.*;
 import org.bson.Document;
+import org.bson.codecs.configuration.CodecConfigurationException;
 
 import javax.annotation.Nullable;
 import java.io.StreamCorruptedException;
@@ -101,8 +103,13 @@ public class MongoSKAdapter {
         Logger.debug("Searching codec for " + unsafeObject.getClass() + " class...");
         MongoSKCodec<Object> codec = MongoSKAdapter.getCodecByClass(unsafeObject.getClass());
         if (codec == null) {
-            Logger.debug("No codec found for this class. " + (SAFE_DESERIALIZATION ? "It has been removed from the document." : "No changes have been made to it."));
-            return SAFE_DESERIALIZATION ? null : unsafeObject;
+            try {
+                MongoClientSettings.getDefaultCodecRegistry().get(unsafeObject.getClass());
+            } catch (CodecConfigurationException ignore) {
+                Logger.debug("No codec found for this class. " + (SAFE_DESERIALIZATION ? "It has been removed from the document." : "No changes have been made to it."));
+                return SAFE_DESERIALIZATION ? null : unsafeObject;
+            }
+            return unsafeObject; // We're safe!
         }
         Logger.debug("A codec has been found: " + codec.getName());
         Document serializedDocument = codec.serialize(unsafeObject);

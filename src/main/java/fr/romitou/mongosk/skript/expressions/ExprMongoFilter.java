@@ -87,15 +87,10 @@ public class ExprMongoFilter extends SimpleExpression<MongoSKFilter> {
         Object value = exprObject.getSingle(e);
         if (field == null)
             return new MongoSKFilter[0];
-        if (mongoSKComparator == null
-            || value == null
-            && !(mongoSKComparator == MongoSKComparator.EQUALS
-            || mongoSKComparator == MongoSKComparator.NOT_EQUAL))
+        if (mongoSKComparator == null || value == null)
             return new MongoSKFilter[0];
-        // The user want to search by a document!
-        // Serialize it for supporting Skript on the query.
-        if (value instanceof Document)
-            value = MongoSKAdapter.serializeObject(value);
+        // Serialize input.
+        value = MongoSKAdapter.serializeObject(value);
         Bson filter = getFilter(mongoSKComparator, field, value);
         if (filter == null)
             return new MongoSKFilter[0];
