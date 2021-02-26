@@ -13,8 +13,8 @@ public enum MongoSKComparator {
     GREATER_THAN("is (((greater|more|higher|bigger|larger) than|above)|\\>) %integer/number%"),
     LESS_THAN_OR_EQUAL("is ((less|smaller|below) [than] or (equal to|the same as)|\\<=) %integer/number%"),
     LESS_THAN("is (((less|smaller) than|below)|\\<) %integer/number%"),
-    NOT_EQUAL("is ((not|neither)|isn't|!=) [equal to] %integer/number/string/boolean%"),
-    EQUALS("(is|equals|=) %integer/number/string/boolean%"),
+    NOT_EQUAL("is ((not|neither)|isn't|!=) [equal to] %integer/number/string/boolean/mongoskdocument%"),
+    EQUALS("(is|equals|=) %integer/number/string/boolean/mongoskdocument%"),
     NOT_EXIST("(does(n't| not) exist|is not (set|defined))"),
     EXISTS("(exists|is (set|defined))");
 
