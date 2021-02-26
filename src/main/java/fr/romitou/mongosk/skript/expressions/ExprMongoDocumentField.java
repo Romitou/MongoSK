@@ -42,7 +42,6 @@ import java.util.stream.Collectors;
 @Since("2.0.0")
 public class ExprMongoDocumentField extends SimpleExpression<Object> {
 
-    private final static String documentField = MongoSK.getConfiguration().getString("document-field", "__MongoSK__");
 
     static {
         Skript.registerExpression(
@@ -74,31 +73,7 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
             return new Object[0];
         if (isSingle) {
             Object value = mongoSKDocument.getBsonDocument().get(fieldName);
-            if (value instanceof Document) {
-                Document doc = (Document) value;
-                if (doc.containsKey(documentField)) {
-                    String codecName = doc.getString(documentField);
-                    MongoSKCodec<Object> codec = MongoSKAdapter.getCodecByName(codecName);
-                    if (codec == null) {
-                        Logger.severe("No codec found for " + codecName + "!",
-                            "Loaded codecs: " + String.join(", ", MongoSKAdapter.getCodecNames()),
-                            "Requested codec: " + codecName
-                        );
-                        return new Object[0];
-                    }
-                    try {
-                        return new Object[]{codec.deserialize(doc)};
-                    } catch (StreamCorruptedException ex) {
-                        Logger.severe("An error occurred during the deserialization of the document: " + ex.getMessage(),
-                            "Requested codec: " + codecName,
-                            "Original value class: " + doc.toString(),
-                            "Document JSON: " + doc.toJson()
-                        );
-                        return new Object[0];
-                    }
-                }
-            }
-            return new Object[]{value};
+            return new Object[]{MongoSKAdapter.deserializeValue(value)};
         }
         return mongoSKDocument.getBsonDocument().getList(fieldName, Object.class).toArray();
     }
@@ -122,20 +97,7 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
     public void change(@Nonnull final Event e, Object[] delta, @Nonnull Changer.ChangeMode mode) {
         String fieldName = exprFieldName.getSingle(e);
         MongoSKDocument mongoSKDocument = exprMongoSKDocument.getSingle(e);
-        List<Object> omega = Arrays.asList(delta);
-        if (MongoSK.getConfiguration().getBoolean("skript-adapters", false)) {
-            omega = omega.stream()
-                .map(o -> {
-                    Logger.debug("Searching codec for " + o.getClass() + "...");
-                    MongoSKCodec<Object> codec = MongoSKAdapter.getCodecByClass(o.getClass());
-                    if (codec == null) return o;
-                    Logger.debug("Codec found: " + codec.getName());
-                    Document serializedDocument = codec.serialize(o);
-                    serializedDocument.put(documentField, codec.getName());
-                    return serializedDocument;
-                })
-                .collect(Collectors.toList());
-        }
+        List<Object> omega = Arrays.asList(MongoSKAdapter.serializeArray(delta));
         if (fieldName == null || mongoSKDocument == null || mongoSKDocument.getBsonDocument() == null || omega.size() == 0)
             return;
         switch (mode) {
