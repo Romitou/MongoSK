@@ -45,8 +45,7 @@ public class MongoSKDocument {
     }
 
     @Override
-    public String
-    toString() {
+    public String toString() {
         return "MongoSKDocument{" +
             "bsonDocument=" + bsonDocument +
             ", baseCollection=" + baseCollection +

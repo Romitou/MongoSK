@@ -7,15 +7,19 @@ import java.util.Objects;
 public class MongoSKFilter {
 
     private final Bson filter;
-    private final String comparator;
+    private final String display;
 
-    public MongoSKFilter(Bson filter, String comparator) {
+    public MongoSKFilter(Bson filter, String display) {
         this.filter = filter;
-        this.comparator = comparator;
+        this.display = display;
     }
 
     public Bson getFilter() {
         return this.filter;
+    }
+
+    public String getDisplay() {
+        return display;
     }
 
     @Override
@@ -23,19 +27,19 @@ public class MongoSKFilter {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MongoSKFilter that = (MongoSKFilter) o;
-        return Objects.equals(filter, that.filter) && Objects.equals(comparator, that.comparator);
+        return Objects.equals(filter, that.filter) && Objects.equals(display, that.display);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(filter, comparator);
+        return Objects.hash(filter, display);
     }
 
     @Override
     public String toString() {
         return "MongoSKFilter{" +
             "filter=" + filter +
-            ", comparator='" + comparator + '\'' +
+            ", display='" + display + '\'' +
             '}';
     }
 
