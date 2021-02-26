@@ -29,7 +29,7 @@ public class ExprNewMongoDocument extends SimpleExpression<MongoSKDocument> {
         Skript.registerExpression(
             ExprNewMongoDocument.class,
             MongoSKDocument.class,
-            ExpressionType.COMBINED,
+            ExpressionType.SIMPLE,
             "[[a] new] mongo[(sk|db)] [empty] document"
         );
     }
