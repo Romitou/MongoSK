@@ -67,7 +67,7 @@ public class MongoSK extends JavaPlugin {
         }
 
         // Register MongoSK codecs.
-        if (getConfig().getBoolean("skript-adapters", false)) {
+        if (getConfig().getBoolean("skript-adapters.enabled", false)) {
             Logger.info("Loading MongoSK adapters and codecs...");
             List<String> codecs = MongoSKAdapter.loadCodecs();
             Logger.info("Loaded " + codecs.size() + " codecs!",
