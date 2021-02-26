@@ -148,7 +148,7 @@ public class SkriptTypes {
                 @Override
                 @Nonnull
                 public String toString(@Nonnull MongoSKFilter filter, int flags) {
-                    return filter.toString();
+                    return filter.getDisplay();
                 }
 
                 @Override
@@ -161,6 +161,70 @@ public class SkriptTypes {
                 @Nonnull
                 public String getVariableNamePattern() {
                     return "mongoskfilter:.+";
+                }
+            })
+        );
+
+        Classes.registerClass(new ClassInfo<>(MongoSKQuery.class, "mongoskquery")
+            .user("mongo(db|sk)?( |-)?quer(y|ies)")
+            .name("MongoSK Query")
+            .description("Allows you to build a complex query to target a very specific type of data with specific options.")
+            .since("2.0.0")
+            .parser(new Parser<MongoSKQuery>() {
+
+                @Override
+                public boolean canParse(@Nonnull ParseContext context) {
+                    return false;
+                }
+
+                @Override
+                @Nonnull
+                public String toString(@Nonnull MongoSKQuery query, int flags) {
+                    return query.getDisplay();
+                }
+
+                @Override
+                @Nonnull
+                public String toVariableNameString(@Nonnull MongoSKQuery query) {
+                    return "mongoskquery:" + query.toString();
+                }
+
+                @Override
+                @Nonnull
+                public String getVariableNamePattern() {
+                    return "mongoskquery:.+";
+                }
+            })
+        );
+
+        Classes.registerClass(new ClassInfo<>(MongoSKSort.class, "mongosksorting")
+            .user("mongo(db|sk)?( |-)?sorts?")
+            .name("MongoSK Sort")
+            .description("Create a sort to first retrieve certain documents according to the specified fields.")
+            .since("2.0.0")
+            .parser(new Parser<MongoSKSort>() {
+
+                @Override
+                public boolean canParse(@Nonnull ParseContext context) {
+                    return false;
+                }
+
+                @Override
+                @Nonnull
+                public String toString(@Nonnull MongoSKSort sort, int flags) {
+                    return sort.getDisplay();
+                }
+
+                @Override
+                @Nonnull
+                public String toVariableNameString(@Nonnull MongoSKSort sort) {
+                    return "mongosksort:" + sort.toString();
+                }
+
+                @Override
+                @Nonnull
+                public String getVariableNamePattern() {
+                    return "mongosksort:.+";
                 }
             })
         );
