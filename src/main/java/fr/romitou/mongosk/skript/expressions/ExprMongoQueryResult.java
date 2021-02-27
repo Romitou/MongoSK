@@ -8,6 +8,7 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import com.mongodb.reactivestreams.client.FindPublisher;
 import fr.romitou.mongosk.SubscriberHelpers;
+import fr.romitou.mongosk.elements.MongoSKDocument;
 import fr.romitou.mongosk.elements.MongoSKQuery;
 import org.bson.Document;
 import org.bukkit.event.Event;
@@ -15,15 +16,15 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ExprMongoQueryResult extends SimpleExpression<Document> {
+public class ExprMongoQueryResult extends SimpleExpression<MongoSKDocument> {
 
     static {
         Skript.registerExpression(
             ExprMongoQueryResult.class,
-            Document.class,
+            MongoSKDocument.class,
             ExpressionType.PROPERTY,
-            "[all] [the] mongo[(db|sk)] (1¦first|2¦all) document[s] of %mongoskquery%",
-            "[all] %mongoskquery%'[s] mongo[(db|sk)] (1¦first|2¦all) document[s]"
+            "[all] [the] (1¦first|2¦all) mongo[(db|sk)] (document|result)[s] of query %mongoskquery%",
+            "[all] query %mongoskquery%'[s] (1¦first|2¦all) mongo[(db|sk)] (document|result)[s]"
         );
     }
 
@@ -39,19 +40,24 @@ public class ExprMongoQueryResult extends SimpleExpression<Document> {
     }
 
     @Override
-    protected Document[] get(@Nonnull Event e) {
+    protected MongoSKDocument[] get(@Nonnull Event e) {
         MongoSKQuery mongoSKQuery = exprMongoSKQuery.getSingle(e);
         if (mongoSKQuery == null || mongoSKQuery.buildIterable() == null)
-            return new Document[0];
+            return new MongoSKDocument[0];
         FindPublisher<Document> findPublisher = mongoSKQuery.buildIterable();
         if (findPublisher == null)
-            return new Document[0];
+            return new MongoSKDocument[0];
         SubscriberHelpers.ObservableSubscriber<Document> observableSubscriber = new SubscriberHelpers.OperationSubscriber<>();
         if (isFirstDocument)
             findPublisher.first().subscribe(observableSubscriber);
         else
             findPublisher.subscribe(observableSubscriber);
-        return observableSubscriber.await().getReceived().toArray(new Document[0]);
+        return observableSubscriber
+            .await()
+            .getReceived()
+            .stream()
+            .map(document -> new MongoSKDocument(document, mongoSKQuery.getMongoSKCollection()))
+            .toArray(MongoSKDocument[]::new);
     }
 
     @Override
@@ -61,8 +67,8 @@ public class ExprMongoQueryResult extends SimpleExpression<Document> {
 
     @Nonnull
     @Override
-    public Class<? extends Document> getReturnType() {
-        return Document.class;
+    public Class<? extends MongoSKDocument> getReturnType() {
+        return MongoSKDocument.class;
     }
 
     @Nonnull
