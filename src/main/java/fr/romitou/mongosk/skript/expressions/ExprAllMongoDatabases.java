@@ -52,9 +52,7 @@ public class ExprAllMongoDatabases extends SimpleExpression<MongoSKDatabase> {
             return new MongoSKDatabase[0];
         SubscriberHelpers.ObservableSubscriber<Document> observableSubscriber = new SubscriberHelpers.OperationSubscriber<>();
         mongoSKServer.getMongoClient().listDatabases().subscribe(observableSubscriber);
-        System.out.println(observableSubscriber.await().getReceived());
-        return observableSubscriber.await()
-            .getReceived()
+        return observableSubscriber.get()
             .stream()
             .map(doc -> doc.getString("name"))
             .map(name -> mongoSKServer.getMongoClient().getDatabase(name))

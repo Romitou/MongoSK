@@ -80,9 +80,7 @@ public class ExprMongoSimpleQuery extends SimpleExpression<MongoSKDocument> {
         else
             findPublisher.subscribe(observableSubscriber);
         Logger.debug("Simple get query executed in " + (System.currentTimeMillis() - getQuery) + "ms.");
-        return observableSubscriber
-            .await()
-            .getReceived()
+        return observableSubscriber.get()
             .stream()
             .map(document -> new MongoSKDocument(document, mongoSKCollection))
             .toArray(MongoSKDocument[]::new);

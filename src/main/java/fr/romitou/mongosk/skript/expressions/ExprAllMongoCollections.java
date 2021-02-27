@@ -52,8 +52,7 @@ public class ExprAllMongoCollections extends SimpleExpression<MongoSKCollection>
             return new MongoSKCollection[0];
         SubscriberHelpers.ObservableSubscriber<Document> observableSubscriber = new SubscriberHelpers.OperationSubscriber<>();
         mongoSKDatabase.getMongoDatabase().listCollections().subscribe(observableSubscriber);
-        return observableSubscriber.await()
-            .getReceived()
+        return observableSubscriber.get()
             .stream()
             .map(doc -> doc.getString("name"))
             .map(name -> mongoSKDatabase.getMongoDatabase().getCollection(name))

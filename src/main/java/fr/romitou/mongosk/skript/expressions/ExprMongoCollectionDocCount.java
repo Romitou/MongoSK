@@ -32,7 +32,7 @@ public class ExprMongoCollectionDocCount extends SimplePropertyExpression<MongoS
     public Integer convert(MongoSKCollection collection) {
         SubscriberHelpers.ObservableSubscriber<Long> observableSubscriber = new SubscriberHelpers.OperationSubscriber<>();
         collection.getMongoCollection().estimatedDocumentCount().subscribe(observableSubscriber);
-        return observableSubscriber.await().getReceived().get(0).intValue();
+        return observableSubscriber.get().get(0).intValue();
     }
 
     @Nonnull

@@ -52,9 +52,7 @@ public class ExprMongoQueryResult extends SimpleExpression<MongoSKDocument> {
             findPublisher.first().subscribe(observableSubscriber);
         else
             findPublisher.subscribe(observableSubscriber);
-        return observableSubscriber
-            .await()
-            .getReceived()
+        return observableSubscriber.get()
             .stream()
             .map(document -> new MongoSKDocument(document, mongoSKQuery.getMongoSKCollection()))
             .toArray(MongoSKDocument[]::new);
