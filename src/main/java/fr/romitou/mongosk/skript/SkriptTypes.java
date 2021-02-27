@@ -197,7 +197,7 @@ public class SkriptTypes {
             })
         );
 
-        Classes.registerClass(new ClassInfo<>(MongoSKSort.class, "mongosksorting")
+        Classes.registerClass(new ClassInfo<>(MongoSKSort.class, "mongosksort")
             .user("mongo(db|sk)?( |-)?sorts?")
             .name("MongoSK Sort")
             .description("Create a sort to first retrieve certain documents according to the specified fields.")

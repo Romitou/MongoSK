@@ -21,7 +21,7 @@ public class ExprMongoSort extends SimpleExpression<MongoSKSort> {
             ExprMongoSort.class,
             MongoSKSort.class,
             ExpressionType.SIMPLE,
-            "[a [new]] mongo[(db|sk)] (1¦asc[ending]|2¦desc[ending]) sort[ing] [(with|of)] field[s] %strings%"
+            "[a [new]] mongo[(db|sk)] (1¦asc[ending]|2¦desc[ending]) sort[ing] [by] field[s] %strings%"
         );
     }
 
@@ -63,6 +63,6 @@ public class ExprMongoSort extends SimpleExpression<MongoSKSort> {
     @Nonnull
     @Override
     public String toString(@Nullable Event e, boolean debug) {
-        return "mongosk " + (isAscending ? "ascending" : "descending") + " sort with fields " + exprFields.toString(e, debug);
+        return "mongosk " + (isAscending ? "ascending" : "descending") + " sort by fields " + exprFields.toString(e, debug);
     }
 }

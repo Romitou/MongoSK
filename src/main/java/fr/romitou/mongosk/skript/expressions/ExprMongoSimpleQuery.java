@@ -152,6 +152,6 @@ public class ExprMongoSimpleQuery extends SimpleExpression<MongoSKDocument> {
     @Override
     @Nonnull
     public String toString(@Nullable final Event e, final boolean debug) {
-        return (isFirstDocument ? "first mongosk document" : "all mongosk documents") + (exprMongoSKFilter == null ? "" : " where " + exprMongoSKFilter.toString(e, debug))  + " of " + exprMongoSKCollection.toString(e, debug);
+        return (isFirstDocument ? "first mongosk document" : "all mongosk documents") + (exprMongoSKFilter == null ? "" : " where " + exprMongoSKFilter.toString(e, debug)) + " of " + exprMongoSKCollection.toString(e, debug);
     }
 }

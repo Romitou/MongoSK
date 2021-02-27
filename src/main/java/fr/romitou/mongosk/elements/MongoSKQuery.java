@@ -3,7 +3,6 @@ package fr.romitou.mongosk.elements;
 import com.mongodb.reactivestreams.client.FindPublisher;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import org.bson.Document;
-import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +42,11 @@ public class MongoSKQuery {
 
     public FindPublisher<Document> buildIterable() {
         MongoCollection<Document> mongoCollection = getMongoSKCollection().getMongoCollection();
-        FindPublisher<Document> findPublisher = mongoCollection.find(getMongoSKFilter().getFilter());
+        FindPublisher<Document> findPublisher;
+        if (getMongoSKFilter() == null)
+            findPublisher = mongoCollection.find();
+        else
+            findPublisher = mongoCollection.find(getMongoSKFilter().getFilter());
         if (getMongoSKSort() == null)
             return findPublisher;
         return findPublisher.sort(getMongoSKSort().getSort());
@@ -51,11 +54,11 @@ public class MongoSKQuery {
 
     public String getDisplay() {
         List<String> stringList = new ArrayList<>();
-        stringList.add("mongo document");
+        stringList.add("mongo query");
         if (mongoSKCollection != null)
             stringList.add("of " + mongoSKCollection.getMongoCollection().getNamespace().getCollectionName() + " collection");
         if (mongoSKFilter != null)
-            stringList.add("with filter " + mongoSKFilter.getDisplay());
+            stringList.add("with " + mongoSKFilter.getDisplay());
         if (mongoSKSort != null)
             stringList.add("sorted by " + mongoSKSort.getDisplay());
         return String.join(" ", stringList);

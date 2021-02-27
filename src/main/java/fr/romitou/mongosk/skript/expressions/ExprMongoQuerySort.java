@@ -3,7 +3,6 @@ package fr.romitou.mongosk.skript.expressions;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
-import fr.romitou.mongosk.elements.MongoSKFilter;
 import fr.romitou.mongosk.elements.MongoSKQuery;
 import fr.romitou.mongosk.elements.MongoSKSort;
 import org.bukkit.event.Event;

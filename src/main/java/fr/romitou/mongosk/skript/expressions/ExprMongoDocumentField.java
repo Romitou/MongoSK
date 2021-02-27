@@ -13,19 +13,14 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import fr.romitou.mongosk.Logger;
-import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
-import fr.romitou.mongosk.adapters.MongoSKCodec;
 import fr.romitou.mongosk.elements.MongoSKDocument;
-import org.bson.Document;
 import org.bukkit.event.Event;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.StreamCorruptedException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Name("Mongo document field")
 @Description("This expression is extremely important because it allows you to manage the values and lists of your documents. " +

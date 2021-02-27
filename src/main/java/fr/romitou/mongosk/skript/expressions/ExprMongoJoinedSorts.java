@@ -35,6 +35,7 @@ public class ExprMongoJoinedSorts extends SimpleExpression<MongoSKSort> {
         exprSort = (Expression<MongoSKSort>) exprs[0];
         return true;
     }
+
     @Override
     protected MongoSKSort[] get(@Nonnull Event e) {
         MongoSKSort[] sorts = exprSort.getArray(e);

@@ -36,6 +36,7 @@ public class ExprMongoJoinedFilters extends SimpleExpression<MongoSKFilter> {
         this.parseMark = parseResult.mark;
         return true;
     }
+
     @Override
     protected MongoSKFilter[] get(@Nonnull Event e) {
         MongoSKFilter firstFilter = exprFirstFilter.getSingle(e);

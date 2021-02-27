@@ -14,7 +14,6 @@ import com.mongodb.client.model.Filters;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import fr.romitou.mongosk.elements.MongoSKFilter;
 import fr.romitou.mongosk.skript.MongoSKComparator;
-import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.event.Event;
 
