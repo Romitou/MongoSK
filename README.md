@@ -14,6 +14,9 @@ A new major version of MongoSK is now available! Now let's take a look at what's
 - 🔊 **Simple and understandable debugging to quickly identify problems**<br/>
   *The information are relevant and useful for both novice users and developers of the plugin*
 
+- 🔬 **Addition of advanced queries for specific queries**<br/>
+  *You are now able to target more precise data in your queries with a lot of options*
+
 - 🤙 **More logical and smart syntaxes**<br/>
   *Syntaxes have been reworked to be more consistent and logical*
 
