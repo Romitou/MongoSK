@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -16,6 +20,12 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+@Name("Mongo joined sorts")
+@Description("Thanks to this expression, you will be able to combine two sorts to refine your queries.")
+@Examples({"set {_sort1} to mongo ascending sort by fields \"test\" and \"coins\"",
+    "set {_sort2} to mongo descending sort by field \"example\"",
+    "set {_sort} to mongo joined filters {_sort1} or {_sort2}"})
+@Since("2.0.0")
 public class ExprMongoJoinedSorts extends SimpleExpression<MongoSKSort> {
 
     static {

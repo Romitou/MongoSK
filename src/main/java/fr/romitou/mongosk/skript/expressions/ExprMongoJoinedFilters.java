@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -14,6 +18,13 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@Name("Mongo joined filters")
+@Description("Thanks to this expression, you will be able to combine two filters to refine your queries. " +
+    "Several types of filter comparison are possible, and, or, and nor.")
+@Examples({"set {_filter1} to mongosk filter where field \"test\" is true",
+    "set {_filter2} to mongosk filter where field \"coins\" is higher than or equals to 10",
+    "set {_filter} to mongo joined filters {_filter1} or {_filter2}"})
+@Since("2.0.0")
 public class ExprMongoJoinedFilters extends SimpleExpression<MongoSKFilter> {
 
     static {

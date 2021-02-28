@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -13,6 +17,12 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@Name("Mongo name")
+@Description("Retrieve the names of different Mongo elements. " +
+    "You can use this expression to retrieve the name of collections or databases.")
+@Examples({"set {_name} to {mongodatabase}'s mongo name",
+    "broadcast mongo name of {mongocollection}"})
+@Since("2.0.0")
 public class ExprMongoName extends SimpleExpression<String> {
 
     static {

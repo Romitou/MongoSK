@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import fr.romitou.mongosk.elements.MongoSKQuery;
@@ -8,6 +12,12 @@ import org.bukkit.event.Event;
 
 import javax.annotation.Nonnull;
 
+@Name("Mongo query disk usage")
+@Description("Enables writing to temporary files on the server. " +
+    "When set to true, the server can write temporary data to disk while executing the operation. This is optional.")
+@Examples({"set {_query} to new mongosk query",
+    "set {_query}'s mongo disk usage to true"})
+@Since("2.0.0")
 public class ExprMongoQueryDiskUsage extends SimplePropertyExpression<MongoSKQuery, Boolean> {
 
     static {

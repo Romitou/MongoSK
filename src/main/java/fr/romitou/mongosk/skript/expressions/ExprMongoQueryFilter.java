@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import fr.romitou.mongosk.elements.MongoSKFilter;
@@ -9,6 +13,12 @@ import org.bukkit.event.Event;
 
 import javax.annotation.Nonnull;
 
+@Name("Mongo query filter")
+@Description("Allows you to set a filter associated with the query. This is optional for find queries, but mandatory " +
+    "for delete or replace queries!")
+@Examples({"set {_query} to new mongosk query",
+    "set {_query}'s mongo filter to new mongosk filter where field \"coins\" is 10"})
+@Since("2.0.0")
 public class ExprMongoQueryFilter extends SimplePropertyExpression<MongoSKQuery, MongoSKFilter> {
 
     static {

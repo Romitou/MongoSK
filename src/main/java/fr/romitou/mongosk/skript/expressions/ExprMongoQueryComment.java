@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import fr.romitou.mongosk.elements.MongoSKQuery;
@@ -8,6 +12,12 @@ import org.bukkit.event.Event;
 
 import javax.annotation.Nonnull;
 
+@Name("Mongo query comment")
+@Description("Defines the comment of the request, in order to better monitor the query on your server. " +
+    "This is optional.")
+@Examples({"set {_query} to new mongosk query",
+    "set {_query}'s mongo comment to \"player query\""})
+@Since("2.0.0")
 public class ExprMongoQueryComment extends SimplePropertyExpression<MongoSKQuery, String> {
 
     static {
