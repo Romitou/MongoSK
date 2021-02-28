@@ -76,7 +76,7 @@ public class MongoSKQuery {
         this.mongoSKSort = mongoSKSort;
     }
 
-    public FindPublisher<Document> buildIterable() {
+    public FindPublisher<Document> buildFindPublisher() {
         MongoCollection<Document> mongoCollection = getMongoSKCollection().getMongoCollection();
         FindPublisher<Document> findPublisher;
         if (getMongoSKFilter() == null)

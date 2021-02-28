@@ -109,6 +109,7 @@ public class MongoSKAdapter {
                 Logger.debug("No codec found for this class. " + (SAFE_DESERIALIZATION ? "It has been removed from the document." : "No changes have been made to it."));
                 return SAFE_DESERIALIZATION ? null : unsafeObject;
             }
+            Logger.debug("The Mongo driver directly supports this type. Next!");
             return unsafeObject; // We're safe!
         }
         Logger.debug("A codec has been found: " + codec.getName());
