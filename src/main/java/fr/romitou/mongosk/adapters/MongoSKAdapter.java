@@ -6,6 +6,7 @@ import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.adapters.codecs.*;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecConfigurationException;
+import org.bson.types.Binary;
 
 import javax.annotation.Nullable;
 import java.io.StreamCorruptedException;
@@ -17,11 +18,14 @@ import java.util.stream.Collectors;
 public class MongoSKAdapter {
 
     private final static String DOCUMENT_FIELD = MongoSK.getConfiguration().getString("skript-adapters.document-field", "__MongoSK__");
+    private final static Boolean ADAPTERS_ENABLED = MongoSK.getConfiguration().getBoolean("skript-adapters.enabled", false);
     private final static Boolean SAFE_DESERIALIZATION = MongoSK.getConfiguration().getBoolean("skript-adapters.safe-data", true);
 
     public static List<MongoSKCodec<?>> codecs = new ArrayList<>();
 
     public static List<String> loadCodecs() {
+        if (!ADAPTERS_ENABLED)
+            return new ArrayList<>();
         codecs.add(new BiomeCodec());
         codecs.add(new BlockCodec());
         codecs.add(new ChunkCodec());
@@ -88,7 +92,7 @@ public class MongoSKAdapter {
             return new Object[0];
         }
         try {
-            return new Object[]{codec.deserialize(doc)};
+            return codec.deserialize(doc);
         } catch (StreamCorruptedException ex) {
             Logger.severe("An error occurred during the deserialization of the document: " + ex.getMessage(),
                 "Requested codec: " + codecName,
@@ -122,9 +126,23 @@ public class MongoSKAdapter {
     }
 
     public static Object[] serializeArray(Object[] unsafeArray) {
-        if (!MongoSK.getConfiguration().getBoolean("skript-adapters.enabled", false))
+        if (!ADAPTERS_ENABLED)
             return unsafeArray;
         return Arrays.stream(unsafeArray).map(MongoSKAdapter::serializeObject).toArray(Object[]::new);
+    }
+
+    public static Object[] deserializeValues(Object[] unsafeValues) {
+        if (!ADAPTERS_ENABLED)
+            return unsafeValues;
+        return Arrays.stream(unsafeValues).map(MongoSKAdapter::deserializeValue).toArray(Object[]::new);
+    }
+
+    public static byte[] getBinaryData(Object unsafeBinary) throws StreamCorruptedException {
+        if (unsafeBinary instanceof byte[])
+            return (byte[]) unsafeBinary;
+        else if (unsafeBinary instanceof Binary)
+            return ((Binary) unsafeBinary).getData();
+        throw new StreamCorruptedException("Cannot retrieve valid binary from document!");
     }
 
 }

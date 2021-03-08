@@ -4,9 +4,9 @@ import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.variables.SerializedVariable;
+import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import fr.romitou.mongosk.adapters.MongoSKCodec;
 import org.bson.Document;
-import org.bson.types.Binary;
 
 import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
@@ -19,14 +19,18 @@ public class ItemTypeCodec implements MongoSKCodec<ItemType> {
     @Nonnull
     @Override
     public ItemType deserialize(Document document) throws StreamCorruptedException {
-        Binary binary = (Binary) document.get("binary");
+        Object unsafeObject = document.get("binary");
+        byte[] byteData = MongoSKAdapter.getBinaryData(unsafeObject);
         ClassInfo<?> classInfo = Classes.getExactClassInfo(ItemType.class);
-        if (binary == null || classInfo == null)
+        if (byteData == null || classInfo == null)
             throw new StreamCorruptedException("Cannot retrieve binary field from document or Skript's ItemType class info!");
-        Object deserialized = Classes.deserialize(classInfo, binary.getData());
+        Object deserialized = Classes.deserialize(classInfo, byteData);
         if (!(deserialized instanceof ItemType))
             throw new StreamCorruptedException("Cannot parse given binary to get an ItemType!");
-        return (ItemType) deserialized;
+        ItemType itemType = (ItemType) deserialized;
+        if (itemType.hasItem())
+            return itemType.getItem();
+        throw new StreamCorruptedException("Deserialized ItemType doesn't have valid data!");
     }
 
     @Nonnull
