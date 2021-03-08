@@ -70,7 +70,8 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
             Object value = mongoSKDocument.getBsonDocument().get(fieldName);
             return new Object[]{MongoSKAdapter.deserializeValue(value)};
         }
-        return mongoSKDocument.getBsonDocument().getList(fieldName, Object.class).toArray();
+        Object[] unsafeArray = mongoSKDocument.getBsonDocument().getList(fieldName, Object.class).toArray();
+        return MongoSKAdapter.deserializeValues(unsafeArray);
     }
 
     @Override
