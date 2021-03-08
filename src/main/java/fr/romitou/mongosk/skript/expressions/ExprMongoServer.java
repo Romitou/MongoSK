@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Locale;
 
-@Name("Mongo Server")
+@Name("Mongo server")
 @Description("Create a connection to your remote MongoDB host using this expression." +
     "This syntax requires to specify a valid MongoDB connection string." +
     "Don't forget to include the 'appName' option in order to improve MongoSK reports in case of problems and to identify requests to your server monitoring." +

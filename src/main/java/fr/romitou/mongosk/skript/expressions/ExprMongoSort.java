@@ -18,7 +18,7 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@Name("Mongo query sort")
+@Name("Mongo sort")
 @Description("Defines the sortings to be applied to the query. This is optional.")
 @Examples({"set {_query} to new mongosk query",
     "set mongo sort of {_query} to mongo ascending sort by field \"test\""})
