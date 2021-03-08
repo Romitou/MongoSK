@@ -13,9 +13,9 @@ public class LocationCodec implements MongoSKCodec<Location> {
     @Nonnull
     @Override
     public Location deserialize(Document document) throws StreamCorruptedException {
-        Integer x = document.getInteger("x"),
-            y = document.getInteger("y"),
-            z = document.getInteger("z");
+        Double x = document.getDouble("x"),
+            y = document.getDouble("y"),
+            z = document.getDouble("z");
         String worldName = document.getString("world");
         if (x == null || y == null || z == null || worldName == null)
             throw new StreamCorruptedException("Cannot retrieve x, y, z fields or world field from document!");
