@@ -83,7 +83,7 @@ public class MongoSKAdapter {
         if (!doc.containsKey(DOCUMENT_FIELD))
             return value;
         String codecName = doc.getString(DOCUMENT_FIELD);
-        MongoSKCodec<Object> codec = MongoSKAdapter.getCodecByName(codecName);
+        MongoSKCodec<?> codec = MongoSKAdapter.getCodecByName(codecName);
         if (codec == null) {
             Logger.severe("No codec found for " + codecName + "!",
                 "Loaded codecs: " + String.join(", ", MongoSKAdapter.getCodecNames()),
