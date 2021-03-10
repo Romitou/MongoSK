@@ -66,12 +66,26 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
         MongoSKDocument mongoSKDocument = exprMongoSKDocument.getSingle(e);
         if (fieldName == null || mongoSKDocument == null || mongoSKDocument.getBsonDocument() == null)
             return new Object[0];
-        if (isSingle) {
-            Object value = mongoSKDocument.getBsonDocument().get(fieldName);
-            return new Object[]{MongoSKAdapter.deserializeValue(value)};
+        if (!mongoSKDocument.getBsonDocument().containsKey(fieldName)) {
+            Logger.severe("The specified field does not exist in the document.",
+                "Document: " + mongoSKDocument.getBsonDocument().toJson(),
+                "Keys: " + mongoSKDocument.getBsonDocument().keySet());
+            return new Object[0];
         }
-        Object[] unsafeArray = mongoSKDocument.getBsonDocument().getList(fieldName, Object.class).toArray();
-        return MongoSKAdapter.deserializeValues(unsafeArray);
+        try {
+            if (isSingle) {
+                Object value = mongoSKDocument.getBsonDocument().get(fieldName);
+                return new Object[]{MongoSKAdapter.deserializeValue(value)};
+            }
+            List<Object> values = mongoSKDocument.getBsonDocument().getList(fieldName, Object.class);
+            return MongoSKAdapter.deserializeValues(values.toArray());
+        } catch (ClassCastException ex) {
+            Logger.severe("The type of item you are querying is not correct. " +
+                "This can happen if you want to retrieve a list, but it is a single value.",
+                "Document: " + mongoSKDocument.getBsonDocument().toJson(),
+                "Exception: " + ex.getMessage());
+            return new Object[0];
+        }
     }
 
     @Override
