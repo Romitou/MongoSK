@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
     "skript-json and convert the document to a Skript variable, and vice versa. " +
     "You can also define the JSON of the document.")
 @Examples({"set {_json} do {_document}'s mongo json",
-    "set mongo json of {_document} to \"\"\"example\"\": true\""})
+    "set mongo json of {_document} to \"{\"\"example\"\": true\"}"})
 @Since("2.0.0")
 public class ExprMongoDocumentJson extends SimplePropertyExpression<MongoSKDocument, String> {
 
