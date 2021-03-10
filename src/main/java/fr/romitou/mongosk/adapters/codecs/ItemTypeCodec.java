@@ -28,9 +28,7 @@ public class ItemTypeCodec implements MongoSKCodec<ItemType> {
         if (!(deserialized instanceof ItemType))
             throw new StreamCorruptedException("Cannot parse given binary to get an ItemType!");
         ItemType itemType = (ItemType) deserialized;
-        if (itemType.hasItem())
-            return itemType.getItem();
-        throw new StreamCorruptedException("Deserialized ItemType doesn't have valid data!");
+        return itemType.getItem();
     }
 
     @Nonnull
