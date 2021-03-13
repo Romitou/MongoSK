@@ -19,6 +19,7 @@ import org.bukkit.event.Event;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -107,8 +108,10 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
     public void change(@Nonnull final Event e, Object[] delta, @Nonnull Changer.ChangeMode mode) {
         String fieldName = exprFieldName.getSingle(e);
         MongoSKDocument mongoSKDocument = exprMongoSKDocument.getSingle(e);
-        List<Object> omega = Arrays.asList(MongoSKAdapter.serializeArray(delta));
-        if (fieldName == null || mongoSKDocument == null || mongoSKDocument.getBsonDocument() == null || omega.size() == 0)
+        List<?> omega = new ArrayList<>();
+        if (delta != null)
+            omega = Arrays.asList(MongoSKAdapter.serializeArray(delta));
+        if (fieldName == null || mongoSKDocument == null || mongoSKDocument.getBsonDocument() == null)
             return;
         switch (mode) {
             case ADD:
@@ -116,22 +119,14 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
                     List<Object> addList = mongoSKDocument.getBsonDocument().getList(fieldName, Object.class);
                     addList.addAll(omega);
                 } catch (RuntimeException ex) {
-                    Logger.severe("An error occurred during adding objects to Mongo document: " + ex.getMessage(),
-                        "Field name: " + fieldName,
-                        "Document: " + mongoSKDocument.getBsonDocument().toJson(),
-                        "Omega: " + omega
-                    );
+                    reportException("adding objects", fieldName, mongoSKDocument, omega, ex);
                 }
                 break;
             case SET:
                 try {
                     mongoSKDocument.getBsonDocument().put(fieldName, isSingle ? omega.get(0) : omega);
                 } catch (RuntimeException ex) {
-                    Logger.severe("An error occurred during setting Mongo document field: " + ex.getMessage(),
-                        "Field name: " + fieldName,
-                        "Document: " + mongoSKDocument.getBsonDocument().toJson(),
-                        "Omega: " + omega
-                    );
+                    reportException("setting field", fieldName, mongoSKDocument, omega, ex);
                 }
                 break;
             case REMOVE:
@@ -139,28 +134,27 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
                     List<Object> removeList = mongoSKDocument.getBsonDocument().getList(fieldName, Object.class);
                     removeList.removeAll(omega);
                 } catch (RuntimeException ex) {
-                    Logger.severe("An error occurred during removing objects from Mongo document: " + ex.getMessage(),
-                        "Field name: " + fieldName,
-                        "Document: " + mongoSKDocument.getBsonDocument().toJson(),
-                        "Omega: " + omega
-                    );
+                    reportException("removing objects", fieldName, mongoSKDocument, omega, ex);
                 }
                 break;
             case DELETE:
                 try {
-
                     mongoSKDocument.getBsonDocument().remove(fieldName);
                 } catch (RuntimeException ex) {
-                    Logger.severe("An error occurred during deleting field of Mongo document: " + ex.getMessage(),
-                        "Field name: " + fieldName,
-                        "Document: " + mongoSKDocument.getBsonDocument().toJson(),
-                        "Omega: " + omega
-                    );
+                    reportException("deleting field", fieldName, mongoSKDocument, omega, ex);
                 }
                 break;
             default:
                 break;
         }
+    }
+
+    private void reportException(String action, String fieldName, MongoSKDocument document, List<?> omega, Exception ex) {
+        Logger.severe("An error occurred during " + action + " of Mongo document: " + ex.getMessage(),
+            "Field name: " + fieldName,
+            "Document: " + document.getBsonDocument().toJson(),
+            "Omega: " + omega
+        );
     }
 
     @Override
