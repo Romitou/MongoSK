@@ -116,8 +116,11 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
         switch (mode) {
             case ADD:
                 try {
-                    List<Object> addList = mongoSKDocument.getBsonDocument().getList(fieldName, Object.class);
+                    ArrayList<Object> addList = new ArrayList<>(mongoSKDocument.getBsonDocument().getList(fieldName, Object.class));
                     addList.addAll(omega);
+                    mongoSKDocument.getBsonDocument().put(fieldName, addList);
+                } catch (NullPointerException ex) {
+                    mongoSKDocument.getBsonDocument().put(fieldName, omega);
                 } catch (RuntimeException ex) {
                     reportException("adding objects", fieldName, mongoSKDocument, omega, ex);
                 }
@@ -131,8 +134,9 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
                 break;
             case REMOVE:
                 try {
-                    List<Object> removeList = mongoSKDocument.getBsonDocument().getList(fieldName, Object.class);
+                    ArrayList<Object> removeList = new ArrayList<>(mongoSKDocument.getBsonDocument().getList(fieldName, Object.class));
                     removeList.removeAll(omega);
+                    mongoSKDocument.getBsonDocument().put(fieldName, removeList);
                 } catch (RuntimeException ex) {
                     reportException("removing objects", fieldName, mongoSKDocument, omega, ex);
                 }
