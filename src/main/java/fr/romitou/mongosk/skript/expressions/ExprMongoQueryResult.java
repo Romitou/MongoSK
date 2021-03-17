@@ -25,6 +25,7 @@ import org.bukkit.event.Event;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 @Name("Mongo simple query")
 @Description("Use this expression if you want to make simple requests, easily and quickly. " +
@@ -87,9 +88,9 @@ public class ExprMongoQueryResult extends SimpleExpression<MongoSKDocument> {
             query.buildFindPublisher().first().subscribe(observableSubscriber);
         else
             query.buildFindPublisher().subscribe(observableSubscriber);
+        List<Document> documents = observableSubscriber.get();
         Logger.debug("Simple get query executed in " + (System.currentTimeMillis() - getQuery) + "ms.");
-        return observableSubscriber.get()
-            .stream()
+        return documents.stream()
             .map(document -> new MongoSKDocument(document, query.getMongoSKCollection()))
             .toArray(MongoSKDocument[]::new);
     }
