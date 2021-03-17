@@ -17,12 +17,12 @@ import javax.annotation.Nonnull;
 @Examples({"set {_query} to new mongosk query",
     "set mongo limit of {_query} to 7"})
 @Since("2.0.0")
-public class ExprMongoQueryLimit extends SimplePropertyExpression<MongoSKQuery, Integer> {
+public class ExprMongoQueryLimit extends SimplePropertyExpression<MongoSKQuery, Number> {
 
     static {
         register(
             ExprMongoQueryLimit.class,
-            Integer.class,
+            Number.class,
             "mongo[(db|sk)] limit",
             "mongoskqueries"
         );
@@ -30,7 +30,7 @@ public class ExprMongoQueryLimit extends SimplePropertyExpression<MongoSKQuery, 
 
     @Nonnull
     @Override
-    public Integer convert(MongoSKQuery query) {
+    public Number convert(MongoSKQuery query) {
         return query.getLimit();
     }
 
@@ -39,7 +39,7 @@ public class ExprMongoQueryLimit extends SimplePropertyExpression<MongoSKQuery, 
         switch (mode) {
             case SET:
             case DELETE:
-                return CollectionUtils.array(Integer.class);
+                return CollectionUtils.array(Number.class);
             default:
                 return new Class[0];
         }
@@ -50,11 +50,11 @@ public class ExprMongoQueryLimit extends SimplePropertyExpression<MongoSKQuery, 
         MongoSKQuery mongoSKQuery = getExpr().getSingle(e);
         if (mongoSKQuery == null || delta == null)
             return;
-        if (!(delta[0] instanceof Integer))
+        if (!(delta[0] instanceof Number))
             return;
         switch (mode) {
             case SET:
-                mongoSKQuery.setLimit((Integer) delta[0]);
+                mongoSKQuery.setLimit(((Number) delta[0]).intValue());
                 break;
             case DELETE:
                 mongoSKQuery.setLimit(null);
@@ -64,8 +64,8 @@ public class ExprMongoQueryLimit extends SimplePropertyExpression<MongoSKQuery, 
 
     @Nonnull
     @Override
-    public Class<? extends Integer> getReturnType() {
-        return Integer.class;
+    public Class<? extends Number> getReturnType() {
+        return Number.class;
     }
 
     @Nonnull
