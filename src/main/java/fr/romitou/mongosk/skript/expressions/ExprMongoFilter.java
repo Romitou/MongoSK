@@ -45,37 +45,15 @@ public class ExprMongoFilter extends SimpleExpression<MongoSKFilter> {
     }
 
     private Expression<String> exprField;
-    private Expression<Object> exprObject;
+    private Expression<?> exprObject;
     private MongoSKComparator mongoSKComparator;
-
-    private static Bson getFilter(MongoSKComparator comparator, String field, Object value) {
-        switch (comparator) {
-            case EXISTS:
-                return Filters.exists(field, true);
-            case NOT_EXIST:
-                return Filters.exists(field, false);
-            case LESS_THAN:
-                return Filters.lt(field, value);
-            case LESS_THAN_OR_EQUAL:
-                return Filters.lte(field, value);
-            case GREATER_THAN:
-                return Filters.gt(field, value);
-            case GREATER_THAN_OR_EQUAL:
-                return Filters.gte(field, value);
-            case EQUALS:
-                return Filters.eq(field, value);
-            case NOT_EQUAL:
-                return Filters.ne(field, value);
-            default:
-                return null;
-        }
-    }
 
     @SuppressWarnings("unchecked")
     @Override
     public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
         exprField = (Expression<String>) exprs[0];
-        exprObject = (Expression<Object>) exprs[1];
+        if (exprs.length > 1)
+            exprObject = exprs[1];
         this.mongoSKComparator = MongoSKComparator.values()[matchedPattern];
         return true;
     }
@@ -83,10 +61,17 @@ public class ExprMongoFilter extends SimpleExpression<MongoSKFilter> {
     @Override
     protected MongoSKFilter[] get(@Nonnull final Event e) {
         String field = exprField.getSingle(e);
-        Object value = exprObject.getSingle(e);
-        if (field == null)
+        if (field == null || mongoSKComparator == null)
             return new MongoSKFilter[0];
-        if (mongoSKComparator == null || value == null)
+        if (exprObject == null) {
+            Bson filter = getFilter(mongoSKComparator, field, null);
+            if (filter == null)
+                return new MongoSKFilter[0];
+            MongoSKFilter mongoSKFilter = new MongoSKFilter(filter, toString(e, false));
+            return new MongoSKFilter[]{mongoSKFilter};
+        }
+        Object value = exprObject.getSingle(e);
+        if (value == null)
             return new MongoSKFilter[0];
         // Serialize input.
         value = MongoSKAdapter.serializeObject(value);
@@ -112,5 +97,28 @@ public class ExprMongoFilter extends SimpleExpression<MongoSKFilter> {
     @Nonnull
     public String toString(@Nullable Event e, boolean debug) {
         return "mongosk filter where field " + exprField.toString(e, debug) + " " + mongoSKComparator.toString() + " " + (exprObject != null ? exprObject.toString(e, debug) : "");
+    }
+
+    private static Bson getFilter(MongoSKComparator comparator, String field, Object value) {
+        switch (comparator) {
+            case EXISTS:
+                return Filters.exists(field, true);
+            case NOT_EXIST:
+                return Filters.exists(field, false);
+            case LESS_THAN:
+                return Filters.lt(field, value);
+            case LESS_THAN_OR_EQUAL:
+                return Filters.lte(field, value);
+            case GREATER_THAN:
+                return Filters.gt(field, value);
+            case GREATER_THAN_OR_EQUAL:
+                return Filters.gte(field, value);
+            case EQUALS:
+                return Filters.eq(field, value);
+            case NOT_EQUAL:
+                return Filters.ne(field, value);
+            default:
+                return null;
+        }
     }
 }
