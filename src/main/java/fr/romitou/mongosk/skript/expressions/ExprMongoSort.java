@@ -30,7 +30,7 @@ public class ExprMongoSort extends SimpleExpression<MongoSKSort> {
             ExprMongoSort.class,
             MongoSKSort.class,
             ExpressionType.SIMPLE,
-            "[a [new]] mongo[(db|sk)] (1¦asc[ending]|2¦desc[ending]) sort[ing] [by] field[s] %strings%"
+            "[[a] new] mongo[(db|sk)] (1¦asc[ending]|2¦desc[ending]) sort[ing] [by] field[s] %strings%"
         );
     }
 

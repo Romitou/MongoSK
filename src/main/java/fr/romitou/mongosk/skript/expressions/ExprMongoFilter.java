@@ -31,7 +31,7 @@ import java.util.Arrays;
 @Since("2.0.0")
 public class ExprMongoFilter extends SimpleExpression<MongoSKFilter> {
 
-    private static final String BASE_PATTERN = "[a [new]] mongo[(db|sk)] filter [where] field %string% ";
+    private static final String BASE_PATTERN = "[[a] new] mongo[(db|sk)] filter [where] field %string% ";
 
     static {
         Skript.registerExpression(
