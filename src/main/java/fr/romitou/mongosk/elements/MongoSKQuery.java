@@ -1,5 +1,6 @@
 package fr.romitou.mongosk.elements;
 
+import com.mongodb.client.model.Filters;
 import com.mongodb.reactivestreams.client.FindPublisher;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import org.bson.Document;
@@ -29,6 +30,8 @@ public class MongoSKQuery {
     }
 
     public MongoSKFilter getMongoSKFilter() {
+        if (mongoSKFilter == null)
+            return new MongoSKFilter(Filters.empty(), "empty filter");
         return mongoSKFilter;
     }
 

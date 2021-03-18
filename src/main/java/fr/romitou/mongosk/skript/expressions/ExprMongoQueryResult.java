@@ -99,12 +99,13 @@ public class ExprMongoQueryResult extends SimpleExpression<MongoSKDocument> {
     public Class<?>[] acceptChange(Changer.ChangeMode mode) {
         switch (mode) {
             case SET:
-                if (isFirstDocument) // MongoDB doesn't support replacing multiple documents
-                    return CollectionUtils.array(MongoSKDocument.class);
+                if (!isFirstDocument) // MongoDB doesn't support replacing multiple documents
+                    return null;
+                return CollectionUtils.array(MongoSKDocument.class);
             case DELETE:
                 return CollectionUtils.array();
             default:
-                return new Class[0];
+                return null;
         }
     }
 
@@ -117,10 +118,6 @@ public class ExprMongoQueryResult extends SimpleExpression<MongoSKDocument> {
             case DELETE:
                 long deleteQuery = System.currentTimeMillis();
                 SubscriberHelpers.ObservableSubscriber<DeleteResult> deleteSubscriber = new SubscriberHelpers.OperationSubscriber<>();
-                if (query.getMongoSKFilter() == null) {
-                    Logger.severe("It is mandatory to specify a filter if you wish to delete documents.");
-                    return;
-                }
                 if (isFirstDocument)
                     query.getMongoSKCollection().getMongoCollection()
                         .deleteOne(query.getMongoSKFilter().getFilter())
@@ -137,10 +134,6 @@ public class ExprMongoQueryResult extends SimpleExpression<MongoSKDocument> {
                 MongoSKDocument mongoSKDocument = (MongoSKDocument) delta[0];
                 if (mongoSKDocument == null)
                     return;
-                if (query.getMongoSKFilter() == null) {
-                    Logger.severe("It is mandatory to specify a filter if you wish to replace documents.");
-                    return;
-                }
                 SubscriberHelpers.ObservableSubscriber<UpdateResult> updateSubscriber = new SubscriberHelpers.OperationSubscriber<>();
                 query.getMongoSKCollection().getMongoCollection()
                     .replaceOne(query.getMongoSKFilter().getFilter(), mongoSKDocument.getBsonDocument())
@@ -186,6 +179,6 @@ public class ExprMongoQueryResult extends SimpleExpression<MongoSKDocument> {
             if (query != null)
                 return (isFirstDocument ? "first mongosk document" : "all mongosk documents") + query.getDisplay();
         }
-        return (isFirstDocument ? "first mongosk document" : "all mongosk documents") + "of a query";
+        return (isFirstDocument ? "first mongosk document" : "all mongosk documents") + " of a query";
     }
 }
