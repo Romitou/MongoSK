@@ -31,7 +31,7 @@ public class EntityCodec implements MongoSKCodec<Entity> {
     @Override
     public Document serialize(Entity entity) {
         Document document = new Document();
-        document.put("id", String.valueOf(entity.getEntityId()));
+        document.put("id", entity.getUniqueId().toString());
         return document;
     }
 
