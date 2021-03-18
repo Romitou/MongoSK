@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
     "insert mongo document {_document} into collection {mycollection}",
     "",
     "update mongo document {_document} of {mycollection}",
-    "delete mongo documents {_doc1} and {_doc2} from {mycollection}"})
+    "remove mongo documents {_doc1} and {_doc2} from {mycollection}"})
 @Since("2.0.0")
 public class EffManageMongoDocument extends Effect {
 

@@ -25,9 +25,9 @@ import java.util.Arrays;
 @Description("Create custom Mongo filters to target a certain type of data in your queries to your collections." +
     "The comparators are the same as for Skript.")
 @Examples({"set {_filter} to a new mongosk filter where field \"example\" is true",
-    "set {_doc} to first mongo document with filter {_filter} of {mycollection}",
+    "set {_doc} to first mongo document with filter {_filter} of collection {mycollection}",
     "",
-    "set {_doc} to all mongo documents with mongosk filter where \"example\" equals true of {mycollection}"})
+    "set {_docs::*} to all mongo documents with mongosk filter where \"example\" equals true of collection {mycollection}"})
 @Since("2.0.0")
 public class ExprMongoFilter extends SimpleExpression<MongoSKFilter> {
 
