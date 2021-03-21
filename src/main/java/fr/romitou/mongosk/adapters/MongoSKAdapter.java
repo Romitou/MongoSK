@@ -4,6 +4,7 @@ import com.mongodb.MongoClientSettings;
 import fr.romitou.mongosk.Logger;
 import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.adapters.codecs.*;
+import fr.romitou.mongosk.elements.MongoSKDocument;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecConfigurationException;
 import org.bson.types.Binary;
@@ -81,7 +82,7 @@ public class MongoSKAdapter {
             return value;
         Document doc = (Document) value;
         if (!doc.containsKey(DOCUMENT_FIELD))
-            return value;
+            return new MongoSKDocument(doc, null);
         String codecName = doc.getString(DOCUMENT_FIELD);
         MongoSKCodec<?> codec = MongoSKAdapter.getCodecByName(codecName);
         if (codec == null) {
@@ -89,7 +90,7 @@ public class MongoSKAdapter {
                 "Loaded codecs: " + String.join(", ", MongoSKAdapter.getCodecNames()),
                 "Requested codec: " + codecName
             );
-            return new Object[0];
+            return new MongoSKDocument(doc, null);
         }
         try {
             return codec.deserialize(doc);
@@ -99,11 +100,15 @@ public class MongoSKAdapter {
                 "Original value class: " + doc.toString(),
                 "Document JSON: " + doc.toJson()
             );
-            return new Object[0];
+            return new MongoSKDocument(doc, null);
         }
     }
 
     public static Object serializeObject(Object unsafeObject) {
+        if (unsafeObject == null)
+            return null;
+        if (unsafeObject instanceof MongoSKDocument)
+            return ((MongoSKDocument) unsafeObject).getBsonDocument();
         Logger.debug("Searching codec for " + unsafeObject.getClass() + " class...");
         MongoSKCodec<Object> codec = MongoSKAdapter.getCodecByClass(unsafeObject.getClass());
         if (codec == null) {
