@@ -3,6 +3,7 @@ package fr.romitou.mongosk.elements;
 import com.mongodb.client.model.Filters;
 import com.mongodb.reactivestreams.client.FindPublisher;
 import com.mongodb.reactivestreams.client.MongoCollection;
+import fr.romitou.mongosk.Logger;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class MongoSKQuery {
     private Integer skip;
 
     public MongoSKQuery() {
+        this.printDebug();
     }
 
     public MongoSKCollection getMongoSKCollection() {
@@ -78,6 +80,18 @@ public class MongoSKQuery {
     public void setMongoSKSort(MongoSKSort mongoSKSort) {
         this.mongoSKSort = mongoSKSort;
     }
+
+    public void printDebug() {
+        Logger.debug("Informations about this MongoSK query:",
+            "MongoSK Filter: " + this.mongoSKFilter.toString(),
+            "MongoSK Sort: " + this.mongoSKSort.toString(),
+            "Disk usage: " + this.diskUsage,
+            "Comment: " + this.comment,
+            "Limit: " + this.limit,
+            "Skip: " + this.skip
+        );
+    }
+
 
     public FindPublisher<Document> buildFindPublisher() {
         MongoCollection<Document> mongoCollection = getMongoSKCollection().getMongoCollection();

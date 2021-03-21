@@ -67,7 +67,7 @@ public class MongoSK extends JavaPlugin {
         }
 
         // Register MongoSK codecs.
-        if (getConfig().getBoolean("skript-adapters.enabled", false)) {
+        if (MongoSKAdapter.ADAPTERS_ENABLED) {
             Logger.info("Loading MongoSK adapters and codecs...");
             List<String> codecs = MongoSKAdapter.loadCodecs();
             Logger.info("Loaded " + codecs.size() + " codecs!",
@@ -81,6 +81,7 @@ public class MongoSK extends JavaPlugin {
             "Skript version: " + skriptPlugin.getDescription().getVersion(),
             "Server version: " + this.getServer().getVersion()
         );
+        Logger.info("As a reminder, if you encounter problems, activate the debug mode in the MongoSK configuration to get additional useful information.");
 
         // Register Metrics.
         // Learn more: https://bstats.org/getting-started
@@ -93,9 +94,9 @@ public class MongoSK extends JavaPlugin {
     }
 
     private void registerMetrics() {
-
         Metrics metrics = new Metrics(this, 8537);
         metrics.addCustomChart(new Metrics.SimplePie("skript_version", () -> Skript.getVersion().toString()));
+        metrics.addCustomChart(new Metrics.SimplePie("adapters_enabled", MongoSKAdapter.ADAPTERS_ENABLED::toString));
     }
 
     private void loadConfiguration() {

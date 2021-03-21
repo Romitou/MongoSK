@@ -1,5 +1,6 @@
 package fr.romitou.mongosk.elements;
 
+import fr.romitou.mongosk.Logger;
 import org.bson.Document;
 
 import javax.annotation.Nullable;
@@ -13,6 +14,7 @@ public class MongoSKDocument {
     public MongoSKDocument(Document bsonDocument, @Nullable MongoSKCollection baseCollection) {
         this.bsonDocument = bsonDocument;
         this.baseCollection = baseCollection;
+        this.printDebug();
     }
 
     public Document getBsonDocument() {
@@ -29,6 +31,14 @@ public class MongoSKDocument {
 
     public void setBaseCollection(MongoSKCollection baseCollection) {
         this.baseCollection = baseCollection;
+    }
+
+    public void printDebug() {
+        Logger.debug("Informations about this MongoSK document:",
+            "BSON document: " + this.bsonDocument.toString(),
+            "JSON: " + this.bsonDocument.toJson(),
+            "Base collection: " + this.baseCollection.toString()
+        );
     }
 
     @Override

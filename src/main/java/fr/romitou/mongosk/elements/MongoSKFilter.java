@@ -1,5 +1,6 @@
 package fr.romitou.mongosk.elements;
 
+import fr.romitou.mongosk.Logger;
 import org.bson.conversions.Bson;
 
 import java.util.Objects;
@@ -12,6 +13,7 @@ public class MongoSKFilter {
     public MongoSKFilter(Bson filter, String display) {
         this.filter = filter;
         this.display = display;
+        this.printDebug();
     }
 
     public Bson getFilter() {
@@ -20,6 +22,13 @@ public class MongoSKFilter {
 
     public String getDisplay() {
         return display;
+    }
+
+    public void printDebug() {
+        Logger.debug("Informations about this MongoSK filter:",
+            "BSON filter: " + this.filter.toBsonDocument(),
+            "Display: " + this.display
+        );
     }
 
     @Override

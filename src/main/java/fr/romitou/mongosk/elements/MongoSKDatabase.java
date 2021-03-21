@@ -1,6 +1,7 @@
 package fr.romitou.mongosk.elements;
 
 import com.mongodb.reactivestreams.client.MongoDatabase;
+import fr.romitou.mongosk.Logger;
 
 import java.util.Objects;
 
@@ -10,10 +11,17 @@ public class MongoSKDatabase {
 
     public MongoSKDatabase(MongoDatabase mongoDatabase) {
         this.mongoDatabase = mongoDatabase;
+        this.printDebug();
     }
 
     public MongoDatabase getMongoDatabase() {
         return mongoDatabase;
+    }
+
+    public void printDebug() {
+        Logger.debug("Informations about this MongoSK database:",
+            "Mongo Database: " + this.mongoDatabase.getName()
+        );
     }
 
     @Override

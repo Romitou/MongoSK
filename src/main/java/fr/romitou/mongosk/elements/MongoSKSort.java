@@ -1,5 +1,6 @@
 package fr.romitou.mongosk.elements;
 
+import fr.romitou.mongosk.Logger;
 import org.bson.conversions.Bson;
 
 import java.util.Objects;
@@ -12,6 +13,7 @@ public class MongoSKSort {
     public MongoSKSort(Bson sort, String display) {
         this.sort = sort;
         this.display = display;
+        this.printDebug();
     }
 
     public Bson getSort() {
@@ -20,6 +22,13 @@ public class MongoSKSort {
 
     public String getDisplay() {
         return display;
+    }
+
+    public void printDebug() {
+        Logger.debug("Informations about this MongoSK sort:",
+            "BSON filter: " + this.sort.toBsonDocument(),
+            "Display: " + this.display
+        );
     }
 
     @Override

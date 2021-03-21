@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 
 public class MongoSKAdapter {
 
-    private final static String DOCUMENT_FIELD = MongoSK.getConfiguration().getString("skript-adapters.document-field", "__MongoSK__");
-    private final static Boolean ADAPTERS_ENABLED = MongoSK.getConfiguration().getBoolean("skript-adapters.enabled", false);
-    private final static Boolean SAFE_DESERIALIZATION = MongoSK.getConfiguration().getBoolean("skript-adapters.safe-data", true);
+    public final static String DOCUMENT_FIELD = MongoSK.getConfiguration().getString("skript-adapters.document-field", "__MongoSK__");
+    public final static Boolean ADAPTERS_ENABLED = MongoSK.getConfiguration().getBoolean("skript-adapters.enabled", false);
+    public final static Boolean SAFE_DESERIALIZATION = MongoSK.getConfiguration().getBoolean("skript-adapters.safe-data", true);
 
     public static List<MongoSKCodec<?>> codecs = new ArrayList<>();
 

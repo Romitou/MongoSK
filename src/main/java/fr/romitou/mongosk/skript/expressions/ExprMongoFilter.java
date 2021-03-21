@@ -11,6 +11,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import com.mongodb.client.model.Filters;
+import fr.romitou.mongosk.Logger;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import fr.romitou.mongosk.elements.MongoSKFilter;
 import fr.romitou.mongosk.skript.MongoSKComparator;
@@ -118,6 +119,9 @@ public class ExprMongoFilter extends SimpleExpression<MongoSKFilter> {
             case NOT_EQUAL:
                 return Filters.ne(field, value);
             default:
+                Logger.warn("No filter was found with this comparator: " + comparator.name(),
+                    "Comparator pattern: " + comparator.getPattern()
+                );
                 return null;
         }
     }

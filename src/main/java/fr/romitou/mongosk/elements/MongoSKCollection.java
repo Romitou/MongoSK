@@ -1,6 +1,7 @@
 package fr.romitou.mongosk.elements;
 
 import com.mongodb.reactivestreams.client.MongoCollection;
+import fr.romitou.mongosk.Logger;
 import org.bson.Document;
 
 import java.util.Objects;
@@ -11,10 +12,17 @@ public class MongoSKCollection {
 
     public MongoSKCollection(MongoCollection<Document> mongoCollection) {
         this.mongoCollection = mongoCollection;
+        this.printDebug();
     }
 
     public MongoCollection<Document> getMongoCollection() {
         return mongoCollection;
+    }
+
+    public void printDebug() {
+        Logger.debug("Informations about this MongoSK collection:",
+            "Mongo Collection: " + this.mongoCollection.getNamespace()
+        );
     }
 
     @Override
