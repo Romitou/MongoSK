@@ -42,7 +42,7 @@ public class ExprMongoQueryDiskUsage extends SimplePropertyExpression<MongoSKQue
             case DELETE:
                 return CollectionUtils.array(Boolean.class);
             default:
-                return new Class[0];
+                return null;
         }
     }
 

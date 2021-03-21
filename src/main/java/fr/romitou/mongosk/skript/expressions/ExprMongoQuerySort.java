@@ -42,7 +42,7 @@ public class ExprMongoQuerySort extends SimplePropertyExpression<MongoSKQuery, M
             case DELETE:
                 return CollectionUtils.array(MongoSKSort.class);
             default:
-                return new Class[0];
+                return null;
         }
     }
 

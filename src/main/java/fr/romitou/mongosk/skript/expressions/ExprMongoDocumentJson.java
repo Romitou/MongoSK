@@ -45,7 +45,7 @@ public class ExprMongoDocumentJson extends SimplePropertyExpression<MongoSKDocum
     public Class<?>[] acceptChange(@Nonnull Changer.ChangeMode mode) {
         if (mode == Changer.ChangeMode.SET)
             return CollectionUtils.array(String.class);
-        return new Class[0];
+        return null;
     }
 
     @Override

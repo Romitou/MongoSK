@@ -41,7 +41,7 @@ public class ExprMongoQueryLimit extends SimplePropertyExpression<MongoSKQuery, 
             case DELETE:
                 return CollectionUtils.array(Number.class);
             default:
-                return new Class[0];
+                return null;
         }
     }
 

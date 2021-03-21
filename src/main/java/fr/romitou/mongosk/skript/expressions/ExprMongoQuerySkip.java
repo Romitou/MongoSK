@@ -41,7 +41,7 @@ public class ExprMongoQuerySkip extends SimplePropertyExpression<MongoSKQuery, N
             case DELETE:
                 return CollectionUtils.array(Number.class);
             default:
-                return new Class[0];
+                return null;
         }
     }
 

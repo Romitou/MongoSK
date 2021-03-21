@@ -43,7 +43,7 @@ public class ExprMongoQueryFilter extends SimplePropertyExpression<MongoSKQuery,
             case DELETE:
                 return CollectionUtils.array(MongoSKFilter.class);
             default:
-                return new Class[0];
+                return null;
         }
     }
 

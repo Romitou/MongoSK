@@ -93,14 +93,15 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
     public Class<?>[] acceptChange(Changer.ChangeMode mode) {
         switch (mode) {
             case ADD:
-                if (!isSingle)
-                    return CollectionUtils.array(Object[].class);
+                if (isSingle)
+                    return null;
+                return CollectionUtils.array(Object[].class);
             case SET:
             case REMOVE:
             case DELETE:
                 return CollectionUtils.array(isSingle ? Object.class : Object[].class);
             default:
-                return new Class[0];
+                return null;
         }
     }
 
