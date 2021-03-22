@@ -16,6 +16,7 @@ import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
 import fr.romitou.mongosk.Logger;
 import fr.romitou.mongosk.elements.MongoSKServer;
+import fr.romitou.mongosk.listeners.MongoCommandListener;
 import org.bukkit.event.Event;
 
 import javax.annotation.Nonnull;
@@ -55,6 +56,8 @@ public class ExprMongoServer extends SimpleExpression<MongoSKServer> {
         String rawConnectionString = exprRawConnectionString.getSingle(e);
         if (rawConnectionString == null)
             return new MongoSKServer[0];
+
+        // Validate the connection string.
         ConnectionString connectionString;
         try {
             connectionString = new ConnectionString(rawConnectionString);
@@ -63,15 +66,28 @@ public class ExprMongoServer extends SimpleExpression<MongoSKServer> {
             return new MongoSKServer[0];
         }
 
-        MongoClientSettings settings = MongoClientSettings.builder()
-            .applyConnectionString(connectionString)
-            .build();
+        // Create listeners.
+        MongoCommandListener mongoCommandListener = new MongoCommandListener();
 
-        MongoClient mongoClient = MongoClients.create(settings);
+        // Build the Mongo client settings.
+        MongoClientSettings.Builder settings = MongoClientSettings.builder()
+            .applyConnectionString(connectionString)
+            .addCommandListener(mongoCommandListener);
+        MongoClient mongoClient = MongoClients.create(settings.build());
+
+        // Get the most pertinent displayed name for this client.
         String displayedName = connectionString.getApplicationName() == null
             ? connectionString.getHosts().get(0)
             : connectionString.getApplicationName();
-        return new MongoSKServer[]{new MongoSKServer(displayedName, mongoClient)};
+
+        // Create the MongoSKServer object.
+        MongoSKServer mongoSKServer = new MongoSKServer(displayedName, mongoClient);
+
+        // Add this server to the listeners (we must do this because the client is only created after the builder).
+        mongoCommandListener.setMongoSKServer(mongoSKServer);
+
+        // Return the MongoSKServer linked with the listeners.
+        return new MongoSKServer[]{mongoSKServer};
     }
 
     @Override

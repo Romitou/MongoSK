@@ -5,7 +5,9 @@ import fr.romitou.mongosk.Logger;
 import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.adapters.codecs.*;
 import fr.romitou.mongosk.elements.MongoSKDocument;
+import org.bson.BsonDocument;
 import org.bson.Document;
+import org.bson.codecs.DecoderContext;
 import org.bson.codecs.configuration.CodecConfigurationException;
 import org.bson.types.Binary;
 
@@ -148,6 +150,12 @@ public class MongoSKAdapter {
         else if (unsafeBinary instanceof Binary)
             return ((Binary) unsafeBinary).getData();
         throw new StreamCorruptedException("Cannot retrieve valid binary from document!");
+    }
+
+    public static Document bsonDocumentToDocument(BsonDocument bsonDocument) {
+        return MongoClientSettings.getDefaultCodecRegistry()
+            .get(Document.class)
+            .decode(bsonDocument.asBsonReader(), DecoderContext.builder().build());
     }
 
 }

@@ -6,6 +6,7 @@ import com.mongodb.reactivestreams.client.MongoClient;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import fr.romitou.mongosk.elements.MongoSKServer;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -112,6 +113,12 @@ public class MongoSK extends JavaPlugin {
             .stream()
             .map(MongoSKServer::getMongoClient)
             .forEach(MongoClient::close);
+    }
+
+    public void callEvent(Event event) {
+        if (!this.isEnabled())
+            return;
+        getServer().getScheduler().runTask(this, () -> getServer().getPluginManager().callEvent(event));
     }
 
 }
