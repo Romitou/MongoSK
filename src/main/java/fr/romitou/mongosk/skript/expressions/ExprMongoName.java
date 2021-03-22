@@ -48,8 +48,6 @@ public class ExprMongoName extends SimpleExpression<String> {
     @Override
     protected String[] get(@Nonnull Event e) {
         Object object = exprObject.getSingle(e);
-        if (object == null)
-            return new String[0];
         if (object instanceof MongoSKCollection)
             return new String[]{(((MongoSKCollection) object).getMongoCollection().getNamespace().getCollectionName())};
         else if (object instanceof MongoSKDatabase)

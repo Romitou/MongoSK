@@ -41,7 +41,7 @@ public class ExprNewMongoDocument extends SimpleExpression<MongoSKDocument> {
 
     @Override
     protected MongoSKDocument[] get(@Nonnull final Event e) {
-        return new MongoSKDocument[]{new MongoSKDocument(new Document(), null)};
+        return new MongoSKDocument[]{new MongoSKDocument()};
     }
 
     @Override

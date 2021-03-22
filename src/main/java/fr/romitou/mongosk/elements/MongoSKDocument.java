@@ -11,6 +11,14 @@ public class MongoSKDocument {
     private Document bsonDocument;
     private MongoSKCollection baseCollection;
 
+    public MongoSKDocument() {
+        this(new Document(), null);
+    }
+
+    public MongoSKDocument(Document bsonDocument) {
+        this(bsonDocument, null);
+    }
+
     public MongoSKDocument(Document bsonDocument, @Nullable MongoSKCollection baseCollection) {
         this.bsonDocument = bsonDocument;
         this.baseCollection = baseCollection;
@@ -35,9 +43,9 @@ public class MongoSKDocument {
 
     public void printDebug() {
         Logger.debug("Informations about this MongoSK document:",
-            "BSON document: " + this.bsonDocument.toString(),
+            // "BSON document: " + this.bsonDocument,
             "JSON: " + this.bsonDocument.toJson(),
-            "Base collection: " + this.baseCollection.toString()
+            "Base collection: " + this.baseCollection
         );
     }
 
