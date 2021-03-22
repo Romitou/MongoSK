@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Name("Mongo simple query")
+@Name("Mongo query result")
 @Description("Use this expression if you want to make simple requests, easily and quickly. " +
     "To do so, you must specify the type of your query: are you looking for several documents or the first document in " +
     "the collection? Then, the first means is to use a filter to specify the type of data you are looking for. " +
