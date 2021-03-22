@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
     "Indeed, it allows to execute any command to a database, which will return the documents to you. " +
     "You are therefore no longer dependent on the features of MongoSK, and you can use any commands. " +
     "To learn more about the possible commands, see: https://docs.mongodb.com/manual/reference/command/.")
-@Examples({"set {_docs::*} to results of mongo command \"{ \"\"serverStatus\"\": 1 }\" in {database}",
+@Examples({"set {_docs::*} to results of mongo command \"{ \"\"serverStatus\"\": 1 }\" of database {database}",
     "set {_version} to mongo value \"version\" of {_docs::1}",
     "broadcast \"Mongo host version: %{_version}%\""})
 @Since("2.0.3")
@@ -38,7 +38,7 @@ public class ExprMongoCommandResult extends SimpleExpression<MongoSKDocument> {
             ExprMongoCommandResult.class,
             MongoSKDocument.class,
             ExpressionType.COMBINED,
-            "(result|document)s of mongo[(sk|db)] command %string% (of|in) %mongoskdatabase%"
+            "(results|documents) of mongo[(sk|db)] command %string% (of|in) database %mongoskdatabase%"
         );
     }
 
@@ -92,6 +92,6 @@ public class ExprMongoCommandResult extends SimpleExpression<MongoSKDocument> {
     @Nonnull
     @Override
     public String toString(@Nullable Event e, boolean debug) {
-        return "result of mongo command " + exprJsonString.toString(e, debug) + " of " + exprMongoSKDatabase.toString(e, debug);
+        return "result of mongo command " + exprJsonString.toString(e, debug) + " of database " + exprMongoSKDatabase.toString(e, debug);
     }
 }
