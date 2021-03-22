@@ -83,8 +83,8 @@ public class MongoSKQuery {
 
     public void printDebug() {
         Logger.debug("Informations about this MongoSK query:",
-            "MongoSK Filter: " + this.mongoSKFilter.toString(),
-            "MongoSK Sort: " + this.mongoSKSort.toString(),
+            "MongoSK Filter: " + this.mongoSKFilter,
+            "MongoSK Sort: " + this.mongoSKSort,
             "Disk usage: " + this.diskUsage,
             "Comment: " + this.comment,
             "Limit: " + this.limit,

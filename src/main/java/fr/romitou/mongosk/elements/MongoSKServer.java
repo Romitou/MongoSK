@@ -28,7 +28,7 @@ public class MongoSKServer {
 
     public void printDebug() {
         Logger.debug("Informations about " + this.displayedName + " MongoSK server:",
-            "Cluster description: " + this.mongoClient.getClusterDescription().toString(),
+            "Cluster description: " + this.mongoClient.getClusterDescription(),
             "Is cluster compatible with Mongo driver: " + this.mongoClient.getClusterDescription().isCompatibleWithDriver()
         );
     }
