@@ -17,6 +17,7 @@ import org.bukkit.event.Event;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 
 @Name("Mongo joined filters")
 @Description("Thanks to this expression, you will be able to combine two filters to refine your queries. " +
@@ -32,7 +33,8 @@ public class ExprMongoJoinedFilters extends SimpleExpression<MongoSKFilter> {
             ExprMongoJoinedFilters.class,
             MongoSKFilter.class,
             ExpressionType.COMBINED,
-            "mongo[(sk|db)] joined filters %mongoskfilter% (1¦and|2¦or|3¦nor) %mongoskfilter%"
+            "mongo[(sk|db)] joined filters %mongoskfilter% (1¦and|2¦or|3¦nor) %mongoskfilter%",
+            "mongo[(sk|db)] joined filters %mongoskfilters% with (1¦and|2¦or|3¦nor) [join] mode"
         );
     }
 
@@ -43,27 +45,39 @@ public class ExprMongoJoinedFilters extends SimpleExpression<MongoSKFilter> {
     @Override
     public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
         exprFirstFilter = (Expression<MongoSKFilter>) exprs[0];
-        exprSecondFilter = (Expression<MongoSKFilter>) exprs[1];
+        if (matchedPattern == 0)
+            exprSecondFilter = (Expression<MongoSKFilter>) exprs[1];
         this.parseMark = parseResult.mark;
         return true;
     }
 
     @Override
     protected MongoSKFilter[] get(@Nonnull Event e) {
-        MongoSKFilter firstFilter = exprFirstFilter.getSingle(e);
-        MongoSKFilter secondFilter = exprSecondFilter.getSingle(e);
-        if (firstFilter == null || secondFilter == null)
-            return new MongoSKFilter[0];
+        Bson[] filters;
+        if (exprSecondFilter == null) {
+            MongoSKFilter[] mongoSKFilters = exprFirstFilter.getArray(e);
+            if (mongoSKFilters.length == 0)
+                return new MongoSKFilter[0];
+            filters = Arrays.stream(mongoSKFilters)
+                .map(MongoSKFilter::getFilter)
+                .toArray(Bson[]::new);
+        } else {
+            MongoSKFilter firstFilter = exprFirstFilter.getSingle(e);
+            MongoSKFilter secondFilter = exprSecondFilter.getSingle(e);
+            if (firstFilter == null || secondFilter == null)
+                return new MongoSKFilter[0];
+            filters = new Bson[]{firstFilter.getFilter(), secondFilter.getFilter()};
+        }
         Bson joinedFilter;
         switch (parseMark) {
             case 1:
-                joinedFilter = Filters.and(firstFilter.getFilter(), secondFilter.getFilter());
+                joinedFilter = Filters.and(filters);
                 break;
             case 2:
-                joinedFilter = Filters.or(firstFilter.getFilter(), secondFilter.getFilter());
+                joinedFilter = Filters.or(filters);
                 break;
             case 3:
-                joinedFilter = Filters.nor(firstFilter.getFilter(), secondFilter.getFilter());
+                joinedFilter = Filters.nor(filters);
                 break;
             default:
                 return new MongoSKFilter[0];
@@ -85,6 +99,9 @@ public class ExprMongoJoinedFilters extends SimpleExpression<MongoSKFilter> {
     @Nonnull
     @Override
     public String toString(@Nullable final Event e, boolean debug) {
-        return exprFirstFilter.toString(e, debug) + (parseMark == 1 ? "and " : parseMark == 2 ? "or " : "nor ") + exprSecondFilter.toString(e, debug);
+        String joinMode = parseMark == 1 ? " and " : parseMark == 2 ? " or " : " nor ";
+        if (exprSecondFilter == null)
+            return exprFirstFilter.toString(e, debug) + " with" + joinMode + "join mode";
+        return exprFirstFilter.toString(e, debug) +  joinMode + exprSecondFilter.toString(e, debug);
     }
 }
