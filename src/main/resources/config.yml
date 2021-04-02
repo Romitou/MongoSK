@@ -24,3 +24,11 @@ skript-adapters:
     # The prefix and the field used by MongoSK in the storage of your documents.
     # This field must be unique and not conflict with existing entries in your documents.
     document-field: "__MongoSK__"
+
+# When you activate these settings, the relevant drop effects will be registered by Skript and can be used.
+# By default, these are disabled to avoid any problems, because any drop action is irreversible!
+allow-drop:
+    # Activates the 'drop [the] mongo[(sk|db)] database %mongoskdatabase%' effect.
+    database: false
+    # Activates the 'drop [the] mongo[(sk|db)] collection %mongoskcollection%' effect.
+    collection: false
