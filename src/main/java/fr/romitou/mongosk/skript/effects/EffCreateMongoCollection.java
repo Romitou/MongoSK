@@ -1,6 +1,10 @@
 package fr.romitou.mongosk.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -12,6 +16,12 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@Name("Create Mongo collection")
+@Description("Quickly create a collection with a specific name in one of your databases. " +
+    "Make sure it does not exist first.")
+@Examples({"set {mydatabase} to mongo database named \"exampleDatabase\" from {myserver}",
+    "create a mongo collection named \"playerData\" in {mydatabase}"})
+@Since("2.0.3")
 public class EffCreateMongoCollection extends Effect {
 
     static {
