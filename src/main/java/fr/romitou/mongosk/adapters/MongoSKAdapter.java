@@ -99,7 +99,7 @@ public class MongoSKAdapter {
         } catch (StreamCorruptedException ex) {
             Logger.severe("An error occurred during the deserialization of the document: " + ex.getMessage(),
                 "Requested codec: " + codecName,
-                "Original value class: " + doc.toString(),
+                "Original value class: " + doc,
                 "Document JSON: " + doc.toJson()
             );
             return new MongoSKDocument(doc, null);
@@ -127,7 +127,7 @@ public class MongoSKAdapter {
         Document serializedDocument = codec.serialize(unsafeObject);
         serializedDocument.put(DOCUMENT_FIELD, codec.getName());
         Logger.debug("Result of the serialization: ",
-            "Initial object: " + unsafeObject.toString(),
+            "Initial object: " + unsafeObject,
             "Serialized document: " + serializedDocument.toJson());
         return serializedDocument;
     }

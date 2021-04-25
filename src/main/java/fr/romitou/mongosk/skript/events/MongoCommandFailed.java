@@ -13,6 +13,8 @@ import javax.annotation.Nonnull;
 
 public class MongoCommandFailed extends Event {
 
+    private static final HandlerList HANDLERS = new HandlerList();
+
     static {
         Skript.registerEvent(
             "Mongo command failed",
@@ -46,8 +48,6 @@ public class MongoCommandFailed extends Event {
         }, 0);
     }
 
-    private static final HandlerList HANDLERS = new HandlerList();
-
     private final MongoSKServer mongoSKServer;
     private final Throwable throwable;
     private final Long elapsedTime;
@@ -58,12 +58,12 @@ public class MongoCommandFailed extends Event {
         this.elapsedTime = elapsedTime;
     }
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
+    public static HandlerList getHandlerList() {
         return HANDLERS;
     }
 
-    public static HandlerList getHandlerList() {
+    @Override
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
 

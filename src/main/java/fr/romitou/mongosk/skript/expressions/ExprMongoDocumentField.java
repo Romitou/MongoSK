@@ -82,7 +82,7 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
             return MongoSKAdapter.deserializeValues(values.toArray());
         } catch (ClassCastException ex) {
             Logger.severe("The type of item you are querying is not correct. " +
-                "This can happen if you want to retrieve a list, but it is a single value.",
+                    "This can happen if you want to retrieve a list, but it is a single value.",
                 "Document: " + mongoSKDocument.getBsonDocument().toJson(),
                 "Exception: " + ex.getMessage());
             return new Object[0];

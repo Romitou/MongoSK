@@ -12,6 +12,7 @@ import org.bukkit.event.Event;
  *         mongo list "lol": "foo" and "bar"
  *     broadcast {_variable}'s mongo json
  * </code>
+ *
  * @param <T> The value associated with this section
  */
 public abstract class MongoSection<T> extends EffectSection {
@@ -25,12 +26,12 @@ public abstract class MongoSection<T> extends EffectSection {
         endSection();
     }
 
-    protected void setVariable(Variable<?> variable) {
-        this.variable = variable;
-    }
-
     protected Variable<?> getVariable() {
         return variable;
+    }
+
+    protected void setVariable(Variable<?> variable) {
+        this.variable = variable;
     }
 
     protected abstract T provideValue();

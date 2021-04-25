@@ -11,7 +11,6 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import fr.romitou.mongosk.elements.MongoSKDocument;
-import org.bson.Document;
 import org.bukkit.event.Event;
 
 import javax.annotation.Nonnull;

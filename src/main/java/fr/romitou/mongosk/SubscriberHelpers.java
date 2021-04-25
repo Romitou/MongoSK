@@ -27,9 +27,13 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Subscriber helper implementations for the Quick Tour.
+ *
  * @author Romitou 27/02/2021
  */
 public final class SubscriberHelpers {
+
+    private SubscriberHelpers() {
+    }
 
     /**
      * A Subscriber that stores the publishers results and provides a latch so can block on completion.
@@ -118,8 +122,5 @@ public final class SubscriberHelpers {
             super.onSubscribe(s);
             s.request(Integer.MAX_VALUE);
         }
-    }
-
-    private SubscriberHelpers() {
     }
 }

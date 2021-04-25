@@ -52,6 +52,7 @@ public class ExprMongoCommandResult extends SimpleExpression<MongoSKDocument> {
         exprMongoSKDatabase = (Expression<MongoSKDatabase>) exprs[1];
         return true;
     }
+
     @Override
     protected MongoSKDocument[] get(@Nonnull Event e) {
         String jsonString = exprJsonString.getSingle(e);

@@ -49,6 +49,32 @@ public class ExprMongoFilter extends SimpleExpression<MongoSKFilter> {
     private Expression<?> exprObject;
     private MongoSKComparator mongoSKComparator;
 
+    private static Bson getFilter(MongoSKComparator comparator, String field, Object value) {
+        switch (comparator) {
+            case EXISTS:
+                return Filters.exists(field, true);
+            case NOT_EXIST:
+                return Filters.exists(field, false);
+            case LESS_THAN:
+                return Filters.lt(field, value);
+            case LESS_THAN_OR_EQUAL:
+                return Filters.lte(field, value);
+            case GREATER_THAN:
+                return Filters.gt(field, value);
+            case GREATER_THAN_OR_EQUAL:
+                return Filters.gte(field, value);
+            case EQUALS:
+                return Filters.eq(field, value);
+            case NOT_EQUAL:
+                return Filters.ne(field, value);
+            default:
+                Logger.warn("No filter was found with this comparator: " + comparator.name(),
+                    "Comparator pattern: " + comparator.getPattern()
+                );
+                return null;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
@@ -98,31 +124,5 @@ public class ExprMongoFilter extends SimpleExpression<MongoSKFilter> {
     @Nonnull
     public String toString(@Nullable Event e, boolean debug) {
         return "mongosk filter where field " + exprField.toString(e, debug) + " " + mongoSKComparator.toString() + " " + (exprObject != null ? exprObject.toString(e, debug) : "");
-    }
-
-    private static Bson getFilter(MongoSKComparator comparator, String field, Object value) {
-        switch (comparator) {
-            case EXISTS:
-                return Filters.exists(field, true);
-            case NOT_EXIST:
-                return Filters.exists(field, false);
-            case LESS_THAN:
-                return Filters.lt(field, value);
-            case LESS_THAN_OR_EQUAL:
-                return Filters.lte(field, value);
-            case GREATER_THAN:
-                return Filters.gt(field, value);
-            case GREATER_THAN_OR_EQUAL:
-                return Filters.gte(field, value);
-            case EQUALS:
-                return Filters.eq(field, value);
-            case NOT_EQUAL:
-                return Filters.ne(field, value);
-            default:
-                Logger.warn("No filter was found with this comparator: " + comparator.name(),
-                    "Comparator pattern: " + comparator.getPattern()
-                );
-                return null;
-        }
     }
 }

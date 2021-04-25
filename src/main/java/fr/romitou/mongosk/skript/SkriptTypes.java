@@ -194,7 +194,7 @@ public class SkriptTypes {
                 @Override
                 @Nonnull
                 public String toVariableNameString(@Nonnull MongoSKQuery query) {
-                    return "mongoskquery:" + query.toString();
+                    return "mongoskquery:" + query;
                 }
 
                 @Override
@@ -227,7 +227,7 @@ public class SkriptTypes {
                 @Override
                 @Nonnull
                 public String toVariableNameString(@Nonnull MongoSKSort sort) {
-                    return "mongosksort:" + sort.toString();
+                    return "mongosksort:" + sort;
                 }
 
                 @Override

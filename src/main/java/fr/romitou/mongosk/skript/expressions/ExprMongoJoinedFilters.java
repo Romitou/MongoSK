@@ -102,6 +102,6 @@ public class ExprMongoJoinedFilters extends SimpleExpression<MongoSKFilter> {
         String joinMode = parseMark == 1 ? " and " : parseMark == 2 ? " or " : " nor ";
         if (exprSecondFilter == null)
             return exprFirstFilter.toString(e, debug) + " with" + joinMode + "join mode";
-        return exprFirstFilter.toString(e, debug) +  joinMode + exprSecondFilter.toString(e, debug);
+        return exprFirstFilter.toString(e, debug) + joinMode + exprSecondFilter.toString(e, debug);
     }
 }

@@ -45,6 +45,10 @@ public class MongoSKQuery {
         return mongoSKSort;
     }
 
+    public void setMongoSKSort(MongoSKSort mongoSKSort) {
+        this.mongoSKSort = mongoSKSort;
+    }
+
     public Boolean getDiskUsage() {
         return diskUsage;
     }
@@ -75,10 +79,6 @@ public class MongoSKQuery {
 
     public void setSkip(Integer skip) {
         this.skip = skip;
-    }
-
-    public void setMongoSKSort(MongoSKSort mongoSKSort) {
-        this.mongoSKSort = mongoSKSort;
     }
 
     public void printDebug() {

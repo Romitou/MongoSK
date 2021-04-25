@@ -74,6 +74,33 @@ public abstract class EffectSection extends Condition {
     }
 
     /**
+     * Checks if the class is the current section.
+     *
+     * @param classes Classes to check
+     * @return Whether the class is the current section
+     */
+    @Nonnull
+    @SafeVarargs
+    public static Boolean isCurrentSection(Class<? extends EffectSection>... classes) {
+        return getCurrentSection(classes).isPresent();
+    }
+
+    /**
+     * Retrieve a specific section by the class that extends it.
+     *
+     * @param classes Classes to check
+     * @return An optional containing the current section
+     */
+    @Nonnull
+    @SafeVarargs
+    public static Optional<EffectSection> getCurrentSection(Class<? extends EffectSection>... classes) {
+        return Arrays.stream(classes)
+            .filter(EffectSection.effectSections::containsKey)
+            .map(EffectSection.effectSections::get)
+            .findFirst();
+    }
+
+    /**
      * Initializes the section's trigger, so that the section can then be executed.
      * It is mandatory to initialise it first before using {@link EffectSection#runSection(Event)}.
      */
@@ -114,6 +141,7 @@ public abstract class EffectSection extends Condition {
     /**
      * Method from TuSKe, to correctly display parsing errors encountered during the parsing of the section.
      * https://github.com/Tuke-Nuke/TuSKe/blob/master/src/main/java/com/github/tukenuke/tuske/util/EffectSection.java#L174-L201
+     *
      * @param logger The logger to stop
      */
     private void stopRetainingLogHandler(RetainingLogHandler logger) {
@@ -151,6 +179,7 @@ public abstract class EffectSection extends Condition {
 
     /**
      * Adaptation of Condition#check, which asks to return whether the condition has been met.
+     *
      * @param e The event to check
      * @return Whether the section should continue to run
      */
@@ -165,6 +194,7 @@ public abstract class EffectSection extends Condition {
     /**
      * Executes the section, with the event passed as a parameter.
      * It is mandatory to have initialized the section first, via {@link EffectSection#loadSection()}.
+     *
      * @param e The event
      */
     protected void runSection(Event e) {
@@ -175,6 +205,7 @@ public abstract class EffectSection extends Condition {
     /**
      * Checks if the section has not been used as a condition.
      * To do this, we check whether the node contains the keywords "if", or "else if".
+     *
      * @return whether the section is conditional
      */
     protected Boolean isConditional() {
@@ -190,6 +221,7 @@ public abstract class EffectSection extends Condition {
 
     /**
      * Checks if a section exists: if the section has been created, or if a trigger exists.
+     *
      * @return Whether there is a section
      */
     protected Boolean hasSection() {
@@ -197,32 +229,8 @@ public abstract class EffectSection extends Condition {
     }
 
     /**
-     * Checks if the class is the current section.
-     * @param classes Classes to check
-     * @return Whether the class is the current section
-     */
-    @Nonnull
-    @SafeVarargs
-    public static Boolean isCurrentSection(Class<? extends EffectSection>... classes) {
-        return getCurrentSection(classes).isPresent();
-    }
-
-    /**
-     * Retrieve a specific section by the class that extends it.
-     * @param classes Classes to check
-     * @return An optional containing the current section
-     */
-    @Nonnull
-    @SafeVarargs
-    public static Optional<EffectSection> getCurrentSection(Class<? extends EffectSection>... classes) {
-        return Arrays.stream(classes)
-            .filter(EffectSection.effectSections::containsKey)
-            .map(EffectSection.effectSections::get)
-            .findFirst();
-    }
-
-    /**
      * Checks that the {@link EffectSection#loadSection()} method has been called beforehand.
+     *
      * @return Whether the section is initialized
      */
     protected Boolean isInitialized() {
@@ -231,6 +239,7 @@ public abstract class EffectSection extends Condition {
 
     /**
      * Useful for recovering the original node.
+     *
      * @return The original node
      */
     public Node getNode() {
@@ -239,6 +248,7 @@ public abstract class EffectSection extends Condition {
 
     /**
      * Useful for recovering the section node.
+     *
      * @return The section node
      */
     public SectionNode getSectionNode() {
@@ -247,6 +257,7 @@ public abstract class EffectSection extends Condition {
 
     /**
      * Useful for recovering the trigger section.
+     *
      * @return The trigger section
      */
     public TriggerSection getTriggerSection() {
@@ -255,6 +266,7 @@ public abstract class EffectSection extends Condition {
 
     /**
      * Useful for recovering the trigger execution state.
+     *
      * @return Whether the next trigger item should be executed
      */
     public Boolean shouldExecuteNext() {
