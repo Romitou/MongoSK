@@ -68,7 +68,7 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
         if (fieldName == null || mongoSKDocument == null || mongoSKDocument.getBsonDocument() == null)
             return new Object[0];
         if (!mongoSKDocument.getBsonDocument().containsKey(fieldName)) {
-            Logger.severe("The specified field does not exist in the document.",
+            Logger.debug("The specified field does not exist in the document.",
                 "Document: " + mongoSKDocument.getBsonDocument().toJson(),
                 "Keys: " + mongoSKDocument.getBsonDocument().keySet());
             return new Object[0];
