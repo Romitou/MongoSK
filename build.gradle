@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'org.mongodb', name: 'mongodb-driver-reactivestreams', version: '4.3.0-beta1'
+    implementation group: 'org.mongodb', name: 'mongodb-driver-reactivestreams', version: '4.3.0-SNAPSHOT'
     shadow group: 'com.destroystokyo.paper', name: 'paper-api', version: '1.16.5-R0.1-SNAPSHOT'
     shadow group: 'com.github.SkriptLang', name: 'Skript', version: '2.5.3', {
         exclude module: 'Vault'
