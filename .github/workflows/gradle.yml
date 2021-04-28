@@ -15,13 +15,6 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: ${{ matrix.java }}
-      - name: Gradle cache
-        uses: actions/cache@v2.1.5
-        with:
-            path: ~/.gradle
-            key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-            restore-keys: |
-                ${{ runner.os }}-gradle-
       - name: Build with Gradle
         run: ./gradlew clean shadowJar
   build:
@@ -35,13 +28,6 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '8'
-      - name: Gradle cache
-        uses: actions/cache@v2.1.5
-        with:
-            path: ~/.gradle
-            key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-            restore-keys: |
-                ${{ runner.os }}-gradle-
       - name: Build with Gradle
         run: ./gradlew clean shadowJar
       - name: Upload artifact
