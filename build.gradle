@@ -6,8 +6,6 @@ plugins {
 group 'fr.romitou.mongosk'
 version '2.1.0'
 
-compileJava.options.encoding = 'UTF-8'
-
 repositories {
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url = 'https://repo.destroystokyo.com/repository/maven-public/' }
@@ -22,5 +20,9 @@ dependencies {
         exclude module: 'Vault'
         exclude module: 'worldguard-legacy'
     }
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
 }
 
