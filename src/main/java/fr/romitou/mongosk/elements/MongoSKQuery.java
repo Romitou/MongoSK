@@ -96,12 +96,7 @@ public class MongoSKQuery {
     public FindPublisher<Document> buildFindPublisher() {
         MongoCollection<Document> mongoCollection = getMongoSKCollection().getMongoCollection();
         FindPublisher<Document> findPublisher;
-        if (getMongoSKFilter() == null)
-            findPublisher = mongoCollection.find();
-        else
-            findPublisher = mongoCollection.find(getMongoSKFilter().getFilter());
-        if (getMongoSKSort() == null)
-            return findPublisher;
+        findPublisher = (getMongoSKFilter() == null) ? mongoCollection.find() : mongoCollection.find(getMongoSKFilter().getFilter());
         if (getLimit() != null)
             findPublisher = findPublisher.limit(getLimit());
         if (getSkip() != null)
@@ -110,7 +105,9 @@ public class MongoSKQuery {
             findPublisher = findPublisher.allowDiskUse(getDiskUsage());
         if (getComment() != null)
             findPublisher = findPublisher.comment(getComment());
-        return findPublisher.sort(getMongoSKSort().getSort());
+        if (getMongoSKSort() != null)
+            findPublisher = findPublisher.sort(getMongoSKSort().getSort());
+        return findPublisher;
     }
 
     public String getDisplay() {
