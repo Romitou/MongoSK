@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'fr.romitou.mongosk'
-version '2.1.0'
+version '2.1.1'
 
 repositories {
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
