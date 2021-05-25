@@ -2,7 +2,7 @@ package fr.romitou.mongosk.adapters.codecs;
 
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.registrations.Classes;
-import ch.njol.skript.util.VisualEffect;
+import ch.njol.skript.util.visual.VisualEffect;
 import ch.njol.skript.variables.SerializedVariable;
 import fr.romitou.mongosk.adapters.MongoSKCodec;
 import org.bson.Document;
@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 
 /**
- * This class uses binaries fields with Skript serializers and deserializers.
+ * This class uses binary fields with Skript serializers and deserializers.
  * The reason is that this object has many fields and it is better to let Skript handle it.
  */
 public class VisualEffectCodec implements MongoSKCodec<VisualEffect> {
