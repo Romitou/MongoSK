@@ -24,39 +24,59 @@ public class MongoSKAdapter {
     public final static Boolean ADAPTERS_ENABLED = MongoSK.getConfiguration().getBoolean("skript-adapters.enabled", false);
     public final static Boolean SAFE_DESERIALIZATION = MongoSK.getConfiguration().getBoolean("skript-adapters.safe-data", true);
 
-    public static List<MongoSKCodec<?>> codecs = new ArrayList<>();
+    private final static List<Class<? extends MongoSKCodec<?>>> availableCodecs = Arrays.asList(
+        BiomeCodec.class,
+        BlockCodec.class,
+        ChunkCodec.class,
+        DamageCauseCodec.class,
+        DateCodec.class,
+        EntityCodec.class,
+        ExperienceCodec.class,
+        GameModeCodec.class,
+        ItemStackCodec.class,
+        ItemTypeCodec.class,
+        LocationCodec.class,
+        MaterialCodec.class,
+        PlayerCodec.class,
+        PotionEffectCodec.class,
+        PotionEffectTypeCodec.class,
+        SlotCodec.class,
+        TimeCodec.class,
+        TimePeriodCodec.class,
+        TimespanCodec.class,
+        VectorCodec.class,
+        VisualEffectCodec.class,
+        WeatherTypeCodec.class,
+        WorldCodec.class
+    );
+    public static List<MongoSKCodec<?>> loadedCodecs = new ArrayList<>();
 
-    public static List<String> loadCodecs() {
+    public static void loadCodecs() {
         if (!ADAPTERS_ENABLED)
-            return new ArrayList<>();
-        codecs.add(new BiomeCodec());
-        codecs.add(new BlockCodec());
-        codecs.add(new ChunkCodec());
-        codecs.add(new DamageCauseCodec());
-        codecs.add(new DateCodec());
-        codecs.add(new EntityCodec());
-        codecs.add(new ExperienceCodec());
-        codecs.add(new GameModeCodec());
-        codecs.add(new ItemStackCodec());
-        codecs.add(new ItemTypeCodec());
-        codecs.add(new LocationCodec());
-        codecs.add(new MaterialCodec());
-        codecs.add(new PlayerCodec());
-        codecs.add(new PotionEffectCodec());
-        codecs.add(new PotionEffectTypeCodec());
-        codecs.add(new SlotCodec());
-        codecs.add(new TimeCodec());
-        codecs.add(new TimePeriodCodec());
-        codecs.add(new TimespanCodec());
-        codecs.add(new VectorCodec());
-        codecs.add(new VisualEffectCodec());
-        codecs.add(new WeatherTypeCodec());
-        codecs.add(new WorldCodec());
-        return getCodecNames();
+            return;
+        availableCodecs.forEach(MongoSKAdapter::loadCodec);
+        List<String> codecs = MongoSKAdapter.getCodecNames();
+        Logger.info("Loaded " + codecs.size() + " codecs!",
+            "Name of the loaded codecs: " + String.join(", ", codecs),
+            "If you have problems with these, do not hesitate to report them."
+        );
+    }
+
+    public static void loadCodec(Class<? extends MongoSKCodec<?>> codec) {
+        try {
+            MongoSKCodec<?> codecInstance = codec.getConstructor().newInstance();
+            Class.forName(codecInstance.getReturnType().getCanonicalName());
+            loadedCodecs.add(codecInstance);
+        } catch (NoClassDefFoundError | ClassNotFoundException e) {
+            Logger.severe("Oops, the class of the " + codec.getName() + " codec doesn't exists! Try updating Skript?");
+        } catch (ReflectiveOperationException e) {
+            Logger.severe("Oops, cannot load the " + codec.getName() + " codec! Look at the console for more details.");
+            e.printStackTrace();
+        }
     }
 
     public static List<String> getCodecNames() {
-        return codecs.stream()
+        return loadedCodecs.stream()
             .map(MongoSKCodec::getName)
             .collect(Collectors.toList());
     }
@@ -64,7 +84,7 @@ public class MongoSKAdapter {
     @SuppressWarnings("unchecked")
     @Nullable
     public static <T> MongoSKCodec<T> getCodecByName(String name) {
-        return (MongoSKCodec<T>) codecs.stream()
+        return (MongoSKCodec<T>) loadedCodecs.stream()
             .filter(codec -> codec.getName().equals(name))
             .findFirst()
             .orElse(null);
@@ -73,7 +93,7 @@ public class MongoSKAdapter {
     @SuppressWarnings("unchecked")
     @Nullable
     public static <T> MongoSKCodec<T> getCodecByClass(Class<? extends T> clazz) {
-        return (MongoSKCodec<T>) codecs.stream()
+        return (MongoSKCodec<T>) loadedCodecs.stream()
             .filter(codec -> codec.getReturnType().isAssignableFrom(clazz))
             .findFirst()
             .orElse(null);
