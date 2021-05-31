@@ -1,21 +1,14 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionType;
-import ch.njol.skript.lang.SkriptParser;
-import ch.njol.skript.lang.util.SimpleExpression;
-import ch.njol.util.Kleenean;
+import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import fr.romitou.mongosk.elements.MongoSKCollection;
 import fr.romitou.mongosk.elements.MongoSKDatabase;
-import org.bukkit.event.Event;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 @Name("Mongo name")
 @Description("Retrieve the names of different Mongo elements. " +
@@ -23,52 +16,36 @@ import javax.annotation.Nullable;
 @Examples({"set {_name} to {mongodatabase}'s mongo name",
     "broadcast mongo name of {mongocollection}"})
 @Since("2.0.0")
-public class ExprMongoName extends SimpleExpression<String> {
+public class ExprMongoName extends SimplePropertyExpression<Object, String> {
 
     static {
-        Skript.registerExpression(
+        register(
             ExprMongoName.class,
             String.class,
-            ExpressionType.PROPERTY,
-            "[the] mongo[(db|sk)] name of %mongoskdatabase/mongoskcollection%",
-            "%mongoskdatabase/mongoskcollection%'s mongo[(db|sk)] name"
+            "mongo[(db|sk)] name",
+            "mongoskdatabase/mongoskcollection"
         );
     }
 
-    private Expression<Object> exprObject;
-
-    @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
-        exprObject = (Expression<Object>) exprs[0];
-        return (exprObject.getReturnType().isInstance(MongoSKDatabase.class)
-            || exprObject.getReturnType().isInstance(MongoSKCollection.class));
+    public String convert(Object ctx) {
+        if (ctx instanceof MongoSKCollection)
+            return ((MongoSKCollection) ctx).getMongoCollection().getNamespace().getCollectionName();
+        else if (ctx instanceof MongoSKDatabase)
+            return ((MongoSKDatabase) ctx).getMongoDatabase().getName();
+        return null;
     }
 
     @Override
-    protected String[] get(@Nonnull Event e) {
-        Object object = exprObject.getSingle(e);
-        if (object instanceof MongoSKCollection)
-            return new String[]{(((MongoSKCollection) object).getMongoCollection().getNamespace().getCollectionName())};
-        else if (object instanceof MongoSKDatabase)
-            return new String[]{((MongoSKDatabase) object).getMongoDatabase().getName()};
-        return new String[0];
-    }
-
-    @Override
-    public boolean isSingle() {
-        return true;
-    }
-
     @Nonnull
-    @Override
     public Class<? extends String> getReturnType() {
         return String.class;
     }
 
-    @Nonnull
     @Override
-    public String toString(@Nullable final Event e, boolean debug) {
-        return "mongo name of " + exprObject.toString(e, debug);
+    @Nonnull
+    protected String getPropertyName() {
+        return "mongo name";
     }
+
 }
