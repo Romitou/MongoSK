@@ -27,3 +27,10 @@ compileJava {
     options.encoding = 'UTF-8'
 }
 
+shadowJar {
+    // Relocate dependencies in order to avoid conflicts with other plugins
+    relocate 'com.mongodb', 'fr.romitou.mongosk.libs.driver'
+    relocate 'org.bson', 'fr.romitou.mongosk.libs.bson'
+    relocate 'org.reactivestreams', 'fr.romitou.mongosk.libs.reactivestreams'
+    relocate 'reactor', 'fr.romitou.mongosk.libs.reactor'
+}
