@@ -7,14 +7,14 @@ group 'fr.romitou.mongosk'
 version '2.1.1'
 
 repositories {
-    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url = 'https://repo.romitou.fr' }
     maven { url = 'https://repo.destroystokyo.com/repository/maven-public/' }
     maven { url = 'https://papermc.io/repo/repository/maven-public/' }
     maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
-    implementation group: 'org.mongodb', name: 'mongodb-driver-reactivestreams', version: '4.3.0-beta1'
+    implementation group: 'org.mongodb', name: 'mongodb-driver-reactivestreams', version: '4.3.0-SNAPSHOT'
     shadow group: 'com.destroystokyo.paper', name: 'paper-api', version: '1.16.5-R0.1-SNAPSHOT'
     shadow group: 'com.github.SkriptLang', name: 'Skript', version: '2.6-alpha1', {
         exclude module: 'Vault'
