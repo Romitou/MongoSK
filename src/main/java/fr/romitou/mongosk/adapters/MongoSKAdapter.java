@@ -23,7 +23,7 @@ public class MongoSKAdapter {
     public final static String DOCUMENT_FIELD = MongoSK.getConfiguration().getString("skript-adapters.document-field", "__MongoSK__");
     public final static Boolean ADAPTERS_ENABLED = MongoSK.getConfiguration().getBoolean("skript-adapters.enabled", false);
     public final static Boolean SAFE_DESERIALIZATION = MongoSK.getConfiguration().getBoolean("skript-adapters.safe-data", true);
-
+    public static final List<MongoSKCodec<?>> loadedCodecs = new ArrayList<>();
     private final static List<Class<? extends MongoSKCodec<?>>> availableCodecs = Arrays.asList(
         BiomeCodec.class,
         BlockCodec.class,
@@ -49,7 +49,6 @@ public class MongoSKAdapter {
         WeatherTypeCodec.class,
         WorldCodec.class
     );
-    public static List<MongoSKCodec<?>> loadedCodecs = new ArrayList<>();
 
     public static void loadCodecs() {
         if (!ADAPTERS_ENABLED)

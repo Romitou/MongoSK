@@ -5,6 +5,7 @@ import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.TriggerItem;
 import ch.njol.skript.lang.TriggerSection;
+import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.log.*;
 import org.bukkit.event.Event;
 
@@ -21,7 +22,8 @@ import java.util.*;
  */
 public abstract class EffectSection extends Condition {
 
-    public static HashMap<Class<? extends EffectSection>, EffectSection> effectSections = new HashMap<>();
+    private static final Boolean IS_USING_NEW_PARSER = isUsingNewParser();
+    public static final HashMap<Class<? extends EffectSection>, EffectSection> effectSections = new HashMap<>();
 
     private final Node node;
     private SectionNode sectionNode;
@@ -146,15 +148,23 @@ public abstract class EffectSection extends Condition {
      */
     private void stopRetainingLogHandler(RetainingLogHandler logger) {
 
+        // Mark the logger's errors as already printed to avoid console warns
+        if (IS_USING_NEW_PARSER)
+            patchLogger(logger);
+
         // Stop the current logger
         logger.stop();
 
         // Use reflection to get current handlers from SkriptLogger
         HandlerList handlerList = new HandlerList();
         try {
-            Field field = SkriptLogger.class.getDeclaredField("handlers");
-            field.setAccessible(true);
-            handlerList = (HandlerList) field.get(null);
+            if (IS_USING_NEW_PARSER) {
+                handlerList = ParserInstance.get().getHandlers();
+            } else {
+                Field field = SkriptLogger.class.getDeclaredField("handlers");
+                field.setAccessible(true);
+                handlerList = (HandlerList) field.get(null);
+            }
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -165,6 +175,10 @@ public abstract class EffectSection extends Condition {
         for (LogHandler logHandler : handlerList) {
             if (!(logHandler instanceof ParseLogHandler))
                 break;
+            ParseLogHandler parseLogHandler = (ParseLogHandler) logHandler;
+            // Since we are doing some tricky stuff, check if the logger doesn't have errors before patching it
+            if (IS_USING_NEW_PARSER && !parseLogHandler.hasError())
+                patchLogger(parseLogHandler);
             toStop.add(logHandler);
         }
 
@@ -173,6 +187,26 @@ public abstract class EffectSection extends Condition {
 
         // Print logs from the original logger
         logger.printLog();
+    }
+
+    private void patchLogger(RetainingLogHandler logHandler) {
+        try {
+            Field field = RetainingLogHandler.class.getDeclaredField("printedErrorOrLog");
+            field.setAccessible(true);
+            field.setBoolean(logHandler, true);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void patchLogger(ParseLogHandler logHandler) {
+        try {
+            Field field = ParseLogHandler.class.getDeclaredField("printedErrorOrLog");
+            field.setAccessible(true);
+            field.setBoolean(logHandler, true);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     protected abstract void execute(Event e);
@@ -272,4 +306,14 @@ public abstract class EffectSection extends Condition {
     public Boolean shouldExecuteNext() {
         return shouldExecuteNext;
     }
+
+    public static Boolean isUsingNewParser() {
+        try {
+            ParserInstance.class.getDeclaredMethod("get");
+            return true;
+        } catch (NoSuchMethodException ignored) {
+            return false;
+        }
+    }
+
 }
