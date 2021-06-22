@@ -51,7 +51,7 @@ public class MongoSK extends JavaPlugin {
         } catch (IOException e) {
             Logger.severe("MongoSK could not load and register some syntax elements.",
                 "Try to update your version of Skript and MongoSK, and try again only with these two plugins.",
-                "If the problem persists, please open an exit on GitHub.",
+                "If the problem persists, please open an issue on GitHub.",
                 "More information about this exception: " + e.getMessage()
             );
             return;
@@ -68,7 +68,7 @@ public class MongoSK extends JavaPlugin {
             "Skript version: " + skriptPlugin.getDescription().getVersion(),
             "Server version: " + this.getServer().getVersion()
         );
-        Logger.info("As a reminder, if you encounter problems, activate the debug mode in the MongoSK configuration to get additional useful information.");
+        Logger.info("If you need help, go to GitHub or to our Discord: https://discord.com/invite/6jeQkRcMkk");
 
         // Register Metrics.
         // Learn more: https://bstats.org/getting-started
@@ -89,13 +89,10 @@ public class MongoSK extends JavaPlugin {
     private void loadConfiguration() {
         // Save the default config if not existent
         this.saveDefaultConfig();
-
-        // Load and store the config.
-        configuration = this.getConfig();
     }
 
     private void closeAllConnections() {
-        getMongoSKServers()
+        mongoSKServers
             .stream()
             .map(MongoSKServer::getMongoClient)
             .forEach(MongoClient::close);
