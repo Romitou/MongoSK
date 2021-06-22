@@ -8,6 +8,7 @@ import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.VariableString;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import com.mongodb.ConnectionString;
@@ -42,18 +43,21 @@ public class ExprMongoServer extends SimpleExpression<MongoSKServer> {
         );
     }
 
-    private Expression<String> exprRawConnectionString;
+    private Expression<?> exprRawConnectionString;
 
-    @SuppressWarnings("unchecked")
     @Override
     public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
-        exprRawConnectionString = (Expression<String>) exprs[0];
+        exprRawConnectionString = exprs[0];
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected MongoSKServer[] get(@Nonnull final Event e) {
-        String rawConnectionString = exprRawConnectionString.getSingle(e);
+        String rawConnectionString = (exprRawConnectionString instanceof VariableString)
+            ? ((VariableString) exprRawConnectionString).toUnformattedString(e)
+            : ((Expression<String>) exprRawConnectionString).getSingle(e);
+
         if (rawConnectionString == null)
             return new MongoSKServer[0];
 
