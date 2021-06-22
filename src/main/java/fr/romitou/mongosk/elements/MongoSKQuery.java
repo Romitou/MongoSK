@@ -20,7 +20,6 @@ public class MongoSKQuery {
     private Integer skip;
 
     public MongoSKQuery() {
-        this.printDebug();
     }
 
     public MongoSKCollection getMongoSKCollection() {

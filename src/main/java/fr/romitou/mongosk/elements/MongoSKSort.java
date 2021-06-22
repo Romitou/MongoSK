@@ -13,7 +13,6 @@ public class MongoSKSort {
     public MongoSKSort(Bson sort, String display) {
         this.sort = sort;
         this.display = display;
-        this.printDebug();
     }
 
     public Bson getSort() {

@@ -11,7 +11,6 @@ public class MongoSKDatabase {
 
     public MongoSKDatabase(MongoDatabase mongoDatabase) {
         this.mongoDatabase = mongoDatabase;
-        this.printDebug();
     }
 
     public MongoDatabase getMongoDatabase() {

@@ -13,7 +13,6 @@ public class MongoSKFilter {
     public MongoSKFilter(Bson filter, String display) {
         this.filter = filter;
         this.display = display;
-        this.printDebug();
     }
 
     public Bson getFilter() {

@@ -22,7 +22,6 @@ public class MongoSKDocument {
     public MongoSKDocument(Document bsonDocument, @Nullable MongoSKCollection baseCollection) {
         this.bsonDocument = bsonDocument;
         this.baseCollection = baseCollection;
-        this.printDebug();
     }
 
     public Document getBsonDocument() {

@@ -12,7 +12,6 @@ public class MongoSKCollection {
 
     public MongoSKCollection(MongoCollection<Document> mongoCollection) {
         this.mongoCollection = mongoCollection;
-        this.printDebug();
     }
 
     public MongoCollection<Document> getMongoCollection() {

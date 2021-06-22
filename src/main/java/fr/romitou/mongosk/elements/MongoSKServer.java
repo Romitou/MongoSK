@@ -14,8 +14,7 @@ public class MongoSKServer {
     public MongoSKServer(String displayedName, MongoClient mongoClient) {
         this.displayedName = displayedName;
         this.mongoClient = mongoClient;
-        MongoSK.addMongoSKServer(this);
-        this.printDebug();
+        MongoSK.registerServer(this);
     }
 
     public String getDisplayedName() {
