@@ -12,17 +12,19 @@ import ch.njol.skript.lang.VariableString;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientException;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
 import fr.romitou.mongosk.Logger;
+import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.elements.MongoSKServer;
 import fr.romitou.mongosk.listeners.MongoCommandListener;
 import org.bukkit.event.Event;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 @Name("Mongo server")
 @Description("Create a connection to your remote MongoDB host using this expression." +
@@ -33,6 +35,9 @@ import java.util.Locale;
     "set {mongoclient} to a new mongosk client with connection string \"mongodb://romitou:mysupersecretpassword@127.0.0.1/?appName=myApp&retryWrites=true&w=majority\""})
 @Since("2.0.0")
 public class ExprMongoServer extends SimpleExpression<MongoSKServer> {
+
+    private final Integer CONNECT_TIMEOUT = MongoSK.getInstance().getConfig().getInt("timeouts.connect", 10000);
+    private final Integer READ_TIMEOUT = MongoSK.getInstance().getConfig().getInt("timeouts.read", 10000);
 
     static {
         Skript.registerExpression(
@@ -65,8 +70,11 @@ public class ExprMongoServer extends SimpleExpression<MongoSKServer> {
         ConnectionString connectionString;
         try {
             connectionString = new ConnectionString(rawConnectionString);
-        } catch (IllegalArgumentException exception) {
-            Logger.severe("Your connection string is invalid: " + exception.getMessage().toLowerCase(Locale.ROOT));
+        } catch (IllegalArgumentException ex) {
+            Logger.severe("Your connection string is invalid: " + ex.getMessage().toLowerCase());
+            return new MongoSKServer[0];
+        } catch (MongoClientException ex) {
+            Logger.severe("An error occurred while creating the client: " + ex.getMessage().toLowerCase());
             return new MongoSKServer[0];
         }
 
@@ -76,6 +84,12 @@ public class ExprMongoServer extends SimpleExpression<MongoSKServer> {
         // Build the Mongo client settings.
         MongoClientSettings.Builder settings = MongoClientSettings.builder()
             .applyConnectionString(connectionString)
+            .applyToSocketSettings(builder -> builder
+                .connectTimeout(CONNECT_TIMEOUT, TimeUnit.MILLISECONDS)
+                .readTimeout(READ_TIMEOUT, TimeUnit.MILLISECONDS))
+            .applicationName(connectionString.getApplicationName() == null
+                ? "MongoSK/" + MongoSK.getInstance().getDescription().getVersion()
+                : connectionString.getApplicationName())
             .addCommandListener(mongoCommandListener);
         MongoClient mongoClient = MongoClients.create(settings.build());
 

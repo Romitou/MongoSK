@@ -37,3 +37,12 @@ allow-drop:
     database: false
     # Activates the 'drop [the] mongo[(sk|db)] collection %mongoskcollection%' effect.
     collection: false
+
+# The timeouts represent the maximum time to wait before the action is completed.
+# If the action is not completed before the time defined below, it will be aborted.
+# Timeouts are expressed in milliseconds. It is not recommended to define a timeout greater than 10000 milliseconds.
+timeouts:
+    # The connection timeout to your server.
+    connect: 10000
+    # The timeout for reading the data received from the server.
+    read: 10000
