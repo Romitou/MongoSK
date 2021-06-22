@@ -18,22 +18,12 @@ import java.util.List;
 public class MongoSK extends JavaPlugin {
 
     private static final List<MongoSKServer> mongoSKServers = new ArrayList<>();
-    private static FileConfiguration configuration;
-
-    public static FileConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    public static List<MongoSKServer> getMongoSKServers() {
-        return mongoSKServers;
-    }
-
-    public static void addMongoSKServer(MongoSKServer mongoSKServer) {
-        mongoSKServers.add(mongoSKServer);
-    }
+    private static MongoSK instance;
 
     @Override
     public void onEnable() {
+        instance = this;
+
         long start = System.currentTimeMillis();
 
         // Load the configuration.
@@ -115,6 +105,14 @@ public class MongoSK extends JavaPlugin {
         if (!this.isEnabled())
             return;
         getServer().getScheduler().runTask(this, () -> getServer().getPluginManager().callEvent(event));
+    }
+
+    public static void registerServer(MongoSKServer mongoSKServer) {
+        mongoSKServers.add(mongoSKServer);
+    }
+
+    public static MongoSK getInstance() {
+        return instance;
     }
 
 }

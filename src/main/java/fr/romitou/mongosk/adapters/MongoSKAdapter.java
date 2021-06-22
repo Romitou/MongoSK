@@ -13,17 +13,17 @@ import org.bson.types.Binary;
 
 import javax.annotation.Nullable;
 import java.io.StreamCorruptedException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MongoSKAdapter {
 
-    public final static String DOCUMENT_FIELD = MongoSK.getConfiguration().getString("skript-adapters.document-field", "__MongoSK__");
-    public final static Boolean ADAPTERS_ENABLED = MongoSK.getConfiguration().getBoolean("skript-adapters.enabled", false);
-    public final static Boolean SAFE_DESERIALIZATION = MongoSK.getConfiguration().getBoolean("skript-adapters.safe-data", true);
-    public static final List<MongoSKCodec<?>> loadedCodecs = new ArrayList<>();
+    public final static String DOCUMENT_FIELD = MongoSK.getInstance().getConfig().getString("skript-adapters.document-field", "__MongoSK__");
+    public final static Boolean ADAPTERS_ENABLED = MongoSK.getInstance().getConfig().getBoolean("skript-adapters.enabled", false);
+    public final static Boolean SAFE_DESERIALIZATION = MongoSK.getInstance().getConfig().getBoolean("skript-adapters.safe-data", true);
+    public final static List<String> DISABLED_CODECS = MongoSK.getInstance().getConfig().getStringList("skript-adapters.disabled");
+
+    private final static List<MongoSKCodec<?>> loadedCodecs = new ArrayList<>();
     private final static List<Class<? extends MongoSKCodec<?>>> availableCodecs = Arrays.asList(
         BiomeCodec.class,
         BlockCodec.class,
@@ -64,10 +64,14 @@ public class MongoSKAdapter {
     public static void loadCodec(Class<? extends MongoSKCodec<?>> codec) {
         try {
             MongoSKCodec<?> codecInstance = codec.getConstructor().newInstance();
+            if (DISABLED_CODECS.contains(codecInstance.getName())) {
+                Logger.info("Codec " + codecInstance.getName() + " is disabled, skipping registration.");
+                return;
+            }
             Class.forName(codecInstance.getReturnType().getCanonicalName());
             loadedCodecs.add(codecInstance);
         } catch (NoClassDefFoundError | ClassNotFoundException e) {
-            Logger.severe("Oops, the class of the " + codec.getName() + " codec doesn't exists! Try updating Skript?");
+            Logger.severe("Oops, the return class of the " + codec.getName() + " codec doesn't exists! Try updating Skript?");
         } catch (ReflectiveOperationException e) {
             Logger.severe("Oops, cannot load the " + codec.getName() + " codec! Look at the console for more details.");
             e.printStackTrace();

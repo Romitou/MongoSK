@@ -24,6 +24,11 @@ skript-adapters:
     # The prefix and the field used by MongoSK in the storage of your documents.
     # This field must be unique and not conflict with existing entries in your documents.
     document-field: "__MongoSK__"
+    # The list of codec names that you do not want to be activated. One per line, starting with a hyphen.
+    disabled:
+        # - date
+        # - player
+        # ...
 
 # When you activate these settings, the relevant drop effects will be registered by Skript and can be used.
 # By default, these are disabled to avoid any problems, because any drop action is irreversible!
