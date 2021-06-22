@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 @Since("2.0.3")
 public class EffDropMongoCollection extends Effect {
 
-    private final static Boolean CAN_DROP = MongoSK.getConfiguration().getBoolean("allow-drop.collection", false);
+    private final static Boolean CAN_DROP = MongoSK.getInstance().getConfig().getBoolean("allow-drop.collection", false);
 
     static {
         if (CAN_DROP)

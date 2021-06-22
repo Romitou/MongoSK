@@ -22,9 +22,8 @@ import java.util.*;
  */
 public abstract class EffectSection extends Condition {
 
-    private static final Boolean IS_USING_NEW_PARSER = isUsingNewParser();
     public static final HashMap<Class<? extends EffectSection>, EffectSection> effectSections = new HashMap<>();
-
+    private static final Boolean IS_USING_NEW_PARSER = isUsingNewParser();
     private final Node node;
     private SectionNode sectionNode;
     private TriggerSection triggerSection;
@@ -100,6 +99,15 @@ public abstract class EffectSection extends Condition {
             .filter(EffectSection.effectSections::containsKey)
             .map(EffectSection.effectSections::get)
             .findFirst();
+    }
+
+    public static Boolean isUsingNewParser() {
+        try {
+            ParserInstance.class.getDeclaredMethod("get");
+            return true;
+        } catch (NoSuchMethodException ignored) {
+            return false;
+        }
     }
 
     /**
@@ -305,15 +313,6 @@ public abstract class EffectSection extends Condition {
      */
     public Boolean shouldExecuteNext() {
         return shouldExecuteNext;
-    }
-
-    public static Boolean isUsingNewParser() {
-        try {
-            ParserInstance.class.getDeclaredMethod("get");
-            return true;
-        } catch (NoSuchMethodException ignored) {
-            return false;
-        }
     }
 
 }
