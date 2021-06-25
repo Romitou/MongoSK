@@ -28,6 +28,8 @@ compileJava {
 }
 
 shadowJar {
+    // Remove all classes of dependencies that are not used by the project
+    minimize()
     // Relocate dependencies in order to avoid conflicts with other plugins
     relocate 'com.mongodb', 'fr.romitou.mongosk.libs.driver'
     relocate 'org.bson', 'fr.romitou.mongosk.libs.bson'
