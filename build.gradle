@@ -7,7 +7,7 @@ group 'fr.romitou.mongosk'
 version '2.2.0'
 
 repositories {
-    maven { url = 'https://repo.romitou.fr' }
+    mavenCentral()
     maven { url = 'https://repo.destroystokyo.com/repository/maven-public/' }
     maven { url = 'https://papermc.io/repo/repository/maven-public/' }
     maven { url = 'https://jitpack.io' }
