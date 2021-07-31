@@ -22,8 +22,8 @@ public class ExprMongoName extends SimplePropertyExpression<Object, String> {
         register(
             ExprMongoName.class,
             String.class,
-            "mongo[(db|sk)] name",
-            "mongoskdatabase/mongoskcollection"
+            "mongo[(db|sk)] name[s]",
+            "mongoskdatabases/mongoskcollections"
         );
     }
 
