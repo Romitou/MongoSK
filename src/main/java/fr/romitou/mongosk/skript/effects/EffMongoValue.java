@@ -15,6 +15,9 @@ import fr.romitou.mongosk.skript.sections.SectMongoDocument;
 import org.bukkit.event.Event;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Name("Mongo section document value")
 @Description("These syntaxes can only be used in a Mongo section of a document creation. " +
@@ -31,17 +34,23 @@ import javax.annotation.Nonnull;
 public class EffMongoValue extends Effect {
 
     static {
-        Skript.registerEffect(EffMongoValue.class, "mongo[(sk|db)] %string%: %objects%");
+        Skript.registerEffect(EffMongoValue.class, "mongo[(sk|db)] [(1¦(field|value)|2¦(array|list))] %string%: %objects%");
     }
 
     private Expression<String> exprKey;
     private Expression<?> exprValue;
+    private Kleenean isSingle;
 
     @SuppressWarnings("unchecked")
     @Override
     public boolean init(@Nonnull Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
         if (!EffectSection.isCurrentSection(SectMongoDocument.class))
             return false;
+        isSingle = parseResult.mark == 1
+            ? Kleenean.TRUE
+            : parseResult.mark == 2
+            ? Kleenean.FALSE
+            : Kleenean.UNKNOWN;
         exprKey = (Expression<String>) exprs[0];
         exprValue = exprs[1].getConvertedExpression(Object.class);
         return exprValue != null;
@@ -50,11 +59,16 @@ public class EffMongoValue extends Effect {
     @Override
     protected void execute(@Nonnull Event e) {
         String key = exprKey.getSingle(e);
-        Object[] value = exprValue.getArray(e);
-        SectMongoDocument.mongoSKDocument.getBsonDocument().put(key, value.length == 1
-            ? MongoSKAdapter.serializeObject(value[0])
-            : MongoSKAdapter.serializeArray(value)
-        );
+        List<?> omega = Arrays.asList(MongoSKAdapter.serializeArray(exprValue.getArray(e)));
+        switch (isSingle) {
+            case UNKNOWN:
+                SectMongoDocument.mongoSKDocument.getBsonDocument().put(key, omega.size() == 1 ? omega.get(0) : omega);
+                break;
+            case TRUE:
+            case FALSE:
+                SectMongoDocument.mongoSKDocument.getBsonDocument().put(key, isSingle == Kleenean.TRUE ? omega.get(0) : omega);
+                break;
+        }
     }
 
     @Nonnull
