@@ -27,8 +27,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Name("Mongo query result")
-@Description("Use this expression if you want to make simple requests, easily and quickly. " +
+@Name("Mongo find query")
+@Description("Use this expression if you want to make simple find requests, easily and quickly. " +
     "To do so, you must specify the type of your query: are you looking for several documents or the first document in " +
     "the collection? Then, the first means is to use a filter to specify the type of data you are looking for. " +
     "Finally, you need to specify where the query should ask for the data, i.e. in which collection." +
@@ -48,15 +48,15 @@ import java.util.List;
     "set mongo filter of {_query} to {myfilter}",
     "set {_doc} to first mongo document of query {_query}"})
 @Since("2.0.0")
-public class ExprMongoQueryResult extends SimpleExpression<MongoSKDocument> {
+public class ExprMongoFindResult extends SimpleExpression<MongoSKDocument> {
 
     static {
         Skript.registerExpression(
-            ExprMongoQueryResult.class,
+            ExprMongoFindResult.class,
             MongoSKDocument.class,
             ExpressionType.COMBINED,
-            "(1¦first|2¦all) mongo[(sk|db)] document[s] [(with|by) [filter] %-mongoskfilter%] (of|from) collection %mongoskcollection%",
-            "(1¦first|2¦all) mongo[(sk|db)] document[s] (of|from) query %mongoskquery%"
+            "[find] (1¦first|2¦all) mongo[(sk|db)] document[s] [(with|by) [filter] %-mongoskfilter%] (of|from) collection %mongoskcollection%",
+            "[find] (1¦first|2¦all) mongo[(sk|db)] document[s] (of|from) query %mongoskquery%"
         );
     }
 
