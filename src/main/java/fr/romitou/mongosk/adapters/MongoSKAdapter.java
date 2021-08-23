@@ -37,6 +37,7 @@ public class MongoSKAdapter {
         ItemTypeCodec.class,
         LocationCodec.class,
         MaterialCodec.class,
+        MoneyCodec.class,
         PlayerCodec.class,
         PotionEffectCodec.class,
         PotionEffectTypeCodec.class,
