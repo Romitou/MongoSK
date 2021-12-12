@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Name("Mongo distinct query (BETA)")
+@Name("Mongo distinct query")
 @Description("The distinct query is useful when you want to retrieve a specific field from each document in a given " +
     "collection. For example, if you have documents with a \"name\" field, you can use this expression to retrieve " +
     "all the \"name\" fields of the documents in the collection. Useful, isn't it?" +
