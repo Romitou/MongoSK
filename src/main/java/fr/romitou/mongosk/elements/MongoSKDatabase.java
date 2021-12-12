@@ -1,7 +1,7 @@
 package fr.romitou.mongosk.elements;
 
 import com.mongodb.reactivestreams.client.MongoDatabase;
-import fr.romitou.mongosk.Logger;
+import fr.romitou.mongosk.LoggerHelper;
 
 import java.util.Objects;
 
@@ -18,7 +18,7 @@ public class MongoSKDatabase {
     }
 
     public void printDebug() {
-        Logger.debug("Informations about this MongoSK database:",
+        LoggerHelper.debug("Informations about this MongoSK database:",
             "Mongo Database: " + this.mongoDatabase.getName()
         );
     }

@@ -14,7 +14,7 @@ import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
-import fr.romitou.mongosk.Logger;
+import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.SubscriberHelpers;
 import fr.romitou.mongosk.elements.MongoSKCollection;
 import fr.romitou.mongosk.elements.MongoSKDocument;
@@ -89,7 +89,7 @@ public class ExprMongoFindResult extends SimpleExpression<MongoSKDocument> {
         else
             query.buildFindPublisher().subscribe(observableSubscriber);
         List<Document> documents = observableSubscriber.get();
-        Logger.debug("Simple get query executed in " + (System.currentTimeMillis() - getQuery) + "ms.");
+        LoggerHelper.debug("Simple get query executed in " + (System.currentTimeMillis() - getQuery) + "ms.");
         return documents.stream()
             .map(document -> new MongoSKDocument(document, query.getMongoSKCollection()))
             .toArray(MongoSKDocument[]::new);
@@ -127,7 +127,7 @@ public class ExprMongoFindResult extends SimpleExpression<MongoSKDocument> {
                         .deleteMany(query.getMongoSKFilter().getFilter())
                         .subscribe(deleteSubscriber);
                 deleteSubscriber.await();
-                Logger.debug("Simple delete query executed in " + (System.currentTimeMillis() - deleteQuery) + "ms.");
+                LoggerHelper.debug("Simple delete query executed in " + (System.currentTimeMillis() - deleteQuery) + "ms.");
                 break;
             case SET:
                 long replaceQuery = System.currentTimeMillis();
@@ -139,7 +139,7 @@ public class ExprMongoFindResult extends SimpleExpression<MongoSKDocument> {
                     .replaceOne(query.getMongoSKFilter().getFilter(), mongoSKDocument.getBsonDocument())
                     .subscribe(updateSubscriber);
                 updateSubscriber.await();
-                Logger.debug("Simple replace query executed in " + (System.currentTimeMillis() - replaceQuery) + "ms.");
+                LoggerHelper.debug("Simple replace query executed in " + (System.currentTimeMillis() - replaceQuery) + "ms.");
             default:
                 break;
         }

@@ -1,6 +1,6 @@
 package fr.romitou.mongosk.elements;
 
-import fr.romitou.mongosk.Logger;
+import fr.romitou.mongosk.LoggerHelper;
 import org.bson.conversions.Bson;
 
 import java.util.Objects;
@@ -24,7 +24,7 @@ public class MongoSKFilter {
     }
 
     public void printDebug() {
-        Logger.debug("Informations about this MongoSK filter:",
+        LoggerHelper.debug("Informations about this MongoSK filter:",
             "BSON filter: " + this.filter.toBsonDocument(),
             "Display: " + this.display
         );

@@ -1,7 +1,7 @@
 package fr.romitou.mongosk.elements;
 
 import com.mongodb.reactivestreams.client.MongoClient;
-import fr.romitou.mongosk.Logger;
+import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.MongoSK;
 
 import java.util.Objects;
@@ -26,7 +26,7 @@ public class MongoSKServer {
     }
 
     public void printDebug() {
-        Logger.debug("Informations about " + this.displayedName + " MongoSK server:",
+        LoggerHelper.debug("Informations about " + this.displayedName + " MongoSK server:",
             "Cluster description: " + this.mongoClient.getClusterDescription(),
             "Is cluster compatible with Mongo driver: " + this.mongoClient.getClusterDescription().isCompatibleWithDriver()
         );

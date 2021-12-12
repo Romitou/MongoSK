@@ -11,7 +11,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import com.mongodb.reactivestreams.client.DistinctPublisher;
-import fr.romitou.mongosk.Logger;
+import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.SubscriberHelpers;
 import fr.romitou.mongosk.adapters.MongoDeserializers;
 import fr.romitou.mongosk.elements.MongoSKCollection;
@@ -86,7 +86,7 @@ public class ExprMongoDisctinctResult extends SimpleExpression<Object> {
         else
             distinctPublisher.subscribe(observableSubscriber);
         List<BsonValue> values = observableSubscriber.get();
-        Logger.debug("Simple distinct query executed in " + (System.currentTimeMillis() - distinctQuery) + "ms.");
+        LoggerHelper.debug("Simple distinct query executed in " + (System.currentTimeMillis() - distinctQuery) + "ms.");
 
         return MongoDeserializers.deserializeBsonValues(values.toArray(new BsonValue[0]));
     }

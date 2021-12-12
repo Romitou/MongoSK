@@ -1,7 +1,7 @@
 package fr.romitou.mongosk.adapters;
 
 import com.mongodb.MongoClientSettings;
-import fr.romitou.mongosk.Logger;
+import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.adapters.codecs.*;
 import fr.romitou.mongosk.elements.MongoSKDocument;
@@ -56,7 +56,7 @@ public class MongoSKAdapter {
             return;
         availableCodecs.forEach(MongoSKAdapter::loadCodec);
         List<String> codecs = MongoSKAdapter.getCodecNames();
-        Logger.info("Loaded " + codecs.size() + " codecs!",
+        LoggerHelper.info("Loaded " + codecs.size() + " codecs!",
             "Name of the loaded codecs: " + String.join(", ", codecs),
             "If you have problems with these, do not hesitate to report them."
         );
@@ -66,15 +66,15 @@ public class MongoSKAdapter {
         try {
             MongoSKCodec<?> codecInstance = codec.getConstructor().newInstance();
             if (DISABLED_CODECS.contains(codecInstance.getName())) {
-                Logger.info("Codec " + codecInstance.getName() + " is disabled, skipping registration.");
+                LoggerHelper.info("Codec " + codecInstance.getName() + " is disabled, skipping registration.");
                 return;
             }
             Class.forName(codecInstance.getReturnType().getCanonicalName());
             loadedCodecs.add(codecInstance);
         } catch (NoClassDefFoundError | ClassNotFoundException e) {
-            Logger.severe("Oops, the return class of the " + codec.getName() + " codec doesn't exists! Try updating Skript?");
+            LoggerHelper.severe("Oops, the return class of the " + codec.getName() + " codec doesn't exists! Try updating Skript?");
         } catch (ReflectiveOperationException e) {
-            Logger.severe("Oops, cannot load the " + codec.getName() + " codec! Look at the console for more details.");
+            LoggerHelper.severe("Oops, cannot load the " + codec.getName() + " codec! Look at the console for more details.");
             e.printStackTrace();
         }
     }
@@ -112,7 +112,7 @@ public class MongoSKAdapter {
         String codecName = doc.getString(DOCUMENT_FIELD);
         MongoSKCodec<?> codec = MongoSKAdapter.getCodecByName(codecName);
         if (codec == null) {
-            Logger.severe("No codec found for " + codecName + "!",
+            LoggerHelper.severe("No codec found for " + codecName + "!",
                 "Loaded codecs: " + String.join(", ", MongoSKAdapter.getCodecNames()),
                 "Requested codec: " + codecName
             );
@@ -121,7 +121,7 @@ public class MongoSKAdapter {
         try {
             return codec.deserialize(doc);
         } catch (StreamCorruptedException ex) {
-            Logger.severe("An error occurred during the deserialization of the document: " + ex.getMessage(),
+            LoggerHelper.severe("An error occurred during the deserialization of the document: " + ex.getMessage(),
                 "Requested codec: " + codecName,
                 "Original value class: " + doc,
                 "Document JSON: " + doc.toJson()
@@ -135,22 +135,22 @@ public class MongoSKAdapter {
             return null;
         if (unsafeObject instanceof MongoSKDocument)
             return ((MongoSKDocument) unsafeObject).getBsonDocument();
-        Logger.debug("Searching codec for " + unsafeObject.getClass() + " class...");
+        LoggerHelper.debug("Searching codec for " + unsafeObject.getClass() + " class...");
         MongoSKCodec<Object> codec = MongoSKAdapter.getCodecByClass(unsafeObject.getClass());
         if (codec == null) {
             try {
                 MongoClientSettings.getDefaultCodecRegistry().get(unsafeObject.getClass());
             } catch (CodecConfigurationException ignore) {
-                Logger.debug("No codec found for this class. " + (SAFE_DESERIALIZATION ? "It has been removed from the document." : "No changes have been made to it."));
+                LoggerHelper.debug("No codec found for this class. " + (SAFE_DESERIALIZATION ? "It has been removed from the document." : "No changes have been made to it."));
                 return SAFE_DESERIALIZATION ? null : unsafeObject;
             }
-            Logger.debug("The Mongo driver directly supports this type. Next!");
+            LoggerHelper.debug("The Mongo driver directly supports this type. Next!");
             return unsafeObject; // We're safe!
         }
-        Logger.debug("A codec has been found: " + codec.getName());
+        LoggerHelper.debug("A codec has been found: " + codec.getName());
         Document serializedDocument = codec.serialize(unsafeObject);
         serializedDocument.put(DOCUMENT_FIELD, codec.getName());
-        Logger.debug("Result of the serialization: ",
+        LoggerHelper.debug("Result of the serialization: ",
             "Initial object: " + unsafeObject,
             "Serialized document: " + serializedDocument.toJson());
         return serializedDocument;

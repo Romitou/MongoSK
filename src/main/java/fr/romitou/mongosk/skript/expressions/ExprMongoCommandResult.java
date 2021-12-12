@@ -10,7 +10,7 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
-import fr.romitou.mongosk.Logger;
+import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.SubscriberHelpers;
 import fr.romitou.mongosk.elements.MongoSKDatabase;
 import fr.romitou.mongosk.elements.MongoSKDocument;
@@ -65,7 +65,7 @@ public class ExprMongoCommandResult extends SimpleExpression<MongoSKDocument> {
                 .runCommand(Document.parse(jsonString).toBsonDocument())
                 .subscribe(documentObservableSubscriber);
         } catch (BSONException | JsonParseException ex) {
-            Logger.severe("An error occurred when changing the document's JSON: " + ex.getMessage(),
+            LoggerHelper.severe("An error occurred when changing the document's JSON: " + ex.getMessage(),
                 "Provided JSON: " + jsonString,
                 "Please check its validity on https://jsonlint.com."
             );

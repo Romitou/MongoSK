@@ -3,7 +3,7 @@ package fr.romitou.mongosk.elements;
 import com.mongodb.client.model.Filters;
 import com.mongodb.reactivestreams.client.FindPublisher;
 import com.mongodb.reactivestreams.client.MongoCollection;
-import fr.romitou.mongosk.Logger;
+import fr.romitou.mongosk.LoggerHelper;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ public class MongoSKQuery {
     }
 
     public void printDebug() {
-        Logger.debug("Informations about this MongoSK query:",
+        LoggerHelper.debug("Informations about this MongoSK query:",
             "MongoSK Filter: " + this.mongoSKFilter,
             "MongoSK Sort: " + this.mongoSKSort,
             "Disk usage: " + this.diskUsage,

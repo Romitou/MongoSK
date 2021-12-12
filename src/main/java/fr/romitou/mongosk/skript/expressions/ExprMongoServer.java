@@ -16,7 +16,7 @@ import com.mongodb.MongoClientException;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
-import fr.romitou.mongosk.Logger;
+import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.elements.MongoSKServer;
 import fr.romitou.mongosk.listeners.MongoCommandListener;
@@ -71,10 +71,10 @@ public class ExprMongoServer extends SimpleExpression<MongoSKServer> {
         try {
             connectionString = new ConnectionString(rawConnectionString);
         } catch (IllegalArgumentException ex) {
-            Logger.severe("Your connection string is invalid: " + ex.getMessage().toLowerCase());
+            LoggerHelper.severe("Your connection string is invalid: " + ex.getMessage().toLowerCase());
             return new MongoSKServer[0];
         } catch (MongoClientException ex) {
-            Logger.severe("An error occurred while creating the client: " + ex.getMessage().toLowerCase());
+            LoggerHelper.severe("An error occurred while creating the client: " + ex.getMessage().toLowerCase());
             return new MongoSKServer[0];
         }
 

@@ -12,7 +12,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
-import fr.romitou.mongosk.Logger;
+import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import fr.romitou.mongosk.elements.MongoSKDocument;
 import org.bukkit.event.Event;
@@ -68,7 +68,7 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
         if (fieldName == null || mongoSKDocument == null || mongoSKDocument.getBsonDocument() == null)
             return new Object[0];
         if (!mongoSKDocument.getBsonDocument().containsKey(fieldName)) {
-            Logger.debug("The specified field does not exist in the document.",
+            LoggerHelper.debug("The specified field does not exist in the document.",
                 "Document: " + mongoSKDocument.getBsonDocument().toJson(),
                 "Keys: " + mongoSKDocument.getBsonDocument().keySet());
             return new Object[0];
@@ -81,7 +81,7 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
             List<Object> values = mongoSKDocument.getBsonDocument().getList(fieldName, Object.class);
             return MongoSKAdapter.deserializeValues(values.toArray());
         } catch (ClassCastException ex) {
-            Logger.severe("The type of item you are querying is not correct. " +
+            LoggerHelper.severe("The type of item you are querying is not correct. " +
                     "This can happen if you want to retrieve a list, but it is a single value.",
                 "Document: " + mongoSKDocument.getBsonDocument().toJson(),
                 "Exception: " + ex.getMessage());
@@ -155,7 +155,7 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
     }
 
     private void reportException(String action, String fieldName, MongoSKDocument document, List<?> omega, Exception ex) {
-        Logger.severe("An error occurred during " + action + " of Mongo document: " + ex.getMessage(),
+        LoggerHelper.severe("An error occurred during " + action + " of Mongo document: " + ex.getMessage(),
             "Field name: " + fieldName,
             "Document: " + document.getBsonDocument().toJson(),
             "Omega: " + omega

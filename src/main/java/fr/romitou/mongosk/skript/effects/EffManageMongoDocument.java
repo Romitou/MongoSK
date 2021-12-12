@@ -13,7 +13,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertManyResult;
 import com.mongodb.client.result.UpdateResult;
-import fr.romitou.mongosk.Logger;
+import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.SubscriberHelpers;
 import fr.romitou.mongosk.elements.MongoSKCollection;
 import fr.romitou.mongosk.elements.MongoSKDocument;
@@ -77,7 +77,7 @@ public class EffManageMongoDocument extends Effect {
                         .collect(Collectors.toList()))
                     .subscribe(observableInsertSubscriber);
                 observableInsertSubscriber.await();
-                Logger.debug("Insert query executed in " + (System.currentTimeMillis() - insertQuery) + "ms.");
+                LoggerHelper.debug("Insert query executed in " + (System.currentTimeMillis() - insertQuery) + "ms.");
                 break;
             case 2:
                 long updateQuery = System.currentTimeMillis();
@@ -88,7 +88,7 @@ public class EffManageMongoDocument extends Effect {
                         .subscribe(observableUpdateSubscriber);
                     observableUpdateSubscriber.await();
                 });
-                Logger.debug("Update query executed in " + (System.currentTimeMillis() - updateQuery) + "ms.");
+                LoggerHelper.debug("Update query executed in " + (System.currentTimeMillis() - updateQuery) + "ms.");
                 break;
             case 3:
                 long deleteQuery = System.currentTimeMillis();
@@ -99,7 +99,7 @@ public class EffManageMongoDocument extends Effect {
                         .subscribe(observableDeleteSubscriber);
                     observableDeleteSubscriber.await();
                 });
-                Logger.debug("Delete query executed in " + (System.currentTimeMillis() - deleteQuery) + "ms.");
+                LoggerHelper.debug("Delete query executed in " + (System.currentTimeMillis() - deleteQuery) + "ms.");
                 break;
         }
 

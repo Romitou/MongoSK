@@ -104,7 +104,7 @@ public final class SubscriberHelpers {
                 if (!errors.isEmpty())
                     throw errors.get(0);
             } catch (Throwable error) {
-                Logger.severe("An error occurred during a Mongo request: " + error.getMessage());
+                LoggerHelper.severe("An error occurred during a Mongo request: " + error.getMessage());
             }
             return this;
         }

@@ -1,6 +1,6 @@
 package fr.romitou.mongosk.elements;
 
-import fr.romitou.mongosk.Logger;
+import fr.romitou.mongosk.LoggerHelper;
 import org.bson.Document;
 
 import javax.annotation.Nullable;
@@ -41,7 +41,7 @@ public class MongoSKDocument {
     }
 
     public void printDebug() {
-        Logger.debug("Informations about this MongoSK document:",
+        LoggerHelper.debug("Informations about this MongoSK document:",
             // "BSON document: " + this.bsonDocument,
             "JSON: " + this.bsonDocument.toJson(),
             "Base collection: " + this.baseCollection

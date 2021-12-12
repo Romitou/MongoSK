@@ -7,7 +7,7 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
-import fr.romitou.mongosk.Logger;
+import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.elements.MongoSKDocument;
 import org.bson.BSONException;
 import org.bson.Document;
@@ -59,7 +59,7 @@ public class ExprMongoDocumentJson extends SimplePropertyExpression<MongoSKDocum
         try {
             mongoSKDocument.setBsonDocument(Document.parse(jsonString));
         } catch (BSONException | JsonParseException ex) {
-            Logger.severe("An error occurred when changing the document's JSON: " + ex.getMessage(),
+            LoggerHelper.severe("An error occurred when changing the document's JSON: " + ex.getMessage(),
                 "Original document: " + mongoSKDocument.getBsonDocument().toJson(),
                 "Provided JSON: " + jsonString,
                 "Please check its validity on https://jsonlint.com."

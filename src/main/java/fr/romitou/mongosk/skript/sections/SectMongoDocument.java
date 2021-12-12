@@ -9,7 +9,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Variable;
 import ch.njol.util.Kleenean;
-import fr.romitou.mongosk.Logger;
+import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.MongoSection;
 import fr.romitou.mongosk.elements.MongoSKDocument;
 import org.bukkit.event.Event;
@@ -36,14 +36,14 @@ public class SectMongoDocument extends MongoSection<MongoSKDocument> {
     public boolean init(@Nonnull Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
 
         if (isConditional()) {
-            Logger.severe("You cannot use conditions with this section.",
+            LoggerHelper.severe("You cannot use conditions with this section.",
                 "Use the section like this: set {_variable} to a new mongo document with:");
             return false;
         }
 
         Expression<?> variable = exprs[0];
         if (!(variable instanceof Variable<?>)) {
-            Logger.severe("In order to use this section, you must provide a variable as the first argument.",
+            LoggerHelper.severe("In order to use this section, you must provide a variable as the first argument.",
                 "Use the section like this: set {_variable} to a new mongo document with:");
             return false;
         }

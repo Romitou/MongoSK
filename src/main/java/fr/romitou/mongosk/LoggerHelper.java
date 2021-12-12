@@ -1,11 +1,14 @@
 package fr.romitou.mongosk;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import java.util.Arrays;
+import java.util.logging.Logger;
 
-public class Logger {
+public class LoggerHelper {
 
+    private final static Logger LOGGER = Bukkit.getLogger();
     private final static Boolean DEBUG = MongoSK.getInstance().getConfig().getBoolean("debug-mode", false);
     private final static String PREFIX = "&7[&2Mongo&aSK&7] ";
 
@@ -14,16 +17,16 @@ public class Logger {
     }
 
     public static void info(String... messages) {
-        System.out.println(getFormattedString(ChatColor.WHITE + messages[0]));
+        LOGGER.info(getFormattedString(ChatColor.WHITE + messages[0]));
         if (messages.length > 1)
             Arrays.stream(messages)
                 .skip(1)
-                .forEachOrdered(Logger::addDebugInfo);
+                .forEachOrdered(LoggerHelper::addDebugInfo);
     }
 
     public static void debug(String... messages) {
         if (!DEBUG) return;
-        System.out.println(getFormattedString(ChatColor.DARK_GRAY + messages[0]));
+        LOGGER.config(getFormattedString(ChatColor.DARK_GRAY + messages[0]));
         if (messages.length > 1)
             Arrays.stream(messages)
                 .skip(1)
@@ -32,23 +35,23 @@ public class Logger {
 
     private static void addDebugInfo(String message) {
         if (!DEBUG) return;
-        System.out.println(getFormattedString(ChatColor.DARK_GRAY + "-> " + message));
+        LOGGER.config(getFormattedString(ChatColor.DARK_GRAY + "-> " + message));
     }
 
     public static void warn(String... messages) {
-        System.out.println(getFormattedString(ChatColor.GOLD + messages[0]));
+        LOGGER.warning(getFormattedString(ChatColor.GOLD + messages[0]));
         if (messages.length > 1)
             Arrays.stream(messages)
                 .skip(1)
-                .forEachOrdered(Logger::addDebugInfo);
+                .forEachOrdered(LoggerHelper::addDebugInfo);
     }
 
     public static void severe(String... messages) {
-        System.out.println(getFormattedString(ChatColor.RED + messages[0]));
+        LOGGER.severe(getFormattedString(ChatColor.RED + messages[0]));
         if (messages.length > 1)
             Arrays.stream(messages)
                 .skip(1)
-                .forEachOrdered(Logger::addDebugInfo);
+                .forEachOrdered(LoggerHelper::addDebugInfo);
     }
 
 }
