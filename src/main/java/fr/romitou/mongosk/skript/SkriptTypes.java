@@ -7,8 +7,6 @@ import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.registrations.Classes;
 import fr.romitou.mongosk.elements.*;
 
-import javax.annotation.Nonnull;
-
 public class SkriptTypes {
     static {
         Classes.registerClass(new ClassInfo<>(MongoSKServer.class, "mongoskserver")
@@ -19,26 +17,18 @@ public class SkriptTypes {
             .since("2.0.0")
             .parser(new Parser<MongoSKServer>() {
                 @Override
-                public boolean canParse(@Nonnull ParseContext context) {
+                public boolean canParse(ParseContext context) {
                     return false;
                 }
 
                 @Override
-                @Nonnull
-                public String toString(@Nonnull MongoSKServer server, int flags) {
+                public String toString(MongoSKServer server, int flags) {
                     return server.getDisplayedName() + " server";
                 }
 
                 @Override
-                @Nonnull
-                public String toVariableNameString(@Nonnull MongoSKServer server) {
+                public String toVariableNameString(MongoSKServer server) {
                     return "mongoskserver:" + server.getDisplayedName();
-                }
-
-                @Override
-                @Nonnull
-                public String getVariableNamePattern() {
-                    return "mongoskserver:.+";
                 }
             })
         );
@@ -51,26 +41,18 @@ public class SkriptTypes {
             .since("2.0.0")
             .parser(new Parser<MongoSKDatabase>() {
                 @Override
-                public boolean canParse(@Nonnull ParseContext context) {
+                public boolean canParse(ParseContext context) {
                     return false;
                 }
 
                 @Override
-                @Nonnull
-                public String toString(@Nonnull MongoSKDatabase database, int flags) {
+                public String toString(MongoSKDatabase database, int flags) {
                     return database.getMongoDatabase().getName() + " database";
                 }
 
                 @Override
-                @Nonnull
-                public String toVariableNameString(@Nonnull MongoSKDatabase database) {
+                public String toVariableNameString(MongoSKDatabase database) {
                     return "mongoskdatabase:" + database.getMongoDatabase().getName();
-                }
-
-                @Override
-                @Nonnull
-                public String getVariableNamePattern() {
-                    return "mongoskdatabase:.+";
                 }
             })
         );
@@ -83,26 +65,18 @@ public class SkriptTypes {
             .since("2.0.0")
             .parser(new Parser<MongoSKCollection>() {
                 @Override
-                public boolean canParse(@Nonnull ParseContext context) {
+                public boolean canParse(ParseContext context) {
                     return false;
                 }
 
                 @Override
-                @Nonnull
-                public String toString(@Nonnull MongoSKCollection collection, int flags) {
+                public String toString(MongoSKCollection collection, int flags) {
                     return collection.getMongoCollection().getNamespace().getCollectionName() + " collection";
                 }
 
                 @Override
-                @Nonnull
-                public String toVariableNameString(@Nonnull MongoSKCollection collection) {
+                public String toVariableNameString(MongoSKCollection collection) {
                     return "mongoskcollection:" + collection.getMongoCollection().getNamespace().getCollectionName();
-                }
-
-                @Override
-                @Nonnull
-                public String getVariableNamePattern() {
-                    return "mongoskcollection:.+";
                 }
             })
         );
@@ -116,26 +90,18 @@ public class SkriptTypes {
             .parser(new Parser<MongoSKDocument>() {
 
                 @Override
-                public boolean canParse(@Nonnull ParseContext context) {
+                public boolean canParse(ParseContext context) {
                     return false;
                 }
 
                 @Override
-                @Nonnull
-                public String toString(@Nonnull MongoSKDocument document, int flags) {
+                public String toString(MongoSKDocument document, int flags) {
                     return document.getBsonDocument().toJson() + " document";
                 }
 
                 @Override
-                @Nonnull
-                public String toVariableNameString(@Nonnull MongoSKDocument document) {
+                public String toVariableNameString(MongoSKDocument document) {
                     return "mongoskdocument:" + document.getBsonDocument().toJson();
-                }
-
-                @Override
-                @Nonnull
-                public String getVariableNamePattern() {
-                    return "mongoskdocument:.+";
                 }
             })
         );
@@ -148,26 +114,18 @@ public class SkriptTypes {
             .since("2.0.0")
             .parser(new Parser<MongoSKFilter>() {
                 @Override
-                public boolean canParse(@Nonnull ParseContext context) {
+                public boolean canParse(ParseContext context) {
                     return false;
                 }
 
                 @Override
-                @Nonnull
-                public String toString(@Nonnull MongoSKFilter filter, int flags) {
+                public String toString(MongoSKFilter filter, int flags) {
                     return filter.getDisplay();
                 }
 
                 @Override
-                @Nonnull
-                public String toVariableNameString(@Nonnull MongoSKFilter filter) {
+                public String toVariableNameString(MongoSKFilter filter) {
                     return "mongoskfilter:" + filter.getFilter().toBsonDocument().toJson();
-                }
-
-                @Override
-                @Nonnull
-                public String getVariableNamePattern() {
-                    return "mongoskfilter:.+";
                 }
             })
         );
@@ -181,26 +139,18 @@ public class SkriptTypes {
             .parser(new Parser<MongoSKQuery>() {
 
                 @Override
-                public boolean canParse(@Nonnull ParseContext context) {
+                public boolean canParse(ParseContext context) {
                     return false;
                 }
 
                 @Override
-                @Nonnull
-                public String toString(@Nonnull MongoSKQuery query, int flags) {
+                public String toString(MongoSKQuery query, int flags) {
                     return query.getDisplay();
                 }
 
                 @Override
-                @Nonnull
-                public String toVariableNameString(@Nonnull MongoSKQuery query) {
+                public String toVariableNameString(MongoSKQuery query) {
                     return "mongoskquery:" + query;
-                }
-
-                @Override
-                @Nonnull
-                public String getVariableNamePattern() {
-                    return "mongoskquery:.+";
                 }
             })
         );
@@ -214,26 +164,18 @@ public class SkriptTypes {
             .parser(new Parser<MongoSKSort>() {
 
                 @Override
-                public boolean canParse(@Nonnull ParseContext context) {
+                public boolean canParse(ParseContext context) {
                     return false;
                 }
 
                 @Override
-                @Nonnull
-                public String toString(@Nonnull MongoSKSort sort, int flags) {
+                public String toString(MongoSKSort sort, int flags) {
                     return sort.getDisplay();
                 }
 
                 @Override
-                @Nonnull
-                public String toVariableNameString(@Nonnull MongoSKSort sort) {
+                public String toVariableNameString(MongoSKSort sort) {
                     return "mongosksort:" + sort;
-                }
-
-                @Override
-                @Nonnull
-                public String getVariableNamePattern() {
-                    return "mongosksort:.+";
                 }
             })
         );
