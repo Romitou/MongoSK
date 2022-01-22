@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'org.mongodb', name: 'mongodb-driver-reactivestreams', version: '4.4.0'
+    implementation group: 'org.mongodb', name: 'mongodb-driver-reactivestreams', version: '4.4.1'
     shadow group: 'io.papermc.paper', name: 'paper-api', version: '1.18.1-R0.1-SNAPSHOT'
     shadow group: 'com.github.SkriptLang', name: 'Skript', version: 'e43c37e02a', { // Well, the 2.6 build failed...
         exclude module: 'Vault'
