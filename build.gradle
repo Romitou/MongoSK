@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'fr.romitou.mongosk'
-version '2.2.1'
+version '2.2.2'
 
 repositories {
     mavenCentral()
@@ -15,8 +15,8 @@ repositories {
 
 dependencies {
     implementation group: 'org.mongodb', name: 'mongodb-driver-reactivestreams', version: '4.4.0'
-    shadow group: 'com.destroystokyo.paper', name: 'paper-api', version: '1.16.5-R0.1-SNAPSHOT'
-    shadow group: 'com.github.SkriptLang', name: 'Skript', version: '2.6', {
+    shadow group: 'io.papermc.paper', name: 'paper-api', version: '1.18.1-R0.1-SNAPSHOT'
+    shadow group: 'com.github.SkriptLang', name: 'Skript', version: 'e43c37e02a', { // Well, the 2.6 build failed...
         exclude module: 'Vault'
         exclude module: 'worldguard'
         exclude module: 'worldguard-legacy'
@@ -24,6 +24,7 @@ dependencies {
 }
 
 compileJava {
+    options.compilerArgs += ['-source', '1.8', '-target', '1.8']
     options.encoding = 'UTF-8'
 }
 
