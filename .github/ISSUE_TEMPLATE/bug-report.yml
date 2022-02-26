@@ -1,0 +1,61 @@
+# Credits: this issue template comes from https://github.com/SkriptLang/Skript/blob/master/.github/ISSUE_TEMPLATE/bug-report.yml
+
+name: 🐛 Report a bug
+description: Report a bug you've encountered with MongoSK.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Before reporting a bug
+        Before reporting your bug, make sure it occurs only in supported versions of MongoSK.
+        Only the latest versions (including pre-releases and stable) are accepted.
+        To save everyone's time, make sure your bug has not already been reported in the issues.
+  - type: textarea
+    attributes:
+      label: 🔖 Versions
+      description: Run '/skript info' and paste the output here. Make sure your server version and MongoSK version are displayed.
+      value: |
+        ```
+        Replace this text with your output from the command.
+        ```
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: ✒️ Description
+      description: Describe the bug you've encountered. Try to be as thorough as possible.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: ⚙️ Expected behavior
+      description: What was supposed to happen? If you're not sure, please state so.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 🔎 Steps to reproduce
+      description: |
+        What did you do to make this problem happen? Try to be as thorough as possible.
+        You may include any code if necessary. Please make sure it is actually testable by someone.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 📸 Errors or screenshots
+      description: |
+        Please paste any console errors you've encountered here. Make sure to copy the entire error.
+        If you have encountered any weird behavior in-game that you would like to share, you may share a screenshot or video.
+        If you are going to use a paste site, please use something like https://gist.github.com/.
+      value: |
+        ```
+        Replace this text with your paste link or errors/screenshots/videos.
+        ```
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: 🤔 Other
+      description: Have anything else to add?
+    validations:
+      required: false
