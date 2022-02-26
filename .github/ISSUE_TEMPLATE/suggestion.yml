@@ -1,0 +1,29 @@
+# Credits: this issue template comes from https://github.com/SkriptLang/Skript/blob/master/.github/ISSUE_TEMPLATE/suggestion.yml
+
+name: 💡 Suggest a new feature
+description: Suggest an addition or change to improve MongoSK
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Guidelines
+        Please make sure that your suggestion isn't something already in MongoSK, and that it hasn't been suggested before.
+  - type: textarea
+    attributes:
+      label: ✒️ Description
+      description: |
+        Describe your suggestion here. Try to be as thorough as possible.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 🤔 Why?
+      description: Tell us why you want to see this feature added.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 💬 Other
+      description: Have anything else to add?
+    validations:
+      required: false
