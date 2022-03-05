@@ -2,13 +2,16 @@ package fr.romitou.mongosk;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
+import ch.njol.skript.lang.parser.ParserInstance;
 import com.mongodb.reactivestreams.client.MongoClient;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import fr.romitou.mongosk.elements.MongoSKServer;
+import fr.romitou.mongosk.skript.SkriptTypes;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,7 +49,11 @@ public class MongoSK extends JavaPlugin {
         LoggerHelper.info("Registration of the MongoSK syntaxes...");
         try {
             SkriptAddon skriptAddon = Skript.registerAddon(this);
-            skriptAddon.loadClasses("fr.romitou.mongosk.skript");
+            skriptAddon.loadClasses(
+                "fr.romitou.mongosk.skript",
+                "conditions", "effects", "events", "expressions", (isUsingNewSections() ? "sections" : "legacySections")
+            );
+            new SkriptTypes();
         } catch (IOException e) {
             LoggerHelper.severe("MongoSK could not load and register some syntax elements.",
                 "Try to update your version of Skript and MongoSK, and try again only with these two plugins.",
@@ -105,6 +112,24 @@ public class MongoSK extends JavaPlugin {
 
     public static void registerServer(MongoSKServer mongoSKServer) {
         mongoSKServers.add(mongoSKServer);
+    }
+
+    public static @NotNull Boolean isUsingNewParser() {
+        try {
+            ParserInstance.class.getDeclaredMethod("get");
+            return true;
+        } catch (NoSuchMethodException ignored) {
+            return false;
+        }
+    }
+
+    public static @NotNull Boolean isUsingNewSections() {
+        try {
+            Class.forName("ch.njol.skript.lang.Section");
+            return true;
+        } catch (ClassNotFoundException ignored) {
+            return false;
+        }
     }
 
     public static MongoSK getInstance() {

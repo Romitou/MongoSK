@@ -15,7 +15,7 @@ import org.bukkit.event.Event;
  *
  * @param <T> The value associated with this section
  */
-public abstract class MongoSection<T> extends EffectSection {
+public abstract class MongoSection<T> extends LegacyEffectSection {
 
     private Variable<?> variable;
 

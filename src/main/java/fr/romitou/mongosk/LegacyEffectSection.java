@@ -8,6 +8,7 @@ import ch.njol.skript.lang.TriggerSection;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.log.*;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
@@ -20,9 +21,9 @@ import java.util.*;
  * @author Tuke_Nuke on 29/03/2017
  * @author Romitou on 25/04/2021
  */
-public abstract class EffectSection extends Condition {
+public abstract class LegacyEffectSection extends Condition {
 
-    public static final HashMap<Class<? extends EffectSection>, EffectSection> effectSections = new HashMap<>();
+    public static final HashMap<Class<? extends LegacyEffectSection>, LegacyEffectSection> effectSections = new HashMap<>();
     private static final Boolean IS_USING_NEW_PARSER = isUsingNewParser();
     private final Node node;
     private SectionNode sectionNode;
@@ -34,7 +35,7 @@ public abstract class EffectSection extends Condition {
      * To use sections, your class must extend EffectSection.
      */
     @SuppressWarnings("unchecked")
-    public EffectSection() {
+    public LegacyEffectSection() {
         // Get the current node.
         this.node = SkriptLogger.getNode();
 
@@ -82,7 +83,7 @@ public abstract class EffectSection extends Condition {
      */
     @Nonnull
     @SafeVarargs
-    public static Boolean isCurrentSection(Class<? extends EffectSection>... classes) {
+    public static Boolean isCurrentSection(Class<? extends LegacyEffectSection>... classes) {
         return getCurrentSection(classes).isPresent();
     }
 
@@ -94,25 +95,20 @@ public abstract class EffectSection extends Condition {
      */
     @Nonnull
     @SafeVarargs
-    public static Optional<EffectSection> getCurrentSection(Class<? extends EffectSection>... classes) {
+    public static Optional<LegacyEffectSection> getCurrentSection(Class<? extends LegacyEffectSection>... classes) {
         return Arrays.stream(classes)
-            .filter(EffectSection.effectSections::containsKey)
-            .map(EffectSection.effectSections::get)
+            .filter(LegacyEffectSection.effectSections::containsKey)
+            .map(LegacyEffectSection.effectSections::get)
             .findFirst();
     }
 
-    public static Boolean isUsingNewParser() {
-        try {
-            ParserInstance.class.getDeclaredMethod("get");
-            return true;
-        } catch (NoSuchMethodException ignored) {
-            return false;
-        }
+    public static @NotNull Boolean isUsingNewParser() {
+        return MongoSK.isUsingNewParser();
     }
 
     /**
      * Initializes the section's trigger, so that the section can then be executed.
-     * It is mandatory to initialise it first before using {@link EffectSection#runSection(Event)}.
+     * It is mandatory to initialise it first before using {@link LegacyEffectSection#runSection(Event)}.
      */
     protected void loadSection() {
         // If section node is null, this means that a trigger has already been created. Aborting.
@@ -137,7 +133,7 @@ public abstract class EffectSection extends Condition {
             @Override
             public String toString(Event e, boolean debug) {
                 // Call the Debuggable#toString method of EffectSection (and not of the TriggerSection).
-                return EffectSection.this.toString(e, debug);
+                return LegacyEffectSection.this.toString(e, debug);
             }
         };
 
@@ -235,7 +231,7 @@ public abstract class EffectSection extends Condition {
 
     /**
      * Executes the section, with the event passed as a parameter.
-     * It is mandatory to have initialized the section first, via {@link EffectSection#loadSection()}.
+     * It is mandatory to have initialized the section first, via {@link LegacyEffectSection#loadSection()}.
      *
      * @param e The event
      */
@@ -271,7 +267,7 @@ public abstract class EffectSection extends Condition {
     }
 
     /**
-     * Checks that the {@link EffectSection#loadSection()} method has been called beforehand.
+     * Checks that the {@link LegacyEffectSection#loadSection()} method has been called beforehand.
      *
      * @return Whether the section is initialized
      */

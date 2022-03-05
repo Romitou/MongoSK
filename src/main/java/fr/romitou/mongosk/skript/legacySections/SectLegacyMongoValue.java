@@ -1,4 +1,4 @@
-package fr.romitou.mongosk.skript.effects;
+package fr.romitou.mongosk.skript.legacySections;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
@@ -9,13 +9,12 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
-import fr.romitou.mongosk.EffectSection;
+import fr.romitou.mongosk.LegacyEffectSection;
+import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
-import fr.romitou.mongosk.skript.sections.SectMongoDocument;
 import org.bukkit.event.Event;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,10 +30,15 @@ import java.util.List;
     "\tmongo \"nestedObject\": {_nested}",
     "broadcast {_doc}'s mongo json"})
 @Since("2.1.0")
-public class EffMongoValue extends Effect {
+public class SectLegacyMongoValue extends Effect {
 
     static {
-        Skript.registerEffect(EffMongoValue.class, "mongo[(sk|db)] [(1¦(field|value)|2¦(array|list))] %string%: %objects%");
+        if (!MongoSK.isUsingNewSections()) {
+            Skript.registerEffect(
+                SectLegacyMongoValue.class,
+                "mongo[(sk|db)] [(1¦(field|value)|2¦(array|list))] %string%: %objects%"
+            );
+        }
     }
 
     private Expression<String> exprKey;
@@ -44,7 +48,7 @@ public class EffMongoValue extends Effect {
     @SuppressWarnings("unchecked")
     @Override
     public boolean init(@Nonnull Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
-        if (!EffectSection.isCurrentSection(SectMongoDocument.class))
+        if (!LegacyEffectSection.isCurrentSection(SectLegacyMongoDocument.class))
             return false;
         isSingle = parseResult.mark == 1
             ? Kleenean.TRUE
@@ -62,11 +66,11 @@ public class EffMongoValue extends Effect {
         List<?> omega = Arrays.asList(MongoSKAdapter.serializeArray(exprValue.getArray(e)));
         switch (isSingle) {
             case UNKNOWN:
-                SectMongoDocument.mongoSKDocument.getBsonDocument().put(key, omega.size() == 1 ? omega.get(0) : omega);
+                SectLegacyMongoDocument.mongoSKDocument.getBsonDocument().put(key, omega.size() == 1 ? omega.get(0) : omega);
                 break;
             case TRUE:
             case FALSE:
-                SectMongoDocument.mongoSKDocument.getBsonDocument().put(key, isSingle == Kleenean.TRUE ? omega.get(0) : omega);
+                SectLegacyMongoDocument.mongoSKDocument.getBsonDocument().put(key, isSingle == Kleenean.TRUE ? omega.get(0) : omega);
                 break;
         }
     }
