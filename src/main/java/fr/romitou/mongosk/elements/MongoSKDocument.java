@@ -1,9 +1,13 @@
 package fr.romitou.mongosk.elements;
 
 import fr.romitou.mongosk.LoggerHelper;
+import fr.romitou.mongosk.skript.expressions.ExprMongoEmbeddedValue;
 import org.bson.Document;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 
 public class MongoSKDocument {
@@ -46,6 +50,36 @@ public class MongoSKDocument {
             "JSON: " + this.bsonDocument.toJson(),
             "Base collection: " + this.baseCollection
         );
+    }
+
+    public Object getEmbeddedValue(final ExprMongoEmbeddedValue.MongoQueryElement[] queryElements) {
+        Object value = this.bsonDocument;
+        Iterator<ExprMongoEmbeddedValue.MongoQueryElement> keyIterator = Arrays.stream(queryElements).iterator();
+        while (keyIterator.hasNext()) {
+            ExprMongoEmbeddedValue.MongoQueryElement queryElement = keyIterator.next();
+            if (queryElement.path != null) {
+                if (value instanceof Document) {
+                    value = ((Document) value).get(queryElement.path);
+                } else {
+                    LoggerHelper.debug("Expected a document, but got a " + value.getClass().getSimpleName() + " instead at path '" + queryElement.path + "'.",
+                        "Query elements: " + Arrays.toString(queryElements),
+                        "Document: " + this.bsonDocument.toJson()
+                    );
+                    return null;
+                }
+            } else if (queryElement.index != null) {
+                if (value instanceof List) {
+                    value = ((List<Object>) value).get(queryElement.index);
+                } else {
+                    LoggerHelper.severe("Expected a list, but got a " + value.getClass().getSimpleName() + " instead at index " + queryElement.index + ".",
+                        "Query elements: " + Arrays.toString(queryElements),
+                        "Document: " + this.bsonDocument.toJson()
+                    );
+                    return null;
+                }
+            }
+        }
+        return value;
     }
 
     @Override
