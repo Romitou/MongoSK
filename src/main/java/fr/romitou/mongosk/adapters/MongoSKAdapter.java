@@ -72,7 +72,7 @@ public class MongoSKAdapter {
             Class.forName(codecInstance.getReturnType().getCanonicalName());
             loadedCodecs.add(codecInstance);
         } catch (NoClassDefFoundError | ClassNotFoundException e) {
-            LoggerHelper.severe("Oops, the return class of the " + codec.getName() + " codec doesn't exists! Try updating Skript?");
+            LoggerHelper.severe("Oops, the return class of the " + codec.getName() + " codec doesn't exists! Skipping registration.");
         } catch (ReflectiveOperationException e) {
             LoggerHelper.severe("Oops, cannot load the " + codec.getName() + " codec! Look at the console for more details.");
             e.printStackTrace();
