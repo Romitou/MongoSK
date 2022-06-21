@@ -18,18 +18,6 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
-@Name("Mongo section document value")
-@Description("These syntaxes can only be used in a Mongo section of a document creation. " +
-    "They are useful when you want to create simple documents quickly. " +
-    "If your document is complex, you should use the classic expressions.")
-@Examples({"set {_nested} to a new mongo document with:",
-    "\tmongo \"number\": 100",
-    "\tmongo \"boolean\": false",
-    "set {_doc} to a new mongo document with:",
-    "\tmongo \"simpleField\": \"Hello!\"",
-    "\tmongo \"nestedObject\": {_nested}",
-    "broadcast {_doc}'s mongo json"})
-@Since("2.1.0")
 public class SectLegacyMongoValue extends Effect {
 
     static {

@@ -17,14 +17,6 @@ import org.bukkit.event.Event;
 
 import javax.annotation.Nonnull;
 
-@Name("Mongo section document")
-@Description("This section can be used to create documents quickly and easily. " +
-    "To know how to use this section completely, see the \"Mongo section document value\" effect. " +
-    "Please note: you must specify a variable that will be affected by this section, as in the example.")
-@Examples({"set {_doc} to a new mongo document with:",
-    "\tmongo \"key\": \"value\"",
-    "send {_doc}"})
-@Since("2.1.0")
 public class SectLegacyMongoDocument extends MongoSection<MongoSKDocument> {
 
     public static MongoSKDocument mongoSKDocument = new MongoSKDocument();

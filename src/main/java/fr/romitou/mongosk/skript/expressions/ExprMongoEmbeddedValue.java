@@ -2,6 +2,10 @@ package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -17,6 +21,35 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Name("Mongo Embedded Value")
+@Description("It is sometimes redundant to extract a document from a document from a document etc... and undertake several data manipulations on several lines. " +
+    "To remedy this, this expression will only ask you the path (MongoSK specific syntax, be careful) as follows: \"foo.bar\", or \"foo[0].bar\" or \"foo.bar[2]\" for example. " +
+    "Embedded documents must be separated by a dot, and you must specify in brackets the index of the array (starting from 0) if it is a list.")
+@Examples({"{",
+    "   \"doc\": {",
+    "      \".foo\": \"bar\"",
+    "   },",
+    "   \"list\": [",
+    "      {",
+    "         \"numbers\": [",
+    "            \"1\",",
+    "            \"2\"",
+    "         ],",
+    "         \"hello\": \"world\"",
+    "      }",
+    "   ]",
+    "}" +
+    "" +
+    "set {_docfoo} to mongo embedded value with path \"doc.\\.foo\" of {doc}",
+    "broadcast \"%{_docfoo}%\" # Output: bar",
+    "",
+    "set {_listnumbers} to mongo embedded value with path \"list[0].numbers[1]\" of {doc}",
+    "broadcast \"%{_listnumbers}%\" # Output: 2",
+    "",
+    "set {_listhello} to mongo embedded value with path \"list[0].hello\" of {doc}",
+    "broadcast \"%{_listhello}%\"  # Output: world"
+})
+@Since("2.3.0")
 public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
 
     static {
