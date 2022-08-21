@@ -19,10 +19,21 @@ public class LocationCodec implements MongoSKCodec<Location> {
         String worldName = document.getString("world");
         if (x == null || y == null || z == null || worldName == null)
             throw new StreamCorruptedException("Cannot retrieve x, y, z fields or world field from document!");
+
         World world = Bukkit.getWorld(worldName);
         if (world == null)
             throw new StreamCorruptedException("Cannot parse given world name!");
-        return new Location(world, x, y, z);
+
+        float yaw = document.get("yaw", 0F),
+            pitch = document.get("pitch", 0F);
+        return new Location(
+            world,
+            x,
+            y,
+            z,
+            yaw,
+            pitch
+        );
     }
 
     @Nonnull
@@ -32,6 +43,8 @@ public class LocationCodec implements MongoSKCodec<Location> {
         document.put("x", location.getX());
         document.put("y", location.getY());
         document.put("z", location.getZ());
+        document.put("yaw", location.getYaw());
+        document.put("pitch", location.getPitch());
         document.put("world", location.getWorld().getName());
         return document;
     }
