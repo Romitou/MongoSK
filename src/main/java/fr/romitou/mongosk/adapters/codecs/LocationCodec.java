@@ -24,16 +24,9 @@ public class LocationCodec implements MongoSKCodec<Location> {
         if (world == null)
             throw new StreamCorruptedException("Cannot parse given world name!");
 
-        float yaw = document.get("yaw", 0F),
-            pitch = document.get("pitch", 0F);
-        return new Location(
-            world,
-            x,
-            y,
-            z,
-            yaw,
-            pitch
-        );
+        Double yaw = document.get("yaw", 0D),
+            pitch = document.get("pitch", 0D);
+        return new Location(world, x, y, z, yaw.floatValue(), pitch.floatValue());
     }
 
     @Nonnull
