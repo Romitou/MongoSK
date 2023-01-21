@@ -82,6 +82,44 @@ public class MongoSKDocument {
         return value;
     }
 
+    public Object setEmbeddedValue(final ExprMongoEmbeddedValue.MongoQueryElement[] queryElements, Object value) {
+        Object currentValue = this.bsonDocument;
+        Iterator<ExprMongoEmbeddedValue.MongoQueryElement> keyIterator = Arrays.stream(queryElements).iterator();
+        while (keyIterator.hasNext()) {
+            ExprMongoEmbeddedValue.MongoQueryElement queryElement = keyIterator.next();
+            if (queryElement.path != null) {
+                if (currentValue instanceof Document) {
+                    if (keyIterator.hasNext()) {
+                        currentValue = ((Document) currentValue).get(queryElement.path);
+                    } else {
+                        ((Document) currentValue).put(queryElement.path, value);
+                    }
+                } else {
+                    LoggerHelper.debug("Expected a document, but got a " + currentValue.getClass().getSimpleName() + " instead at path '" + queryElement.path + "'.",
+                        "Query elements: " + Arrays.toString(queryElements),
+                        "Document: " + this.bsonDocument.toJson()
+                    );
+                    return null;
+                }
+            } else if (queryElement.index != null) {
+                if (currentValue instanceof List) {
+                    if (keyIterator.hasNext()) {
+                        currentValue = ((List<Object>) currentValue).get(queryElement.index);
+                    } else {
+                        ((List<Object>) currentValue).set(queryElement.index, value);
+                    }
+                } else {
+                    LoggerHelper.severe("Expected a list, but got a " + currentValue.getClass().getSimpleName() + " instead at index " + queryElement.index + ".",
+                        "Query elements: " + Arrays.toString(queryElements),
+                        "Document: " + this.bsonDocument.toJson()
+                    );
+                    return null;
+                }
+            }
+        }
+        return value;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

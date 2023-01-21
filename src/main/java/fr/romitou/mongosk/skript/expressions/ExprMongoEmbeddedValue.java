@@ -11,6 +11,7 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+import ch.njol.util.coll.CollectionUtils;
 import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import fr.romitou.mongosk.elements.MongoSKDocument;
@@ -19,6 +20,7 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Name("Mongo Embedded Value")
@@ -105,10 +107,64 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
 
     @Override
     public Class<?>[] acceptChange(Changer.ChangeMode mode) {
-        return new Class[0];
+        if (mode == Changer.ChangeMode.SET || mode == Changer.ChangeMode.DELETE || mode == Changer.ChangeMode.ADD)
+            return CollectionUtils.array(Object[].class);
+        return null;
     }
 
-//    @Override
+    @Override
+    public void change(Event e, Object[] delta, Changer.ChangeMode mode) {
+        String fieldName = exprFieldName.getSingle(e);
+        MongoSKDocument mongoSKDocument = exprMongoSKDocument.getSingle(e);
+        if (fieldName == null || mongoSKDocument == null || mongoSKDocument.getBsonDocument() == null)
+            return;
+        MongoQueryElement[] mongoQueryElements = buildQueryElementsFromString(fieldName);
+        switch (mode) {
+            case SET:
+                mongoSKDocument.setEmbeddedValue(mongoQueryElements, delta.length == 1 ? MongoSKAdapter.serializeObject(delta[0]) : MongoSKAdapter.serializeArray(delta));
+                break;
+            case DELETE:
+                mongoSKDocument.setEmbeddedValue(mongoQueryElements, null);
+                break;
+            case ADD:
+                Object addValue = mongoSKDocument.getEmbeddedValue(mongoQueryElements);
+                if (addValue instanceof List) {
+                    List<Object> list = (List<Object>) addValue;
+                    list.addAll(Arrays.asList(MongoSKAdapter.serializeArray(delta)));
+                    mongoSKDocument.setEmbeddedValue(mongoQueryElements, list);
+                } else if (addValue instanceof Object[]) {
+                    List<Object> list = new ArrayList<>(Arrays.asList((Object[]) addValue));
+                    list.addAll(Arrays.asList(MongoSKAdapter.serializeArray(delta)));
+                    mongoSKDocument.setEmbeddedValue(mongoQueryElements, list);
+                } else {
+                    LoggerHelper.severe("The type of item you are querying is not correct. " +
+                            "This can happen if you want to retrieve a list, but it is a single value.",
+                        "Document: " + mongoSKDocument.getBsonDocument().toJson(),
+                        "Exception: " + addValue.getClass().getName());
+                }
+                break;
+            case REMOVE_ALL:
+            case REMOVE:
+                Object removeValue = mongoSKDocument.getEmbeddedValue(mongoQueryElements);
+                if (removeValue instanceof List) {
+                    List<Object> list = (List<Object>) removeValue;
+                    list.removeAll(Arrays.asList(MongoSKAdapter.serializeArray(delta)));
+                    mongoSKDocument.setEmbeddedValue(mongoQueryElements, list);
+                } else if (removeValue instanceof Object[]) {
+                    List<Object> list = new ArrayList<>(Arrays.asList((Object[]) removeValue));
+                    list.removeAll(Arrays.asList(MongoSKAdapter.serializeArray(delta)));
+                    mongoSKDocument.setEmbeddedValue(mongoQueryElements, list);
+                } else {
+                    LoggerHelper.severe("The type of item you are querying is not correct. " +
+                            "This can happen if you want to retrieve a list, but it is a single addValue.",
+                        "Document: " + mongoSKDocument.getBsonDocument().toJson(),
+                        "Exception: " + removeValue.getClass().getName());
+                }
+            break;
+        }
+    }
+
+    //    @Override
 //    public void change(@Nonnull final Event e, Object[] delta, @Nonnull Changer.ChangeMode mode) {
 //        String fieldName = exprFieldName.getSingle(e);
 //        MongoSKDocument mongoSKDocument = exprMongoSKDocument.getSingle(e);
