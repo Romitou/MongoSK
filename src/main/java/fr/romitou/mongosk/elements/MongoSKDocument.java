@@ -61,20 +61,34 @@ public class MongoSKDocument {
                 if (value instanceof Document) {
                     value = ((Document) value).get(queryElement.path);
                 } else {
-                    LoggerHelper.debug("Expected a document, but got a " + value.getClass().getSimpleName() + " instead at path '" + queryElement.path + "'.",
-                        "Query elements: " + Arrays.toString(queryElements),
-                        "Document: " + this.bsonDocument.toJson()
-                    );
+                    if (value == null) {
+                        LoggerHelper.debug("Expected a document, but got null instead at path '" + queryElement.path + "'.",
+                            "Query elements: " + Arrays.toString(queryElements),
+                            "Document: " + this.bsonDocument.toJson()
+                        );
+                    } else {
+                        LoggerHelper.debug("Expected a document, but got a " + value.getClass().getSimpleName() + " instead at path '" + queryElement.path + "'.",
+                            "Query elements: " + Arrays.toString(queryElements),
+                            "Document: " + this.bsonDocument.toJson()
+                        );
+                    }
                     return null;
                 }
             } else if (queryElement.index != null) {
                 if (value instanceof List) {
                     value = ((List<Object>) value).get(queryElement.index);
                 } else {
-                    LoggerHelper.severe("Expected a list, but got a " + value.getClass().getSimpleName() + " instead at index " + queryElement.index + ".",
-                        "Query elements: " + Arrays.toString(queryElements),
-                        "Document: " + this.bsonDocument.toJson()
-                    );
+                    if (value == null) {
+                        LoggerHelper.severe("Expected a list, but got null instead at index " + queryElement.index + ".",
+                            "Query elements: " + Arrays.toString(queryElements),
+                            "Document: " + this.bsonDocument.toJson()
+                        );
+                    } else {
+                        LoggerHelper.severe("Expected a list, but got a " + value.getClass().getSimpleName() + " instead at index " + queryElement.index + ".",
+                            "Query elements: " + Arrays.toString(queryElements),
+                            "Document: " + this.bsonDocument.toJson()
+                        );
+                    }
                     return null;
                 }
             }
