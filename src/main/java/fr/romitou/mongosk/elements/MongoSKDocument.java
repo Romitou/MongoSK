@@ -96,24 +96,38 @@ public class MongoSKDocument {
         return value;
     }
 
-    public Object setEmbeddedValue(final ExprMongoEmbeddedValue.MongoQueryElement[] queryElements, Object value) {
+    public void setEmbeddedValue(final ExprMongoEmbeddedValue.MongoQueryElement[] queryElements, Object value) {
         Object currentValue = this.bsonDocument;
+        if (currentValue == null) {
+            currentValue = new Document();
+        }
         Iterator<ExprMongoEmbeddedValue.MongoQueryElement> keyIterator = Arrays.stream(queryElements).iterator();
         while (keyIterator.hasNext()) {
             ExprMongoEmbeddedValue.MongoQueryElement queryElement = keyIterator.next();
             if (queryElement.path != null) {
                 if (currentValue instanceof Document) {
                     if (keyIterator.hasNext()) {
-                        currentValue = ((Document) currentValue).get(queryElement.path);
+                        Object foundValue = ((Document) currentValue).get(queryElement.path);
+                        if (foundValue == null) {
+                            ((Document) currentValue).put(queryElement.path, new Document());
+                        } else {
+                            currentValue = foundValue;
+                        }
                     } else {
                         ((Document) currentValue).put(queryElement.path, value);
                     }
                 } else {
-                    LoggerHelper.debug("Expected a document, but got a " + currentValue.getClass().getSimpleName() + " instead at path '" + queryElement.path + "'.",
-                        "Query elements: " + Arrays.toString(queryElements),
-                        "Document: " + this.bsonDocument.toJson()
-                    );
-                    return null;
+                    if (currentValue == null) {
+                        LoggerHelper.debug("Expected a document, but got null instead at path '" + queryElement.path + "'.",
+                            "Query elements: " + Arrays.toString(queryElements),
+                            "Document: " + this.bsonDocument.toJson()
+                        );
+                    } else {
+                        LoggerHelper.debug("Expected a document, but got a " + currentValue.getClass().getSimpleName() + " instead at path '" + queryElement.path + "'.",
+                            "Query elements: " + Arrays.toString(queryElements),
+                            "Document: " + this.bsonDocument.toJson()
+                        );
+                    }
                 }
             } else if (queryElement.index != null) {
                 if (currentValue instanceof List) {
@@ -123,15 +137,20 @@ public class MongoSKDocument {
                         ((List<Object>) currentValue).set(queryElement.index, value);
                     }
                 } else {
-                    LoggerHelper.severe("Expected a list, but got a " + currentValue.getClass().getSimpleName() + " instead at index " + queryElement.index + ".",
-                        "Query elements: " + Arrays.toString(queryElements),
-                        "Document: " + this.bsonDocument.toJson()
-                    );
-                    return null;
+                    if (currentValue == null) {
+                        LoggerHelper.severe("Expected a list, but got null instead at index " + queryElement.index + ".",
+                            "Query elements: " + Arrays.toString(queryElements),
+                            "Document: " + this.bsonDocument.toJson()
+                        );
+                    } else {
+                        LoggerHelper.severe("Expected a list, but got a " + currentValue.getClass().getSimpleName() + " instead at index " + queryElement.index + ".",
+                            "Query elements: " + Arrays.toString(queryElements),
+                            "Document: " + this.bsonDocument.toJson()
+                        );
+                    }
                 }
             }
         }
-        return value;
     }
 
     @Override
