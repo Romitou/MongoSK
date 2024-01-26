@@ -1,26 +1,19 @@
 plugins {
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-group 'fr.romitou.mongosk'
-version '2.3.1'
 
 repositories {
     mavenCentral()
-    maven { url = 'https://repo.destroystokyo.com/repository/maven-public/' }
     maven { url = 'https://papermc.io/repo/repository/maven-public/' }
-    maven { url = 'https://jitpack.io' }
+    maven { url = 'https://repo.skriptlang.org/releases' }
 }
 
 dependencies {
-    implementation group: 'org.mongodb', name: 'mongodb-driver-reactivestreams', version: '4.8.2'
-    shadow group: 'io.papermc.paper', name: 'paper-api', version: '1.19.2-R0.1-SNAPSHOT'
-    shadow group: 'com.github.SkriptLang', name: 'Skript', version: '2.6.2', { // Well, the 2.6 build failed...
-        exclude module: 'Vault'
-        exclude module: 'worldguard'
-        exclude module: 'worldguard-legacy'
-    }
+    implementation group: 'org.mongodb', name: 'mongodb-driver-reactivestreams', version: '4.9.0'
+    compileOnly group: 'io.papermc.paper', name: 'paper-api', version: '1.19.2-R0.1-SNAPSHOT'
+    compileOnly group: 'com.github.SkriptLang', name: 'Skript', version: '2.7.0-beta1'
 }
 
 compileJava {
@@ -28,7 +21,17 @@ compileJava {
     options.encoding = 'UTF-8'
 }
 
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+
 shadowJar {
+    archiveClassifier.set('')
     // Remove all classes of dependencies that are not used by the project
     minimize()
     // Relocate dependencies in order to avoid conflicts with other plugins
