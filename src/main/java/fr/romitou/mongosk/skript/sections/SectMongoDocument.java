@@ -42,7 +42,7 @@ public class SectMongoDocument extends EffectSection {
 
         @Override
         protected boolean run(Event e) {
-            Variables.setVariable(variable.getName().getDefaultVariableName(), SectMongoDocument.mongoSKDocument, e, variable.isLocal());
+            Variables.setVariable(variable.getName().toString(e), SectMongoDocument.mongoSKDocument, e, variable.isLocal());
             SectMongoDocument.mongoSKDocument = new MongoSKDocument();
             return true;
         }
@@ -80,6 +80,9 @@ public class SectMongoDocument extends EffectSection {
             currentSections.add(this);
             try {
                 ArrayList<TriggerItem> items = ScriptLoader.loadItems(sectionNode);
+                if (items.size() != sectionNode.size()) { // Some items didn't parse
+                    return false;
+                }
                 MongoTriggerItem mongoTriggerItem = new MongoTriggerItem(localVariable);
                 TriggerItem last = items.get(items.size() - 1).setNext(mongoTriggerItem);
                 items.set(items.size() - 1, last);

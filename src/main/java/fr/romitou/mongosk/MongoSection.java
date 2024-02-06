@@ -22,7 +22,7 @@ public abstract class MongoSection<T> extends LegacyEffectSection {
     @Override
     protected void execute(Event e) {
         runSection(e);
-        Variables.setVariable(variable.getName().getDefaultVariableName(), provideValue(), e, variable.isLocal());
+        Variables.setVariable(variable.getName().toString(e), provideValue(), e, variable.isLocal());
         endSection();
     }
 
