@@ -24,6 +24,8 @@ import java.util.regex.Pattern;
 public class MongoOptions extends Structure {
     private static final Pattern DATABASE_PATTERN =
             Pattern.compile("database \"(.+)\"");
+    private static final Pattern COLLECTION_PATTERN =
+            Pattern.compile("collection \"(.+)\"");
 
     static {
         Skript.registerStructure(MongoOptions.class,
@@ -91,13 +93,24 @@ public class MongoOptions extends Structure {
         for (Node node : sectionNode) {
             if (node instanceof EntryNode) {
                 String collectionName = node.getKey();
+                if (collectionName == null) {
+                    Skript.error("Invalid collection definition. Must be in the form of '<collection name>: <variable>'");
+                    return false;
+                }
+                Matcher matcher = COLLECTION_PATTERN.matcher(collectionName);
+                if (matcher.matches()) {
+                    collectionName = matcher.group(1);
+                } else {
+                    Skript.error("Invalid collection definition. Must be in the form of '<collection name>: <variable>'");
+                    return false;
+                }
                 String rawVariable = ((EntryNode) node).getValue();
 
                 String name = rawVariable.toLowerCase();
                 if (name.startsWith("{") && name.endsWith("}")) {
                     name = name.substring(1, name.length() - 1);
                 } else {
-                    Skript.error("Invalid variable definition. Must be in the form of '{<variable>}'");
+                    Skript.error("Invalid variable definition. Must be in the form of '{<variable name>}'");
                 }
 
                 if (name.startsWith(Variable.LOCAL_VARIABLE_TOKEN)) {
