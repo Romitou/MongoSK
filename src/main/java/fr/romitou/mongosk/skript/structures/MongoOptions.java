@@ -8,6 +8,8 @@ import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Variable;
 import ch.njol.skript.variables.Variables;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
 import com.mongodb.reactivestreams.client.MongoCollection;
@@ -46,8 +48,24 @@ public class MongoOptions extends Structure {
                     Skript.error("The first line of the options must be the connection string");
                     return false;
                 }
-                String connectionString = ((EntryNode) node).getKey();
-                mongoClient = MongoClients.create(connectionString);
+                String connectionString = ((EntryNode) node).getValue();
+                if (!connectionString.startsWith("\"") || !connectionString.endsWith("\"")) {
+                    Skript.error("Invalid connection string. Must be in the form of '\"<connection string>\"'");
+                    return false;
+                }
+                connectionString = connectionString.substring(1, connectionString.length() - 1);
+
+                try {
+                    ConnectionString connString = new ConnectionString(connectionString);
+                    mongoClient = MongoClients.create(
+                            MongoClientSettings.builder()
+                                    .applyConnectionString(connString)
+                                    .build()
+                    );
+                } catch (IllegalArgumentException e) {
+                    Skript.error("Invalid connection string: " + e.getMessage());
+                    return false;
+                }
             } else {
                 if (node instanceof SectionNode && node.getKey() != null) {
                     Matcher matcher = DATABASE_PATTERN.matcher(node.getKey());
