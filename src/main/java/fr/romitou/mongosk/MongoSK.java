@@ -21,6 +21,44 @@ public class MongoSK extends JavaPlugin {
 
     private static final List<MongoSKServer> mongoSKServers = new ArrayList<>();
     private static MongoSK instance;
+    private static PluginManager pluginManager;
+    private static Plugin skriptPlugin;
+
+    public Boolean canLoad() {
+        // Make some safe checks to be sure Skript is installed, enabled, and ready to register this addon.
+        LoggerHelper.info("Checking the availability of Skript...");
+
+        pluginManager = this.getServer().getPluginManager();
+        skriptPlugin = pluginManager.getPlugin("Skript");
+
+        if (skriptPlugin == null) {
+            LoggerHelper.severe("Skript is not installed on your server!",
+                "MongoSK cannot work without Skript.",
+                "Please install Skript and restart your server."
+            );
+            return false;
+        }
+
+        if (!pluginManager.isPluginEnabled(skriptPlugin)) {
+            LoggerHelper.severe("Skript is not enabled on your server!",
+                "MongoSK cannot work without Skript.",
+                "Please enable Skript and restart your server."
+            );
+            return false;
+        }
+
+        try {
+            Skript.isAcceptRegistrations();
+        } catch (IllegalStateException e) {
+            LoggerHelper.severe("Skript is not ready to accept registrations!",
+                "MongoSK cannot work without Skript.",
+                "Please report this issue in our Discord server or on GitHub."
+            );
+            return false;
+        }
+
+        return true;
+    }
 
     @Override
     public void onEnable() {
@@ -31,16 +69,7 @@ public class MongoSK extends JavaPlugin {
         // Load the configuration.
         this.loadConfiguration();
 
-        // Make some safe checks to be sure Skript is installed, enabled, and ready to register this addon.
-        LoggerHelper.info("Checking the availability of Skript...");
-        final PluginManager pluginManager = this.getServer().getPluginManager();
-        final Plugin skriptPlugin = pluginManager.getPlugin("Skript");
-        if (skriptPlugin == null || !skriptPlugin.isEnabled() || !Skript.isAcceptRegistrations()) {
-            LoggerHelper.severe("Skript is not installed or does not accept registrations. Disabling.",
-                "Is Skript plugin present: " + (skriptPlugin != null),
-                "Is Skript enabled: " + (skriptPlugin != null && skriptPlugin.isEnabled()),
-                "Does Skript accept registrations: " + (skriptPlugin != null && skriptPlugin.isEnabled() && Skript.isAcceptRegistrations())
-            );
+        if (!this.canLoad()) {
             pluginManager.disablePlugin(this);
             return;
         }
