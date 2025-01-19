@@ -14,9 +14,9 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'org.mongodb', name: 'mongodb-driver-reactivestreams', version: '5.2.1'
-    shadow group: 'io.papermc.paper', name: 'paper-api', version: '1.20.4-R0.1-SNAPSHOT'
-    shadow group: 'com.github.SkriptLang', name: 'Skript', version: '2.9.4', {
+    implementation group: 'org.mongodb', name: 'mongodb-driver-reactivestreams', version: '5.3.0'
+    shadow group: 'io.papermc.paper', name: 'paper-api', version: '1.21.4-R0.1-SNAPSHOT'
+    shadow group: 'com.github.SkriptLang', name: 'Skript', version: '2.10.0', {
         exclude module: 'Vault'
         exclude module: 'worldguard'
         exclude module: 'worldguard-legacy'
