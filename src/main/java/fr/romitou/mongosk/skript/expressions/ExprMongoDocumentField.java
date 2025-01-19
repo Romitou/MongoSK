@@ -98,6 +98,7 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
                 return CollectionUtils.array(Object[].class);
             case SET:
             case REMOVE:
+            case REMOVE_ALL:
             case DELETE:
                 return CollectionUtils.array(isSingle ? Object.class : Object[].class);
             default:
@@ -133,10 +134,14 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
                     reportException("setting field", fieldName, mongoSKDocument, omega, ex);
                 }
                 break;
+            case REMOVE_ALL:
             case REMOVE:
                 try {
                     ArrayList<Object> removeList = new ArrayList<>(mongoSKDocument.getBsonDocument().getList(fieldName, Object.class));
-                    removeList.removeAll(omega);
+                    if (mode == Changer.ChangeMode.REMOVE_ALL)
+                        removeList.removeAll(omega);
+                    else
+                        removeList.remove(omega.size() == 1 ? omega.get(0) : omega);
                     mongoSKDocument.getBsonDocument().put(fieldName, removeList);
                 } catch (RuntimeException ex) {
                     reportException("removing objects", fieldName, mongoSKDocument, omega, ex);
