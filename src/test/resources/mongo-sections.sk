@@ -1,0 +1,9 @@
+test "mongo-sections":
+    set {_doc} to a new mongo document with:
+        mongo "a": 1, 2 and 3
+        mongo list "b": 4, 5 and 6
+        mongo list "c": 1
+        mongo "d": 7
+        mongo value "e": 8
+        mongo value "f": 9 and 10
+    assert mongo json of {_doc} is "{""a"": [1, 2, 3], ""b"": [4, 5, 6], ""c"": [1], ""d"": 7, ""e"": 8, ""f"": 9}" with "incorrect document scheme"

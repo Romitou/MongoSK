@@ -1,0 +1,37 @@
+name: Build & Test
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - name: Build with Gradle
+        run: ./gradlew clean shadowJar
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MongoSK
+          path: build/libs/**
+  test:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: MongoSK
+          path: build/libs
+      - name: Run tests
+        uses: SkriptLang/skript-test-action@v1.2
+        with:
+          test_script_directory: src/test/resources
+          skript_repo_ref: 2.10.0
+          extra_plugins_directory: build/libs
