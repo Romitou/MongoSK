@@ -35,3 +35,4 @@ jobs:
           test_script_directory: src/test/resources
           skript_repo_ref: 2.10.0
           extra_plugins_directory: build/libs
+          run_vanilla_tests: false
