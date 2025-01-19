@@ -6,6 +6,9 @@ import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.registrations.Classes;
 import fr.romitou.mongosk.elements.*;
+import org.bson.types.Binary;
+
+import java.nio.charset.StandardCharsets;
 
 public class SkriptTypes {
     static {
@@ -176,6 +179,31 @@ public class SkriptTypes {
                 @Override
                 public String toVariableNameString(MongoSKSort sort) {
                     return "mongosksort:" + sort;
+                }
+            })
+        );
+
+        Classes.registerClass(new ClassInfo<>(Binary.class, "mongobinary")
+            .user("mongo(db|sk)?( |-)?binar(y|ies)")
+            .defaultExpression(new EventValueExpression<>(Binary.class))
+            .name("MongoSK Binary")
+            .description("Represents a binary data, which can be used to store large data in a more efficient way.")
+            .since("2.3.3")
+            .parser(new Parser<Binary>() {
+
+                @Override
+                public boolean canParse(ParseContext context) {
+                    return false;
+                }
+
+                @Override
+                public String toString(Binary binary, int flags) {
+                    return new String(binary.getData(), StandardCharsets.UTF_8);
+                }
+
+                @Override
+                public String toVariableNameString(Binary binary) {
+                    return "mongobinary:" + toString(binary, 0);
                 }
             })
         );
