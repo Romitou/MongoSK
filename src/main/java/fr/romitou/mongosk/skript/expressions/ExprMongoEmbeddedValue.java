@@ -116,12 +116,15 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
     public void change(Event e, Object[] delta, Changer.ChangeMode mode) {
         String fieldName = exprFieldName.getSingle(e);
         MongoSKDocument mongoSKDocument = exprMongoSKDocument.getSingle(e);
+        List<?> omega = new ArrayList<>();
+        if (delta != null)
+            omega = Arrays.asList(MongoSKAdapter.serializeArray(delta));
         if (fieldName == null || mongoSKDocument == null || mongoSKDocument.getBsonDocument() == null)
             return;
         MongoQueryElement[] mongoQueryElements = buildQueryElementsFromString(fieldName);
         switch (mode) {
             case SET:
-                mongoSKDocument.setEmbeddedValue(mongoQueryElements, delta.length == 1 ? MongoSKAdapter.serializeObject(delta[0]) : MongoSKAdapter.serializeArray(delta));
+                mongoSKDocument.setEmbeddedValue(mongoQueryElements, isSingle ? omega.get(0) : omega);
                 break;
             case DELETE:
                 mongoSKDocument.setEmbeddedValue(mongoQueryElements, null);
@@ -130,11 +133,11 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
                 Object addValue = mongoSKDocument.getEmbeddedValue(mongoQueryElements);
                 if (addValue instanceof List) {
                     List<Object> list = (List<Object>) addValue;
-                    list.addAll(Arrays.asList(MongoSKAdapter.serializeArray(delta)));
+                    list.addAll(omega);
                     mongoSKDocument.setEmbeddedValue(mongoQueryElements, list);
                 } else if (addValue instanceof Object[]) {
                     List<Object> list = new ArrayList<>(Arrays.asList((Object[]) addValue));
-                    list.addAll(Arrays.asList(MongoSKAdapter.serializeArray(delta)));
+                    list.add(omega);
                     mongoSKDocument.setEmbeddedValue(mongoQueryElements, list);
                 } else {
                     LoggerHelper.severe("The type of item you are querying is not correct. " +
@@ -148,11 +151,11 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
                 Object removeValue = mongoSKDocument.getEmbeddedValue(mongoQueryElements);
                 if (removeValue instanceof List) {
                     List<Object> list = (List<Object>) removeValue;
-                    list.removeAll(Arrays.asList(MongoSKAdapter.serializeArray(delta)));
+                    list.removeAll(omega);
                     mongoSKDocument.setEmbeddedValue(mongoQueryElements, list);
                 } else if (removeValue instanceof Object[]) {
                     List<Object> list = new ArrayList<>(Arrays.asList((Object[]) removeValue));
-                    list.removeAll(Arrays.asList(MongoSKAdapter.serializeArray(delta)));
+                    list.removeAll(omega);
                     mongoSKDocument.setEmbeddedValue(mongoQueryElements, list);
                 } else {
                     LoggerHelper.severe("The type of item you are querying is not correct. " +

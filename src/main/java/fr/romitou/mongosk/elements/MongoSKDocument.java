@@ -109,7 +109,9 @@ public class MongoSKDocument {
                     if (keyIterator.hasNext()) {
                         Object foundValue = ((Document) currentValue).get(queryElement.path);
                         if (foundValue == null) {
-                            ((Document) currentValue).put(queryElement.path, new Document());
+                            Document newDoc = new Document();
+                            ((Document) currentValue).put(queryElement.path, newDoc);
+                            currentValue = newDoc;
                         } else {
                             currentValue = foundValue;
                         }
