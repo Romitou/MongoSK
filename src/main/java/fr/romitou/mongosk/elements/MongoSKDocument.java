@@ -116,7 +116,11 @@ public class MongoSKDocument {
                             currentValue = foundValue;
                         }
                     } else {
-                        ((Document) currentValue).put(queryElement.path, value);
+                        if (value == null) {
+                            ((Document) currentValue).remove(queryElement.path);
+                        } else {
+                            ((Document) currentValue).put(queryElement.path, value);
+                        }
                     }
                 } else {
                     if (currentValue == null) {
@@ -136,7 +140,11 @@ public class MongoSKDocument {
                     if (keyIterator.hasNext()) {
                         currentValue = ((List<Object>) currentValue).get(queryElement.index);
                     } else {
-                        ((List<Object>) currentValue).set(queryElement.index, value);
+                        if (value == null) {
+                            ((List<Object>) currentValue).remove((int) queryElement.index);
+                        } else {
+                            ((List<Object>) currentValue).set(queryElement.index, value);
+                        }
                     }
                 } else {
                     if (currentValue == null) {

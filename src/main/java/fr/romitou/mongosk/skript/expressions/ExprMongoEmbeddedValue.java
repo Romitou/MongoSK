@@ -107,9 +107,9 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
 
     @Override
     public Class<?>[] acceptChange(Changer.ChangeMode mode) {
-        if (mode == Changer.ChangeMode.SET || mode == Changer.ChangeMode.DELETE || mode == Changer.ChangeMode.ADD)
-            return CollectionUtils.array(Object[].class);
-        return null;
+        if (mode == Changer.ChangeMode.RESET)
+            return null;
+        return CollectionUtils.array(Object[].class);
     }
 
     @Override
