@@ -154,7 +154,7 @@ public class MongoSK extends JavaPlugin {
 
     public static @NotNull Boolean isUsingNewSections() {
         try {
-            Class.forName("ch.njol.skript.lang.Section");
+            Class.forName("ch.njol.skript.expressions.base.SectionExpression");
             return true;
         } catch (ClassNotFoundException ignored) {
             return false;

@@ -1,15 +1,11 @@
 package fr.romitou.mongosk.skript.sections;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.lang.EffectSection;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
-import ch.njol.skript.lang.TriggerItem;
+import ch.njol.skript.lang.*;
 import ch.njol.util.Kleenean;
 import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
@@ -28,11 +24,11 @@ import java.util.List;
     "\tmongo \"nestedObject\": {_nested}",
     "broadcast {_doc}'s mongo json"})
 @Since("2.1.0") // New class from 2.3.0, but section backported for older versions :)
-public class SectMongoValue extends EffectSection {
+public class SectMongoValue extends Effect {
 
     static {
         if (MongoSK.isUsingNewSections())
-            Skript.registerSection(
+            Skript.registerEffect(
                 SectMongoValue.class,
                 "mongo[(sk|db)] [(1¦(field|value)|2¦(array|list))] %string%\\: %objects%"
             );
@@ -42,10 +38,9 @@ public class SectMongoValue extends EffectSection {
     private Expression<?> exprValue;
     private Kleenean isSingle;
 
-    @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult, SectionNode sectionNode, List<TriggerItem> triggerItems) {
-        if (!getParser().isCurrentSection(SectMongoDocument.class))
+    public boolean init(Expression<?>[] exprs, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+        if (!getParser().isCurrentEvent(SectMongoDocument.EvtCreateMongoDocument.class))
             return false;
         isSingle = parseResult.mark == 1
             ? Kleenean.TRUE
@@ -58,23 +53,30 @@ public class SectMongoValue extends EffectSection {
     }
 
     @Override
-    protected TriggerItem walk(Event e) {
-        String key = exprKey.getSingle(e);
-        List<?> omega = Arrays.asList(MongoSKAdapter.serializeArray(exprValue.getArray(e)));
+    protected void execute(Event event) {
+        SectMongoDocument.EvtCreateMongoDocument mongoDocumentEvent = (SectMongoDocument.EvtCreateMongoDocument) event;
+        String key = exprKey.getSingle(event);
+        List<?> omega = Arrays.asList(MongoSKAdapter.serializeArray(exprValue.getArray(event)));
         switch (isSingle) {
             case UNKNOWN:
-                SectMongoDocument.mongoSKDocument.getBsonDocument().put(key, omega.size() == 1 ? omega.get(0) : omega);
+                mongoDocumentEvent
+                    .getMongoDocument()
+                    .getBsonDocument()
+                    .put(key, omega.size() == 1 ? omega.get(0) : omega);
                 break;
             case TRUE:
             case FALSE:
-                SectMongoDocument.mongoSKDocument.getBsonDocument().put(key, isSingle == Kleenean.TRUE ? omega.get(0) : omega);
+                mongoDocumentEvent
+                    .getMongoDocument()
+                    .getBsonDocument()
+                    .put(key, isSingle == Kleenean.TRUE ? omega.get(0) : omega);
                 break;
         }
-        return walk(e, true);
     }
 
     @Override
     public String toString(Event e, boolean debug) {
         return "mongo " + exprKey.toString(e, debug) + ": " + exprValue.toString(e, debug);
     }
+
 }

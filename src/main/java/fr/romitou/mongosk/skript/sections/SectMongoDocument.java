@@ -1,21 +1,22 @@
 package fr.romitou.mongosk.skript.sections;
 
-import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
+import ch.njol.skript.expressions.base.SectionExpression;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
-import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.elements.MongoSKDocument;
 import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Name("Mongo section document")
@@ -30,79 +31,69 @@ import java.util.List;
     "\tmongo value \"e\": 8",
     "\tmongo value \"f\": 9 and 10"})
 @Since("2.1.0") // New class from 2.3.0, but section backported for older versions :)
-public class SectMongoDocument extends EffectSection {
-
-    static class MongoTriggerItem extends TriggerItem {
-
-        private final Variable<?> variable;
-
-        public MongoTriggerItem(Variable<?> variable) {
-            this.variable = variable;
-        }
-
-        @Override
-        protected boolean run(Event e) {
-            Variables.setVariable(variable.getName().toString(e), SectMongoDocument.mongoSKDocument, e, variable.isLocal());
-            SectMongoDocument.mongoSKDocument = new MongoSKDocument();
-            return true;
-        }
-
-        @Override
-        public String toString(Event e, boolean debug) {
-            return "[MongoSK internal: mongo document creation final item]";
-        }
-    }
-
+public class SectMongoDocument extends SectionExpression<MongoSKDocument> {
     static {
         if (MongoSK.isUsingNewSections())
-            Skript.registerSection(
+            Skript.registerExpression(
                 SectMongoDocument.class,
-                "set %object% to [a] new mongo[(db|sk)] document with"
+                MongoSKDocument.class,
+                ExpressionType.SIMPLE,
+                "[a] new mongo[(db|sk)] document with"
             );
     }
 
-    public static MongoSKDocument mongoSKDocument = new MongoSKDocument();
-    private Variable<?> localVariable;
+    protected static class EvtCreateMongoDocument extends Event {
+        public static MongoSKDocument mongoSKDocument = new MongoSKDocument();
+
+        @Override
+        public @NotNull HandlerList getHandlers() {
+            return new HandlerList();
+        }
+
+        public MongoSKDocument getMongoDocument() {
+            return mongoSKDocument;
+        }
+    }
+
+    private Trigger trigger;
 
     @Override
     public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult, SectionNode sectionNode, List<TriggerItem> triggerItems) {
-        Expression<?> variable = exprs[0];
-        if (!(variable instanceof Variable<?>)) {
-            LoggerHelper.severe("In order to use this section, you must provide a variable as the first argument.",
-                "Use the section like this: set {_variable} to a new mongo document with:");
+        System.out.println("Initiated Mongo section document");
+        if (sectionNode == null) {
             return false;
         }
 
-        localVariable = (Variable<?>) variable;
-
-        if (hasSection() && sectionNode != null) {
-            List<TriggerSection> currentSections = getParser().getCurrentSections();
-            currentSections.add(this);
-            try {
-                ArrayList<TriggerItem> items = ScriptLoader.loadItems(sectionNode);
-                if (items.size() != sectionNode.size()) { // Some items didn't parse
-                    return false;
-                }
-                MongoTriggerItem mongoTriggerItem = new MongoTriggerItem(localVariable);
-                TriggerItem last = items.get(items.size() - 1).setNext(mongoTriggerItem);
-                items.set(items.size() - 1, last);
-                items.add(mongoTriggerItem);
-                setTriggerItems(items);
-            } finally {
-                currentSections.remove(currentSections.size() - 1);
-            }
-        }
-
+        this.trigger = this.loadCode(
+            sectionNode,
+            "create mongo document",
+            () -> {},
+            EvtCreateMongoDocument.class
+        );
         return true;
     }
 
     @Override
-    protected TriggerItem walk(Event e) {
-        return walk(e, true);
+    protected MongoSKDocument @Nullable [] get(Event event) {
+        EvtCreateMongoDocument contextEvent = new EvtCreateMongoDocument();
+        Variables.withLocalVariables(event, contextEvent, () ->
+            TriggerItem.walk(trigger, contextEvent)
+        );
+        return new MongoSKDocument[]{contextEvent.getMongoDocument()};
+    }
+
+    @Override
+    public boolean isSingle() {
+        return true;
+    }
+
+    @Override
+    public Class<? extends MongoSKDocument> getReturnType() {
+        return MongoSKDocument.class;
     }
 
     @Override
     public String toString(Event e, boolean debug) {
-        return "set " + localVariable.toString(e, debug) + " to a new mongo document with";
+        return "new mongo document with";
     }
 }
