@@ -9,14 +9,14 @@ version '2.3.2'
 repositories {
     mavenCentral()
     maven { url = 'https://repo.destroystokyo.com/repository/maven-public/' }
-    maven { url = 'https://papermc.io/repo/repository/maven-public/' }
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
     maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
     implementation group: 'org.mongodb', name: 'mongodb-driver-reactivestreams', version: '5.3.1'
     compileOnly group: 'io.papermc.paper', name: 'paper-api', version: '1.21.4-R0.1-SNAPSHOT'
-    compileOnly group: 'com.github.SkriptLang', name: 'Skript', version: '2.10.0', {
+    compileOnly group: 'com.github.SkriptLang', name: 'Skript', version: '2.10.1', {
         exclude module: 'Vault'
         exclude module: 'worldguard'
         exclude module: 'worldguard-legacy'
