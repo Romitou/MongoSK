@@ -266,7 +266,7 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
     public MongoQueryElement[] buildQueryElementsFromString(String string) {
         ArrayList<MongoQueryElement> mongoQueryElements = new ArrayList<>();
         Integer arrayStartIndex = null;
-        Integer textStartIndex = null;
+        Integer textStartIndex = 0;
         for (int i = 0; i < string.length(); i++) {
             char c = string.charAt(i);
             boolean lastIteration = i == string.length() - 1;
