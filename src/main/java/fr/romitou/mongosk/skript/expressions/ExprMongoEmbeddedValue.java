@@ -109,6 +109,8 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
     public Class<?>[] acceptChange(Changer.ChangeMode mode) {
         if (mode == Changer.ChangeMode.RESET)
             return null;
+        if (isSingle && (mode == Changer.ChangeMode.ADD || mode == Changer.ChangeMode.REMOVE || mode == Changer.ChangeMode.REMOVE_ALL))
+            return null;
         return CollectionUtils.array(Object[].class);
     }
 
@@ -132,7 +134,7 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
             case ADD:
                 Object addValue = mongoSKDocument.getEmbeddedValue(mongoQueryElements);
                 if (addValue instanceof List) {
-                    List<Object> list = (List<Object>) addValue;
+                    List<Object> list = new ArrayList<>((List<Object>) addValue);
                     list.addAll(omega);
                     mongoSKDocument.setEmbeddedValue(mongoQueryElements, list);
                 } else if (addValue instanceof Object[]) {
@@ -140,17 +142,14 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
                     list.add(omega);
                     mongoSKDocument.setEmbeddedValue(mongoQueryElements, list);
                 } else {
-                    LoggerHelper.severe("The type of item you are querying is not correct. " +
-                            "This can happen if you want to retrieve a list, but it is a single value.",
-                        "Document: " + mongoSKDocument.getBsonDocument().toJson(),
-                        "Exception: " + addValue.getClass().getName());
+                    mongoSKDocument.setEmbeddedValue(mongoQueryElements, omega);
                 }
                 break;
             case REMOVE_ALL:
             case REMOVE:
                 Object removeValue = mongoSKDocument.getEmbeddedValue(mongoQueryElements);
                 if (removeValue instanceof List) {
-                    List<Object> list = (List<Object>) removeValue;
+                    List<Object> list = new ArrayList<>((List<Object>) removeValue);
                     list.removeAll(omega);
                     mongoSKDocument.setEmbeddedValue(mongoQueryElements, list);
                 } else if (removeValue instanceof Object[]) {
@@ -158,10 +157,7 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
                     list.removeAll(omega);
                     mongoSKDocument.setEmbeddedValue(mongoQueryElements, list);
                 } else {
-                    LoggerHelper.severe("The type of item you are querying is not correct. " +
-                            "This can happen if you want to retrieve a list, but it is a single addValue.",
-                        "Document: " + mongoSKDocument.getBsonDocument().toJson(),
-                        "Exception: " + removeValue.getClass().getName());
+                    mongoSKDocument.setEmbeddedValue(mongoQueryElements, null);
                 }
             break;
         }
