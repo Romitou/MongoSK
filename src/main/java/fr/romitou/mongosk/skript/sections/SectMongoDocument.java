@@ -43,7 +43,7 @@ public class SectMongoDocument extends SectionExpression<MongoSKDocument> {
     }
 
     protected static class EvtCreateMongoDocument extends Event {
-        public static MongoSKDocument mongoSKDocument = new MongoSKDocument();
+        public MongoSKDocument mongoSKDocument = new MongoSKDocument();
 
         @Override
         public @NotNull HandlerList getHandlers() {
