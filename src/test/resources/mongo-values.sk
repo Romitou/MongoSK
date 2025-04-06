@@ -1,0 +1,54 @@
+test "mongo-values":
+    set {_document} to mongo document
+    set mongo value "playerName" of {_document} to "Romitou"
+    set mongo value "coins" of {_document} to 100
+    assert mongo json of {_document} is "{""playerName"": ""Romitou"", ""coins"": 100}" with "incorrect mongo value definition"
+
+
+    set mongo list "fruitList" of {_document} to "kiwi", "pear"
+    set mongo list "appleList" of {_document} to "apple", "apple"
+    remove "apple" from mongo list "appleList" of {_document}
+    assert mongo json of {_document} is "{""playerName"": ""Romitou"", ""coins"": 100, ""fruitList"": [""kiwi"", ""pear""], ""appleList"": [""apple""]}" with "incorrect mongo list definition"
+
+    set mongo list "appleList" of {_document} to "apple", "apple"
+    remove all "apple" from mongo list "appleList" of {_document}
+    assert mongo json of {_document} is "{""playerName"": ""Romitou"", ""coins"": 100, ""fruitList"": [""kiwi"", ""pear""], ""appleList"": []}" with "incorrect mongo list removal"
+
+    delete mongo value "coins" of {_document}
+    assert mongo json of {_document} is "{""playerName"": ""Romitou"", ""fruitList"": [""kiwi"", ""pear""], ""appleList"": [""apple""]}" with "incorrect mongo value deletion"
+
+    add "banana" to mongo list "fruitList" of {_document}
+    assert mongo json of {_document} is "{""playerName"": ""Romitou"", ""fruitList"": [""kiwi"", ""pear"", ""banana""], ""appleList"": []}" with "incorrect mongo list addition"
+
+    set {_fruits::*} to "orange", "grape"
+    add {_fruits::*} to mongo list "fruitList" of {_document}
+    assert mongo json of {_document} is "{""playerName"": ""Romitou"", ""fruitList"": [""kiwi"", ""pear"", ""banana"", ""orange"", ""grape""], ""appleList"": []}" with "incorrect mongo list addition with list"
+
+    remove "kiwi" from mongo list "fruitList" of {_document}
+    assert mongo json of {_document} is "{""playerName"": ""Romitou"", ""fruitList"": [""pear"", ""banana"", ""orange"", ""grape""], ""appleList"": []}" with "incorrect mongo list removal"
+
+    remove all {_fruits::*} from mongo list "fruitList" of {_document}
+    assert mongo json of {_document} is "{""playerName"": ""Romitou"", ""fruitList"": [""pear""], ""appleList"": []}" with "incorrect mongo list removal with list"
+
+test "mongo-embedded-values":
+    set {_document} to mongo document
+    set mongo embedded value "stats.wins" of {_document} to 42
+    set mongo embedded value "stats.losses" of {_document} to 10
+    assert mongo json of {_document} is "{\"stats\":{\"wins\":42,\"losses\":10}}" with "incorrect embedded value definition"
+
+    delete mongo embedded value "stats.losses" of {_document}
+    assert mongo json of {_document} is "{\"stats\":{\"wins\":42}}" with "embedded value deletion failed"
+
+    set {_document} to mongo document
+    set mongo embedded value "inventory[0].name" of {_document} to "Sword"
+    set mongo embedded value "inventory[0].power" of {_document} to 5
+    set mongo embedded value "inventory[1].name" of {_document} to "Shield"
+    set mongo embedded value "inventory[1].defense" of {_document} to 12
+    assert mongo json of {_document} is "{\"inventory\":[{\"name\":\"Sword\",\"power\":5},{\"name\":\"Shield\",\"defense\":12}]}" with "incorrect nested array definition"
+
+    set mongo embedded value "inventory[1].defense" of {_document} to 15
+    assert mongo json of {_document} is "{\"inventory\":[{\"name\":\"Sword\",\"power\":5},{\"name\":\"Shield\",\"defense\":15}]}" with "embedded array element update failed"
+
+    set {_document} to mongo document
+    set mongo embedded value "newList[2]" of {_document} to "filled"
+    assert mongo json of {_document} is "{\"newList\":[null,null,\"filled\"]}" with "list auto-fill failed"
