@@ -230,12 +230,13 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
                 if (!current.isEmpty()) {
                     elements.add(new MongoQueryElement(current.toString()));
                     current.setLength(0);
-                } else {
-                    LoggerHelper.severe("Empty field name found between dots",
-                        "Path: " + path,
-                        "Index: " + i
-                    );
                 }
+//                else {
+//                    LoggerHelper.severe("Empty field name found between dots",
+//                        "Path: " + path,
+//                        "Index: " + i
+//                    );
+//                }
             } else if (c == '[') {
                 if (!current.isEmpty()) {
                     elements.add(new MongoQueryElement(current.toString()));
