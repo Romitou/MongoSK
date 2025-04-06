@@ -5,10 +5,7 @@ import fr.romitou.mongosk.skript.expressions.ExprMongoEmbeddedValue;
 import org.bson.Document;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class MongoSKDocument {
 
@@ -52,112 +49,104 @@ public class MongoSKDocument {
         );
     }
 
-    public Object getEmbeddedValue(final ExprMongoEmbeddedValue.MongoQueryElement[] queryElements) {
-        Object value = this.bsonDocument;
-        Iterator<ExprMongoEmbeddedValue.MongoQueryElement> keyIterator = Arrays.stream(queryElements).iterator();
-        while (keyIterator.hasNext()) {
-            ExprMongoEmbeddedValue.MongoQueryElement queryElement = keyIterator.next();
-            if (queryElement.path != null) {
-                if (value instanceof Document) {
-                    value = ((Document) value).get(queryElement.path);
-                } else {
-                    if (value == null) {
-                        LoggerHelper.debug("Expected a document, but got null instead at path '" + queryElement.path + "'.",
-                            "Query elements: " + Arrays.toString(queryElements),
-                            "Document: " + this.bsonDocument.toJson()
-                        );
-                    } else {
-                        LoggerHelper.debug("Expected a document, but got a " + value.getClass().getSimpleName() + " instead at path '" + queryElement.path + "'.",
-                            "Query elements: " + Arrays.toString(queryElements),
-                            "Document: " + this.bsonDocument.toJson()
-                        );
-                    }
+    public Object getEmbeddedValue(final List<ExprMongoEmbeddedValue.MongoQueryElement> queryElements) {
+        if (this.bsonDocument == null) {
+            LoggerHelper.debug("The BSON document is null.",
+                "Query elements: " + queryElements,
+                "Document: null");
+            return null;
+        }
+        Object current = this.bsonDocument;
+
+        for (ExprMongoEmbeddedValue.MongoQueryElement element : queryElements) {
+            if (element.getKey() != null) {
+                if (!(current instanceof Document)) {
+                    LoggerHelper.debug("Invalid path: a document was expected for the field '" + element.getKey() + "'.",
+                        "Query elements: " + queryElements,
+                        "Document: " + (this.bsonDocument != null ? this.bsonDocument.toJson() : "null"));
                     return null;
                 }
-            } else if (queryElement.index != null) {
-                if (value instanceof List) {
-                    value = ((List<Object>) value).get(queryElement.index);
-                } else {
-                    if (value == null) {
-                        LoggerHelper.severe("Expected a list, but got null instead at index " + queryElement.index + ".",
-                            "Query elements: " + Arrays.toString(queryElements),
-                            "Document: " + this.bsonDocument.toJson()
-                        );
-                    } else {
-                        LoggerHelper.severe("Expected a list, but got a " + value.getClass().getSimpleName() + " instead at index " + queryElement.index + ".",
-                            "Query elements: " + Arrays.toString(queryElements),
-                            "Document: " + this.bsonDocument.toJson()
-                        );
-                    }
+                current = ((Document) current).get(element.getKey());
+            } else if (element.getIndex() != null) {
+                if (!(current instanceof List)) {
+                    LoggerHelper.severe("Invalid path: a list was expected for the index " + element.getIndex() + ".",
+                        "Query elements: " + queryElements,
+                        "Document: " + this.bsonDocument.toJson());
                     return null;
                 }
+                List<Object> list = (List<Object>) current;
+                int idx = element.getIndex();
+                if (idx < 0 || idx >= list.size()) {
+                    LoggerHelper.severe("Index " + idx + " out of range for the list.",
+                        "Query elements: " + queryElements,
+                        "Document: " + this.bsonDocument.toJson());
+                    return null;
+                }
+                current = list.get(idx);
             }
         }
-        return value;
+        return current;
     }
 
-    public void setEmbeddedValue(final ExprMongoEmbeddedValue.MongoQueryElement[] queryElements, Object value) {
-        Object currentValue = this.bsonDocument;
-        if (currentValue == null) {
-            currentValue = new Document();
+    public void setEmbeddedValue(final List<ExprMongoEmbeddedValue.MongoQueryElement> queryElements, Object value) {
+        if (this.bsonDocument == null) {
+            this.bsonDocument = new Document();
         }
-        Iterator<ExprMongoEmbeddedValue.MongoQueryElement> keyIterator = Arrays.stream(queryElements).iterator();
-        while (keyIterator.hasNext()) {
-            ExprMongoEmbeddedValue.MongoQueryElement queryElement = keyIterator.next();
-            if (queryElement.path != null) {
-                if (currentValue instanceof Document) {
-                    if (keyIterator.hasNext()) {
-                        Object foundValue = ((Document) currentValue).get(queryElement.path);
-                        if (foundValue == null) {
-                            Document newDoc = new Document();
-                            ((Document) currentValue).put(queryElement.path, newDoc);
-                            currentValue = newDoc;
-                        } else {
-                            currentValue = foundValue;
-                        }
-                    } else {
-                        if (value == null) {
-                            ((Document) currentValue).remove(queryElement.path);
-                        } else {
-                            ((Document) currentValue).put(queryElement.path, value);
-                        }
-                    }
-                } else {
-                    if (currentValue == null) {
-                        LoggerHelper.debug("Expected a document, but got null instead at path '" + queryElement.path + "'.",
-                            "Query elements: " + Arrays.toString(queryElements),
-                            "Document: " + this.bsonDocument.toJson()
-                        );
-                    } else {
-                        LoggerHelper.debug("Expected a document, but got a " + currentValue.getClass().getSimpleName() + " instead at path '" + queryElement.path + "'.",
-                            "Query elements: " + Arrays.toString(queryElements),
-                            "Document: " + this.bsonDocument.toJson()
-                        );
-                    }
+        Object current = this.bsonDocument;
+
+        for (int i = 0; i < queryElements.size(); i++) {
+            ExprMongoEmbeddedValue.MongoQueryElement element = queryElements.get(i);
+            boolean isLast = (i == queryElements.size() - 1);
+
+            if (element.getKey() != null) {
+                if (!(current instanceof Document)) {
+                    LoggerHelper.severe("Invalid path: a document was expected for the field '" + element.getKey() + "'.",
+                        "Query elements: " + queryElements,
+                        "Document: " + this.bsonDocument.toJson());
+                    return;
                 }
-            } else if (queryElement.index != null) {
-                if (currentValue instanceof List) {
-                    if (keyIterator.hasNext()) {
-                        currentValue = ((List<Object>) currentValue).get(queryElement.index);
+                Document doc = (Document) current;
+                if (isLast) {
+                    if (value == null) {
+                        doc.remove(element.getKey());
                     } else {
-                        if (value == null) {
-                            ((List<Object>) currentValue).remove((int) queryElement.index);
-                        } else {
-                            ((List<Object>) currentValue).set(queryElement.index, value);
-                        }
+                        doc.put(element.getKey(), value);
                     }
                 } else {
-                    if (currentValue == null) {
-                        LoggerHelper.severe("Expected a list, but got null instead at index " + queryElement.index + ".",
-                            "Query elements: " + Arrays.toString(queryElements),
-                            "Document: " + this.bsonDocument.toJson()
-                        );
-                    } else {
-                        LoggerHelper.severe("Expected a list, but got a " + currentValue.getClass().getSimpleName() + " instead at index " + queryElement.index + ".",
-                            "Query elements: " + Arrays.toString(queryElements),
-                            "Document: " + this.bsonDocument.toJson()
-                        );
+                    Object next = doc.get(element.getKey());
+                    if (next == null) {
+                        ExprMongoEmbeddedValue.MongoQueryElement nextElement = queryElements.get(i + 1);
+                        next = (nextElement.getIndex() != null) ? new ArrayList<>() : new Document();
+                        doc.put(element.getKey(), next);
                     }
+                    current = next;
+                }
+            } else if (element.getIndex() != null) {
+                if (!(current instanceof List)) {
+                    LoggerHelper.severe("Invalid path: a list was expected for the index " + element.getIndex() + ".",
+                        "Query elements: " + queryElements,
+                        "Document: " + this.bsonDocument.toJson());
+                    return;
+                }
+                List<Object> list = (List<Object>) current;
+                int idx = element.getIndex();
+                while (list.size() <= idx) {
+                    list.add(null);
+                }
+                if (isLast) {
+                    if (value == null) {
+                        list.remove(idx);
+                    } else {
+                        list.set(idx, value);
+                    }
+                } else {
+                    Object next = list.get(idx);
+                    if (next == null) {
+                        ExprMongoEmbeddedValue.MongoQueryElement nextElement = queryElements.get(i + 1);
+                        next = (nextElement.getIndex() != null) ? new ArrayList<>() : new Document();
+                        list.set(idx, next);
+                    }
+                    current = next;
                 }
             }
         }

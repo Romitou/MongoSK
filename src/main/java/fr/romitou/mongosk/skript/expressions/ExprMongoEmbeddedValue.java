@@ -82,7 +82,7 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
         MongoSKDocument mongoSKDocument = exprMongoSKDocument.getSingle(e);
         if (fieldName == null || mongoSKDocument == null || mongoSKDocument.getBsonDocument() == null)
             return new Object[0];
-        MongoQueryElement[] mongoQueryElements = buildQueryElementsFromString(fieldName);
+        ArrayList<MongoQueryElement> mongoQueryElements = buildQueryElementsFromString(fieldName);
         try {
             Object value = mongoSKDocument.getEmbeddedValue(mongoQueryElements);
             if (isSingle) {
@@ -123,7 +123,7 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
             omega = Arrays.asList(MongoSKAdapter.serializeArray(delta));
         if (fieldName == null || mongoSKDocument == null || mongoSKDocument.getBsonDocument() == null)
             return;
-        MongoQueryElement[] mongoQueryElements = buildQueryElementsFromString(fieldName);
+        ArrayList<MongoQueryElement> mongoQueryElements = buildQueryElementsFromString(fieldName);
         switch (mode) {
             case SET:
                 mongoSKDocument.setEmbeddedValue(mongoQueryElements, isSingle ? omega.get(0) : omega);
@@ -163,63 +163,6 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
         }
     }
 
-    //    @Override
-//    public void change(@Nonnull final Event e, Object[] delta, @Nonnull Changer.ChangeMode mode) {
-//        String fieldName = exprFieldName.getSingle(e);
-//        MongoSKDocument mongoSKDocument = exprMongoSKDocument.getSingle(e);
-//        List<?> omega = new ArrayList<>();
-//        if (delta != null)
-//            omega = Arrays.asList(MongoSKAdapter.serializeArray(delta));
-//        if (fieldName == null || mongoSKDocument == null || mongoSKDocument.getBsonDocument() == null)
-//            return;
-//        switch (mode) {
-//            case ADD:
-//                try {
-//                    ArrayList<Object> addList = new ArrayList<>(mongoSKDocument.getBsonDocument().getList(fieldName, Object.class));
-//                    addList.addAll(omega);
-//                    mongoSKDocument.getBsonDocument().put(fieldName, addList);
-//                } catch (NullPointerException ex) {
-//                    mongoSKDocument.getBsonDocument().put(fieldName, omega);
-//                } catch (RuntimeException ex) {
-//                    reportException("adding objects", fieldName, mongoSKDocument, omega, ex);
-//                }
-//                break;
-//            case SET:
-//                try {
-//                    mongoSKDocument.getBsonDocument().put(fieldName, isSingle ? omega.get(0) : omega);
-//                } catch (RuntimeException ex) {
-//                    reportException("setting field", fieldName, mongoSKDocument, omega, ex);
-//                }
-//                break;
-//            case REMOVE:
-//                try {
-//                    ArrayList<Object> removeList = new ArrayList<>(mongoSKDocument.getBsonDocument().getList(fieldName, Object.class));
-//                    removeList.removeAll(omega);
-//                    mongoSKDocument.getBsonDocument().put(fieldName, removeList);
-//                } catch (RuntimeException ex) {
-//                    reportException("removing objects", fieldName, mongoSKDocument, omega, ex);
-//                }
-//                break;
-//            case DELETE:
-//                try {
-//                    mongoSKDocument.getBsonDocument().remove(fieldName);
-//                } catch (RuntimeException ex) {
-//                    reportException("deleting field", fieldName, mongoSKDocument, omega, ex);
-//                }
-//                break;
-//            default:
-//                break;
-//        }
-//    }
-
-//    private void reportException(String action, String fieldName, MongoSKDocument document, List<?> omega, Exception ex) {
-//        LoggerHelper.severe("An error occurred during " + action + " of Mongo document: " + ex.getMessage(),
-//            "Field name: " + fieldName,
-//            "Document: " + document.getBsonDocument().toJson(),
-//            "Omega: " + omega
-//        );
-//    }
-
     @Override
     public boolean isSingle() {
         return isSingle;
@@ -238,77 +181,100 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
     }
 
     public class MongoQueryElement {
-        public String path;
-        public Integer index;
+        private final String key;
+        private final Integer index;
 
-        MongoQueryElement(String path, Integer index) {
-            this.path = path;
+        public MongoQueryElement(String key) {
+            this.key = key;
+            this.index = null;
+        }
+
+        public MongoQueryElement(int index) {
+            this.key = null;
             this.index = index;
         }
 
-        MongoQueryElement(String path) {
-            this(path, null);
+        public boolean isIndex() {
+            return index != null;
         }
 
-        MongoQueryElement(Integer index) {
-            this(null, index);
+        public String getKey() {
+            return key;
+        }
+
+        public Integer getIndex() {
+            return index;
         }
 
         @Override
         public String toString() {
-            return "MongoQueryElement{" +
-                "path='" + path + '\'' +
-                ", index=" + index +
-                '}';
+            return isIndex() ? "[" + index + "]" : key;
         }
     }
 
-    public MongoQueryElement[] buildQueryElementsFromString(String string) {
-        ArrayList<MongoQueryElement> mongoQueryElements = new ArrayList<>();
-        Integer arrayStartIndex = null;
-        Integer textStartIndex = 0;
-        for (int i = 0; i < string.length(); i++) {
-            char c = string.charAt(i);
-            boolean lastIteration = i == string.length() - 1;
-            boolean isArrayStart = c == '[';
-            if (((c == '.' || isArrayStart) && (i >= 1 && string.charAt(i - 1) != '\\')) || (lastIteration && arrayStartIndex == null)) {
-                if (isArrayStart)
-                    arrayStartIndex = i;
-                Integer textIndex = textStartIndex;
-                textStartIndex = null;
-                if (textIndex == null) {
-                    LoggerHelper.severe("The path is not valid. Expected a field name, but found a single dot.",
-                        "Path: " + string,
-                        "Index: " + i);
-                    continue;
+    public ArrayList<MongoQueryElement> buildQueryElementsFromString(String path) {
+        ArrayList<MongoQueryElement> elements = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean inBracket = false;
+        boolean escapeNext = false;
+
+        for (int i = 0; i < path.length(); i++) {
+            char c = path.charAt(i);
+
+            if (escapeNext) {
+                current.append(c);
+                escapeNext = false;
+            } else if (c == '\\') {
+                escapeNext = true;
+            } else if (c == '.' && !inBracket) {
+                if (!current.isEmpty()) {
+                    elements.add(new MongoQueryElement(current.toString()));
+                    current.setLength(0);
+                } else {
+                    LoggerHelper.severe("Empty field name found between dots",
+                        "Path: " + path,
+                        "Index: " + i
+                    );
                 }
-                String queryString = string.substring(textIndex, lastIteration ? i + 1 : i);
-                mongoQueryElements.add(new MongoQueryElement(queryString.replace("\\.", ".")));
-            } else if (arrayStartIndex == null && textStartIndex == null) {
-                textStartIndex = i;
+            } else if (c == '[') {
+                if (!current.isEmpty()) {
+                    elements.add(new MongoQueryElement(current.toString()));
+                    current.setLength(0);
+                }
+                inBracket = true;
             } else if (c == ']') {
-                Integer startIndex = arrayStartIndex;
-                arrayStartIndex = null;
-                if (startIndex == null) {
-                    LoggerHelper.severe("The path is not valid. Expected an array index, but found a closing bracket.",
-                        "Path: " + string,
-                        "Index: " + i);
+                if (!inBracket) {
+                    LoggerHelper.severe("Unexpected closing bracket",
+                        "Path: " + path,
+                        "Index: " + i
+                    );
                     continue;
                 }
-                Integer index = null;
+                inBracket = false;
                 try {
-                    index = Integer.parseInt(string.substring(startIndex + 1, i));
-                } catch (NumberFormatException ex) {
-                    LoggerHelper.severe("The path is not valid. Expected an integer, but found a non-integer value within the array brackets.",
-                        "String: " + string,
-                        "Index: " + i);
+                    int index = Integer.parseInt(current.toString());
+                    elements.add(new MongoQueryElement(index));
+                } catch (NumberFormatException e) {
+                    LoggerHelper.severe("Expected integer inside brackets",
+                        "Path: " + path,
+                        "Content: " + current
+                    );
                 }
-                mongoQueryElements.add(new MongoQueryElement(index));
-                if (string.length() > i + 1 && string.charAt(i + 1) == '.')
-                    i++;
+                current.setLength(0);
+            } else {
+                current.append(c);
             }
         }
-        return mongoQueryElements.toArray(new MongoQueryElement[0]);
+
+        if (!current.isEmpty() && !inBracket) {
+            elements.add(new MongoQueryElement(current.toString()));
+        } else if (inBracket) {
+            LoggerHelper.severe("Unclosed bracket in path",
+                "Path: " + path
+            );
+        }
+
+        return elements;
     }
 
 }
