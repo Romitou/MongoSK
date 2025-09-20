@@ -59,7 +59,6 @@ public class SectMongoDocument extends SectionExpression<MongoSKDocument> {
 
     @Override
     public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult, SectionNode sectionNode, List<TriggerItem> triggerItems) {
-        System.out.println("Initiated Mongo section document");
         if (sectionNode == null) {
             return false;
         }
@@ -67,6 +66,7 @@ public class SectMongoDocument extends SectionExpression<MongoSKDocument> {
         this.trigger = this.loadCode(
             sectionNode,
             "create mongo document",
+            () -> {},
             () -> {},
             EvtCreateMongoDocument.class
         );
