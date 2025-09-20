@@ -8,6 +8,7 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SectionExpression;
 import ch.njol.skript.lang.*;
+import ch.njol.skript.util.Version;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
 import fr.romitou.mongosk.MongoSK;
@@ -63,13 +64,22 @@ public class SectMongoDocument extends SectionExpression<MongoSKDocument> {
             return false;
         }
 
-        this.trigger = this.loadCode(
-            sectionNode,
-            "create mongo document",
-            () -> {},
-            () -> {},
-            EvtCreateMongoDocument.class
-        );
+        if (Skript.getVersion().isSmallerThan(new Version(2, 11, 3))) {
+            this.trigger = this.loadCode(
+                sectionNode,
+                "create mongo document",
+                () -> {},
+                EvtCreateMongoDocument.class
+            );
+        } else {
+            this.trigger = this.loadCode(
+                sectionNode,
+                "create mongo document",
+                () -> {},
+                () -> {},
+                EvtCreateMongoDocument.class
+            );
+        }
         return true;
     }
 
