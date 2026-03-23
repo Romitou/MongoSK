@@ -125,7 +125,7 @@ public class MongoSKQuery {
         if (limit != null)
             stringList.add("with limit of " + limit + " document(s)");
         if (skip != null)
-            stringList.add("with skip of " + limit + " document(s)");
+            stringList.add("with skip of " + skip + " document(s)");
         return String.join(" ", stringList);
     }
 
