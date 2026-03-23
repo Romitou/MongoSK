@@ -1,18 +1,43 @@
 package fr.romitou.mongosk;
 
-import org.bukkit.Bukkit;
-
 import java.util.Arrays;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.bukkit.Bukkit;
 
 public class LoggerHelper {
 
-    private final static Logger LOGGER = Bukkit.getLogger();
-    private final static Boolean DEBUG = MongoSK.getInstance().getConfig().getBoolean("debug-mode", false);
+    private static final Logger LOGGER;
+    private static final boolean DEBUG;
     private final static String PREFIX = "[MongoSK] ";
 
+    static {
+        Logger logger = null;
+        try {
+            logger = Bukkit.getLogger();
+        } catch (Throwable t) {
+            // Bukkit not available or failed to load
+            logger = Logger.getLogger("MongoSK");
+            logger.log(Level.FINE, "Bukkit logger not available, falling back to default logger", t);
+        }
+        if (logger == null) {
+            logger = Logger.getLogger("MongoSK");
+        }
+        LOGGER = logger;
+
+        boolean debug = false;
+        try {
+            debug = MongoSK.getInstance().getConfig().getBoolean("debug-mode", false);
+        } catch (Throwable t) {
+            // MongoSK not available or failed to load
+            LOGGER.log(Level.FINE, "MongoSK instance not available or failed to load config, debug mode disabled", t);
+        }
+        DEBUG = debug;
+    }
+
     public static void info(String... messages) {
-        LOGGER.info(PREFIX + messages[0]);
+        LOGGER.info(messages[0]);
         if (messages.length > 1)
             Arrays.stream(messages)
                 .skip(1)
@@ -21,7 +46,7 @@ public class LoggerHelper {
 
     public static void debug(String... messages) {
         if (!DEBUG) return;
-        LOGGER.config(PREFIX + messages[0]);
+        LOGGER.config(messages[0]);
         if (messages.length > 1)
             Arrays.stream(messages)
                 .skip(1)
@@ -29,7 +54,7 @@ public class LoggerHelper {
     }
 
     public static void warn(String... messages) {
-        LOGGER.warning(PREFIX + messages[0]);
+        LOGGER.warning(messages[0]);
         if (messages.length > 1)
             Arrays.stream(messages)
                 .skip(1)
@@ -37,16 +62,20 @@ public class LoggerHelper {
     }
 
     public static void severe(String... messages) {
-        LOGGER.severe(PREFIX + messages[0]);
+        LOGGER.severe(messages[0]);
         if (messages.length > 1)
             Arrays.stream(messages)
                 .skip(1)
                 .forEachOrdered(LoggerHelper::addDebugInfo);
     }
 
+    public static void severe(String message, Throwable e) {
+        LOGGER.log(java.util.logging.Level.SEVERE, message, e);
+    }
+
     private static void addDebugInfo(String message) {
         if (!DEBUG) return;
-        LOGGER.config(PREFIX + "-> " + message);
+        LOGGER.config("-> " + message);
     }
 
 }
