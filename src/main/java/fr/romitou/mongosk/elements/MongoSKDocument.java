@@ -1,7 +1,6 @@
 package fr.romitou.mongosk.elements;
 
 import fr.romitou.mongosk.LoggerHelper;
-import fr.romitou.mongosk.skript.expressions.ExprMongoEmbeddedValue;
 import org.bson.Document;
 
 import javax.annotation.Nullable;
@@ -49,7 +48,7 @@ public class MongoSKDocument {
         );
     }
 
-    public Object getEmbeddedValue(final List<ExprMongoEmbeddedValue.MongoQueryElement> queryElements) {
+    public Object getEmbeddedValue(final List<MongoQueryElement> queryElements) {
         if (this.bsonDocument == null) {
             LoggerHelper.debug("The BSON document is null.",
                 "Query elements: " + queryElements,
@@ -58,7 +57,7 @@ public class MongoSKDocument {
         }
         Object current = this.bsonDocument;
 
-        for (ExprMongoEmbeddedValue.MongoQueryElement element : queryElements) {
+        for (MongoQueryElement element : queryElements) {
             if (element.getKey() != null) {
                 if (!(current instanceof Document)) {
                     LoggerHelper.debug("Invalid path: a document was expected for the field '" + element.getKey() + "'.",
@@ -88,14 +87,14 @@ public class MongoSKDocument {
         return current;
     }
 
-    public void setEmbeddedValue(final List<ExprMongoEmbeddedValue.MongoQueryElement> queryElements, Object value) {
+    public void setEmbeddedValue(final List<MongoQueryElement> queryElements, Object value) {
         if (this.bsonDocument == null) {
             this.bsonDocument = new Document();
         }
         Object current = this.bsonDocument;
 
         for (int i = 0; i < queryElements.size(); i++) {
-            ExprMongoEmbeddedValue.MongoQueryElement element = queryElements.get(i);
+            MongoQueryElement element = queryElements.get(i);
             boolean isLast = (i == queryElements.size() - 1);
 
             if (element.getKey() != null) {
@@ -115,7 +114,7 @@ public class MongoSKDocument {
                 } else {
                     Object next = doc.get(element.getKey());
                     if (next == null) {
-                        ExprMongoEmbeddedValue.MongoQueryElement nextElement = queryElements.get(i + 1);
+                        MongoQueryElement nextElement = queryElements.get(i + 1);
                         next = (nextElement.getIndex() != null) ? new ArrayList<>() : new Document();
                         doc.put(element.getKey(), next);
                     }
@@ -130,8 +129,9 @@ public class MongoSKDocument {
                 }
                 List<Object> list = (List<Object>) current;
                 int idx = element.getIndex();
-                while (list.size() <= idx) {
-                    list.add(null);
+                int diff = idx - list.size() + 1;
+                if (diff > 0) {
+                    list.addAll(Collections.nCopies(diff, null));
                 }
                 if (isLast) {
                     if (value == null) {
@@ -142,7 +142,7 @@ public class MongoSKDocument {
                 } else {
                     Object next = list.get(idx);
                     if (next == null) {
-                        ExprMongoEmbeddedValue.MongoQueryElement nextElement = queryElements.get(i + 1);
+                        MongoQueryElement nextElement = queryElements.get(i + 1);
                         next = (nextElement.getIndex() != null) ? new ArrayList<>() : new Document();
                         list.set(idx, next);
                     }
