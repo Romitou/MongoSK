@@ -1,8 +1,8 @@
 package fr.romitou.mongosk.adapters.codecs;
 
 import fr.romitou.mongosk.adapters.MongoSKCodec;
+import fr.romitou.mongosk.utils.WorldCache;
 import org.bson.Document;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 
@@ -18,7 +18,7 @@ public class ChunkCodec implements MongoSKCodec<Chunk> {
         String worldName = document.getString("world");
         if (x == null || z == null || worldName == null)
             throw new StreamCorruptedException("Cannot retrieve x, z or world fields from document!");
-        World world = Bukkit.getWorld(worldName);
+        World world = WorldCache.getWorld(worldName);
         if (world == null)
             throw new StreamCorruptedException("Cannot parse given world name!");
         return world.getChunkAt(x, z);

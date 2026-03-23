@@ -1,8 +1,8 @@
 package fr.romitou.mongosk.adapters.codecs;
 
 import fr.romitou.mongosk.adapters.MongoSKCodec;
+import fr.romitou.mongosk.utils.WorldCache;
 import org.bson.Document;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
@@ -19,7 +19,7 @@ public class BlockCodec implements MongoSKCodec<Block> {
             z = document.getInteger("z");
         if (worldName == null)
             throw new StreamCorruptedException("Cannot retrieve x, y, z fields and world field from document!");
-        World world = Bukkit.getWorld(worldName);
+        World world = WorldCache.getWorld(worldName);
         if (world == null)
             throw new StreamCorruptedException("Cannot parse given world name!");
         return world.getBlockAt(x, y, z);
