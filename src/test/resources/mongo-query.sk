@@ -1,0 +1,20 @@
+test "mongo-query-properties":
+    set {_q} to a new mongosk query
+
+    set mongo comment of {_q} to "my comment"
+    set mongo disk usage of {_q} to true
+    set mongo limit of {_q} to 10
+    set mongo skip of {_q} to 5
+
+    assert mongo skip of {_q} is 5 with "incorrect mongo query skip"
+    assert mongo limit of {_q} is 10 with "incorrect mongo query limit"
+
+test "mongo-query-display":
+    set {_q} to a new mongosk query
+    set mongo comment of {_q} to "test comment"
+    set mongo disk usage of {_q} to false
+    set mongo limit of {_q} to 15
+    set mongo skip of {_q} to 2
+
+    set {_display} to "%{_q}%"
+    assert {_display} is "mongo query with comment ""test comment"" without disk usage with limit of 15 document(s) with skip of 2 document(s)" with "incorrect mongo query display"
