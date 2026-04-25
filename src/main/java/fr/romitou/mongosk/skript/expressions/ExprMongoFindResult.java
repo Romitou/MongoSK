@@ -28,24 +28,15 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 @Name("Mongo find query")
-@Description("Use this expression if you want to make simple find requests, easily and quickly. " +
-    "To do so, you must specify the type of your query: are you looking for several documents or the first document in " +
-    "the collection? Then, the first means is to use a filter to specify the type of data you are looking for. " +
-    "Finally, you need to specify where the query should ask for the data, i.e. in which collection." +
-    "The second way is to specify a Mongo request that you will have built beforehand. " +
-    "This will allow you to better specify your request and create a more complex one." +
-    "You also have the possibility to modify already existing documents and delete documents, " +
-    "in the same way as for making your queries.")
-@Examples({"set {_docs::*} to all mongo documents of collection {mycollection}",
-    "set {_filter} to mongosk filter where field \"example\" is true",
-    "set {_mydoc} to first mongo document with filter {_filter} of collection {mycollection}",
-    "set first mongo document with mongosk filter where field \"_id\" equals \"507f1f77bcf86cd799439011\" of collection {mycollection} to {_mydoc}",
-    "delete all mongosk documents of collection {mycollection}",
-    "",
-    "set {_query} to new mongo query",
-    "set mongo collection of {_query} to {mycollection}",
-    "set mongo filter of {_query} to {myfilter}",
-    "set {_doc} to first mongo document of query {_query}"})
+@Description({
+    "Executes a Mongo query or filter and returns the resulting documents from the collection.",
+    "You can choose to retrieve the first matching document, or all matching documents."
+})
+@Examples({
+    "set {_doc} to first mongo document of {mycollection}",
+    "set {_docs::*} to all mongo documents with filter {_filter} of collection {mycollection}",
+    "set {_queryDocs::*} to all mongo documents for query {_query}"
+})
 @Since("2.0.0")
 public class ExprMongoFindResult extends SimpleExpression<MongoSKDocument> {
 

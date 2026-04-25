@@ -15,13 +15,17 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 
 @Name("Mongo document has key?")
-@Description("Checks if the documents contains the specified key.")
-@Examples({"set {_doc} to a new mongo document",
+@Description({
+    "Checks if the document contains the specified key (field name).",
+    "Ideal for verifying if a specific attribute has been defined before attempting to read it."
+})
+@Examples({
+    "set {_doc} to a new mongo document",
     "set mongo value \"foo\" of {_doc} to \"bar\"",
     "if mongo document {_doc} has key \"foo\":",
-    "\tbroadcast \"The 'foo' key exists!\"",
+    "	broadcast \"The 'foo' key exists!\"",
     "else:",
-    "\tbroadcast \"The 'foo' key doesn't exist :(\""
+    "	broadcast \"The 'foo' key doesn't exist :(\""
 })
 @Since("2.1.0")
 public class CondMongoDocHasKey extends Condition {

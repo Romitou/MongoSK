@@ -20,10 +20,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Name("Mongo collection")
-@Description("Retrieve a specific collection via its name from a database on your Mongo server. " +
-    "You must specify the database where your collection is located.")
-@Examples({"set {_collection} to mongo collection named \"myCollection\" of {mydatabase}",
-    "set {_documents::*} to all mongo documents of {_collection}"})
+@Description({
+    "Retrieve a specific collection from a Mongo database.",
+    "You must specify the database where the collection is located."
+})
+@Examples({
+    "set {mycollection} to mongo collection named \"players\" of {mydatabase}",
+    "broadcast \"Retrieved collection: %{mycollection}'s mongo name%\""
+})
 @Since("2.0.0")
 public class ExprMongoCollection extends SimpleExpression<MongoSKCollection> {
 

@@ -23,13 +23,16 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Name("Mongo command result")
-@Description("This expression is very useful and gives complete freedom to use your database with MongoSK. " +
-    "Indeed, it allows to execute any command to a database, which will return the documents to you. " +
-    "You are therefore no longer dependent on the features of MongoSK, and you can use any commands. " +
-    "To learn more about the possible commands, see: https://docs.mongodb.com/manual/reference/command/.")
-@Examples({"set {_docs::*} to results of mongo command \"{ \"\"serverStatus\"\": 1 }\" of database {database}",
+@Description({
+    "Sends a raw command to a MongoDB database and returns the resulting documents.",
+    "This frees you from the specific features implemented in MongoSK and allows you to execute arbitrary MongoDB commands.",
+    "For more information on possible commands, see: https://docs.mongodb.com/manual/reference/command/."
+})
+@Examples({
+    "set {_docs::*} to results of mongo command \"{ \"serverStatus\": 1 }\" of database {database}",
     "set {_version} to mongo value \"version\" of {_docs::1}",
-    "broadcast \"Mongo host version: %{_version}%\""})
+    "broadcast \"Mongo host version: %{_version}%\""
+})
 @Since("2.0.3")
 public class ExprMongoCommandResult extends SimpleExpression<MongoSKDocument> {
 

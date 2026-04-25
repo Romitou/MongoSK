@@ -24,17 +24,21 @@ import java.util.Arrays;
 import java.util.List;
 
 @Name("Mongo document field")
-@Description("This expression is extremely important because it allows you to manage the values and lists of your documents. " +
-    "You can define lists, add items to lists, set values, or delete them. If Skript adapters are enabled, you can " +
-    "specify any type of data, and they will be automatically transformed by MongoSK so that they can be registered. " +
-    "So you can store players, blocks, items for example.")
-@Examples({"command test:",
-    "\ttrigger:",
-    "\t\tset {_doc} to first mongo document from {mycollection}",
-    "\t\tif mongo value \"player\" of {_doc} is not set:",
-    "\t\t\tset mongo value \"player\" of {_doc} to player",
-    "\t\tset {_player} to mongo value \"player\" of {_doc}",
-    "\t\tsend \"test\" to {_player}"})
+@Description({
+    "This expression is extremely important because it allows you to manage the values and lists of your documents.",
+    "You can define lists, add items to lists, set values, or delete them.",
+    "If Skript adapters are enabled, you can specify any type of data, and they will be automatically transformed by MongoSK so that they can be registered.",
+    "This means you can store players, blocks, and items natively."
+})
+@Examples({
+    "command test:",
+    "	trigger:",
+    "		set {_doc} to first mongo document from {mycollection}",
+    "		if mongo value \"player\" of {_doc} is not set:",
+    "			set mongo value \"player\" of {_doc} to player",
+    "		set {_player} to mongo value \"player\" of {_doc}",
+    "		send \"Hello!\" to {_player}"
+})
 @Since("2.0.0")
 public class ExprMongoDocumentField extends SimpleExpression<Object> {
 

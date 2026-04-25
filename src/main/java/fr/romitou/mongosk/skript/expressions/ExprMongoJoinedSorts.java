@@ -21,10 +21,15 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Name("Mongo joined sorts")
-@Description("Thanks to this expression, you will be able to combine two sorts to refine your queries.")
-@Examples({"set {_sort1} to mongo ascending sort by fields \"test\" and \"coins\"",
+@Description({
+    "Allows you to combine two sorting configurations to refine your queries further.",
+    "Useful when you need to sort by multiple criteria simultaneously."
+})
+@Examples({
+    "set {_sort1} to mongo ascending sort by fields \"test\" and \"coins\"",
     "set {_sort2} to mongo descending sort by field \"example\"",
-    "set {_sort} to mongo joined filters {_sort1} or {_sort2}"})
+    "set {_sort} to mongo joined sorts {_sort1} and {_sort2}"
+})
 @Since("2.0.0")
 public class ExprMongoJoinedSorts extends SimpleExpression<MongoSKSort> {
 

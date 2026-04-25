@@ -17,10 +17,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Name("Create Mongo collection")
-@Description("Quickly create a collection with a specific name in one of your databases. " +
-    "Make sure it does not exist first.")
-@Examples({"set {mydatabase} to mongo database named \"exampleDatabase\" from {myserver}",
-    "create a mongo collection named \"playerData\" in {mydatabase}"})
+@Description({
+    "Quickly create a collection with a specific name within a database.",
+    "It is recommended to verify that the collection does not already exist before creating it."
+})
+@Examples({
+    "set {mydatabase} to mongo database named \"exampleDatabase\" from {myserver}",
+    "create a mongo collection named \"playerData\" in {mydatabase}"
+})
 @Since("2.0.3")
 public class EffCreateMongoCollection extends Effect {
 

@@ -10,10 +10,14 @@ import fr.romitou.mongosk.elements.MongoSKCollection;
 import javax.annotation.Nonnull;
 
 @Name("Mongo database name of a collection")
-@Description("Retrieves the name of the database to which the collection belongs. " +
-    "You can then use the expression to retrieve a database by its name if you wish.")
-@Examples({"set {_dbname} to {mycollection}'s database name",
-    "set {_mydatabase} to mongo database named {_dbname} of {myserver}"})
+@Description({
+    "Retrieves the database that a specific collection belongs to.",
+    "Useful when navigating back from a collection to its parent database."
+})
+@Examples({
+    "set {_db} to mongo database of {mycollection}",
+    "broadcast \"Collection belongs to: %{_db}'s mongo name%\""
+})
 @Since("2.0.0")
 public class ExprMongoCollectionDatabase extends SimplePropertyExpression<MongoSKCollection, String> {
 

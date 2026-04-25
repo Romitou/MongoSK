@@ -15,13 +15,17 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 
 @Name("Mongo document has value?")
-@Description("Checks if the documents contains the specified value.")
-@Examples({"set {_doc} to a new mongo document",
+@Description({
+    "Checks if the document contains a specific value anywhere within it.",
+    "Useful for validating whether a given element is present in the document data."
+})
+@Examples({
+    "set {_doc} to a new mongo document",
     "set mongo value \"foo\" of {_doc} to \"bar\"",
     "if mongo document {_doc} has value \"bar\":",
-    "\tbroadcast \"The 'bar' value exists!\"",
+    "	broadcast \"The 'bar' value exists!\"",
     "else:",
-    "\tbroadcast \"The 'bar' value doesn't exist :(\""
+    "	broadcast \"The 'bar' value doesn't exist :(\""
 })
 @Since("2.1.0")
 public class CondMongoDocHasValue extends Condition {

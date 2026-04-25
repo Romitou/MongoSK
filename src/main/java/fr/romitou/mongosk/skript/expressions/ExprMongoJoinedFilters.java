@@ -20,11 +20,15 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 
 @Name("Mongo joined filters")
-@Description("Thanks to this expression, you will be able to combine two filters to refine your queries. " +
-    "Several types of filter comparison are possible, and, or, and nor.")
-@Examples({"set {_filter1} to mongosk filter where field \"test\" is true",
-    "set {_filter2} to mongosk filter where field \"coins\" is higher than or equals to 10",
-    "set {_filter} to mongo joined filters {_filter1} or {_filter2}"})
+@Description({
+    "Combines multiple filters into a single filter using 'and' / 'or' logic.",
+    "This allows you to create complex query conditions effortlessly."
+})
+@Examples({
+    "set {_filter1} to a new mongosk filter where field \"coins\" is greater than 100",
+    "set {_filter2} to a new mongosk filter where field \"rank\" is \"VIP\"",
+    "set {_combined} to mongo joined filters {_filter1} and {_filter2}"
+})
 @Since("2.0.0")
 public class ExprMongoJoinedFilters extends SimpleExpression<MongoSKFilter> {
 

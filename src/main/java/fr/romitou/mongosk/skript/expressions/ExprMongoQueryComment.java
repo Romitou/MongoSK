@@ -13,10 +13,14 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 
 @Name("Mongo query comment")
-@Description("Defines the comment of the request, in order to better monitor the query on your server. " +
-    "This is optional.")
-@Examples({"set {_query} to new mongosk query",
-    "set {_query}'s mongo comment to \"player query\""})
+@Description({
+    "Defines the comment of the request, aiding in query monitoring on your MongoDB server.",
+    "This is optional and helps administrators trace query origins."
+})
+@Examples({
+    "set {_query} to new mongosk query",
+    "set {_query}'s mongo comment to \"player data fetch query\""
+})
 @Since("2.0.0")
 public class ExprMongoQueryComment extends SimplePropertyExpression<MongoSKQuery, String> {
 

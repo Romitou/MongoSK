@@ -19,9 +19,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Name("Mongo sort")
-@Description("Defines the sortings to be applied to the query. This is optional.")
-@Examples({"set {_query} to new mongosk query",
-    "set mongo sort of {_query} to mongo ascending sort by field \"test\""})
+@Description({
+    "Creates a sorting rule for query results based on one or more fields.",
+    "You can specify ascending or descending order."
+})
+@Examples({
+    "set {_sort} to mongo ascending sort by field \"score\"",
+    "set {_sort} to mongo descending sort by fields \"level\" and \"experience\""
+})
 @Since("2.0.0")
 public class ExprMongoSort extends SimpleExpression<MongoSKSort> {
 

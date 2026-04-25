@@ -11,10 +11,15 @@ import fr.romitou.mongosk.elements.MongoSKDatabase;
 import javax.annotation.Nonnull;
 
 @Name("Mongo name")
-@Description("Retrieve the names of different Mongo elements. " +
-    "You can use this expression to retrieve the name of collections or databases.")
-@Examples({"set {_name} to {mongodatabase}'s mongo name",
-    "broadcast mongo name of {mongocollection}"})
+@Description({
+    "Retrieves the name of a Mongo server, database, or collection.",
+    "This is useful for logging or checking if you are interacting with the correct entity."
+})
+@Examples({
+    "broadcast \"Connected to server: %{myserver}'s mongo name%\"",
+    "broadcast \"Using database: %{mydatabase}'s mongo name%\"",
+    "broadcast \"Querying collection: %{mycollection}'s mongo name%\""
+})
 @Since("2.0.0")
 public class ExprMongoName extends SimplePropertyExpression<Object, String> {
 

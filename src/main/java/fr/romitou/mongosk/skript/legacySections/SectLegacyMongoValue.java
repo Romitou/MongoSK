@@ -37,8 +37,8 @@ public class SectLegacyMongoValue extends Effect {
         isSingle = parseResult.mark == 1
             ? Kleenean.TRUE
             : parseResult.mark == 2
-              ? Kleenean.FALSE
-              : Kleenean.UNKNOWN;
+            ? Kleenean.FALSE
+            : Kleenean.UNKNOWN;
         exprKey = (Expression<String>) exprs[0];
         exprValue = exprs[1].getConvertedExpression(Object.class);
         return exprValue != null;

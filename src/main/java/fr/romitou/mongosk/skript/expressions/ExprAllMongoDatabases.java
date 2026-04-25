@@ -20,9 +20,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Name("All Mongo databases")
-@Description("Quickly retrieve all the databases contained in a Mongo server.")
-@Examples({"set {_databases::*} to all mongo databases of {myserver}",
-    "broadcast \"Databases of my server: %{_databases::*}'s mongo names%\""})
+@Description({
+    "Quickly retrieve all the databases contained within a Mongo server connection.",
+    "Returns a list of MongoDB databases."
+})
+@Examples({
+    "set {_databases::*} to all mongo databases of {myserver}",
+    "broadcast \"Databases of my server: %{_databases::*}'s mongo names%\""
+})
 @Since("2.0.0")
 public class ExprAllMongoDatabases extends SimpleExpression<MongoSKDatabase> {
 

@@ -17,10 +17,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Name("New Mongo document")
-@Description("If you want to create a new empty document to specify your data, this expression will do the job.")
-@Examples({"set {_doc} to a new mongosk empty document",
-    "set mongo value \"test\" of {_doc} to \"something\"",
-    "insert mongo document {_doc} into collection {mycollection}"})
+@Description({
+    "Creates a new, empty Mongo document.",
+    "You can then use other expressions to populate it with fields, values, and lists."
+})
+@Examples({
+    "set {_doc} to a new mongo document",
+    "set mongo value \"name\" of {_doc} to \"MongoSK\""
+})
 @Since("2.0.0")
 public class ExprNewMongoDocument extends SimpleExpression<MongoSKDocument> {
 

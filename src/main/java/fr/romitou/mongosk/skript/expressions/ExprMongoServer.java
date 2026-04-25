@@ -28,12 +28,16 @@ import javax.annotation.Nullable;
 import java.util.concurrent.TimeUnit;
 
 @Name("Mongo server")
-@Description("Create a connection to your remote MongoDB host using this expression." +
-    "This syntax requires to specify a valid MongoDB connection string." +
-    "Don't forget to include the 'appName' option in order to improve MongoSK reports in case of problems and to identify requests to your server monitoring." +
-    "You can consult the attached examples or the official documentation: https://docs.mongodb.com/manual/reference/connection-string/.")
-@Examples({"on script load:",
-    "set {mongoclient} to a new mongosk client with connection string \"mongodb://romitou:mysupersecretpassword@127.0.0.1/?appName=myApp&retryWrites=true&w=majority\""})
+@Description({
+    "Create a connection to your remote MongoDB host using this expression.",
+    "This syntax requires you to specify a valid MongoDB connection string.",
+    "Don't forget to include the 'appName' option in order to improve MongoSK reports in case of problems and to identify requests in your server monitoring.",
+    "For more information, consult the official documentation: https://docs.mongodb.com/manual/reference/connection-string/."
+})
+@Examples({
+    "on script load:",
+    "	set {mongoclient} to a new mongosk client with connection string \"mongodb://<username>:<password>@127.0.0.1/?appName=myApp&retryWrites=true&w=majority\""
+})
 @Since("2.0.0")
 public class ExprMongoServer extends SimpleExpression<MongoSKServer> {
 

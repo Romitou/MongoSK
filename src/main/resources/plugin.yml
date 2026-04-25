@@ -4,4 +4,4 @@ description: The MongoDB database management addon.
 website: https://github.com/Romitou/MongoSK
 author: Romitou
 main: fr.romitou.mongosk.MongoSK
-depend: [ Skript ]
+depend: [Skript]

@@ -21,16 +21,21 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 @Name("Mongo section document")
-@Description("The Mongo section document allows the initialization of a new document and allows to define its fields in a quick and intuitive way with the expression \"Mongo section document value\". " +
-    "The variable you specify in the first line represents the variable that will contain the document built in the section. " +
-    "You can then use this variable after the end of your section.")
-@Examples({"set {_doc} to a new mongo document with:",
-    "\tmongo \"a\": 1, 2 and 3",
-    "\tmongo list \"b\": 4, 5 and 6",
-    "\tmongo list \"c\": 1",
-    "\tmongo \"d\": 7",
-    "\tmongo value \"e\": 8",
-    "\tmongo value \"f\": 9 and 10"})
+@Description({
+    "The Mongo section document allows the quick and intuitive initialization of a new document, letting you define its fields using the 'mongo value' expressions.",
+    "The variable specified in the first line holds the document built within the section.",
+    "You can then use this variable directly after the section concludes."
+})
+@Examples({
+    "set {_doc} to a new mongo document with:",
+    "	mongo \"a\": 1, 2 and 3",
+    "	mongo list \"b\": 4, 5 and 6",
+    "	mongo list \"c\": 1",
+    "	mongo \"d\": 7",
+    "	mongo value \"e\": 8",
+    "	mongo value \"f\": 9 and 10",
+    "broadcast {_doc}'s mongo json"
+})
 @Since("2.1.0") // New class from 2.3.0, but section backported for older versions :)
 public class SectMongoDocument extends SectionExpression<MongoSKDocument> {
     static {
@@ -68,18 +73,15 @@ public class SectMongoDocument extends SectionExpression<MongoSKDocument> {
             this.trigger = this.loadCode(
                 sectionNode,
                 "create mongo document",
-                () -> {
-                },
+                () -> {},
                 EvtCreateMongoDocument.class
             );
         } else {
             this.trigger = this.loadCode(
                 sectionNode,
                 "create mongo document",
-                () -> {
-                },
-                () -> {
-                },
+                () -> {},
+                () -> {},
                 EvtCreateMongoDocument.class
             );
         }

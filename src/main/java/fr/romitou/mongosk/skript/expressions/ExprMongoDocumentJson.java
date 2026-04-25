@@ -18,11 +18,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Name("Mongo document JSON")
-@Description("Retrieve the JSON representation of the document. This expression can be useful to use it with " +
-    "skript-json and convert the document to a Skript variable, and vice versa. " +
-    "You can also define the JSON of the document.")
-@Examples({"set {_json} do {_document}'s mongo json",
-    "set mongo json of {_document} to \"{\"\"example\"\": true\"}"})
+@Description({
+    "Retrieves the JSON representation of a document.",
+    "This expression is extremely useful for integration with plugins like skript-json, allowing bidirectional conversion between documents and Skript variables.",
+    "You can also assign a JSON string to overwrite a document."
+})
+@Examples({
+    "set {_json} to {_document}'s mongo json",
+    "set mongo json of {_document} to \"{ \"example\": true }\""
+})
 @Since("2.0.0")
 public class ExprMongoDocumentJson extends SimplePropertyExpression<MongoSKDocument, String> {
 

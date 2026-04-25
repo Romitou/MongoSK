@@ -14,9 +14,14 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 
 @Name("Mongo query projection")
-@Description("Defines the projection to be applied to the query. This is optional.")
-@Examples({"set {_query} to new mongosk query",
-    "set mongo projection of {_query} to mongo projection excluding fields \"_id\" and \"bulky_data\""})
+@Description({
+    "Defines the projection to be applied to the query, determining which fields are returned.",
+    "This is optional."
+})
+@Examples({
+    "set {_query} to new mongosk query",
+    "set mongo projection of {_query} to mongo projection excluding fields \"_id\" and \"bulky_data\""
+})
 @Since("2.4.2")
 public class ExprMongoQueryProjection extends SimplePropertyExpression<MongoSKQuery, MongoSKProjection> {
 

@@ -15,10 +15,15 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 
 @Name("Mongo document is empty?")
-@Description("Checks if the document is empty (if it contains no keys or values).")
-@Examples({"set {_doc} to a new mongo document",
+@Description({
+    "Checks if the document is completely empty, meaning it contains no keys or values.",
+    "Useful for verifying document initialization or checking if an update removed all fields."
+})
+@Examples({
+    "set {_doc} to a new mongo document",
     "if mongo document {_doc} is empty:",
-    "\tbroadcast \"The document is empty!\""})
+    "	broadcast \"The document is empty!\""
+})
 @Since("2.1.0")
 public class CondMongoDocIsEmpty extends Condition {
 

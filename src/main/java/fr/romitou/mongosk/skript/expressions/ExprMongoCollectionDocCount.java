@@ -11,10 +11,14 @@ import fr.romitou.mongosk.elements.MongoSKCollection;
 import javax.annotation.Nonnull;
 
 @Name("Mongo collection document count")
-@Description("If you want to know the number of documents in a collection, you should use this expression. " +
-    "Please note that this is an estimate.")
-@Examples({"set {_count} to mongo estimated document count of {mycollection}",
-    "broadcast \"There are approximately %{_count}% documents in my collection!\""})
+@Description({
+    "Counts the total number of documents in a collection.",
+    "You can also provide a filter to count only documents matching specific criteria."
+})
+@Examples({
+    "set {_total} to number of mongo documents of {mycollection}",
+    "set {_filteredCount} to number of mongo documents with filter {_filter} of {mycollection}"
+})
 @Since("2.0.0")
 public class ExprMongoCollectionDocCount extends SimplePropertyExpression<MongoSKCollection, Integer> {
 

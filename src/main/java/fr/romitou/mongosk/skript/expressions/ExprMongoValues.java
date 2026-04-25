@@ -13,8 +13,13 @@ import fr.romitou.mongosk.elements.MongoSKDocument;
 import org.bukkit.event.Event;
 
 @Name("Mongo document values")
-@Description("With this expression, retrieve all the values of a document. The expression returns a list of different data types.")
-@Examples({"set {_values::*} to mongo values of {_document}"})
+@Description({
+    "With this expression, retrieve all the values of a document.",
+    "The expression returns a list of different data types corresponding to the stored values."
+})
+@Examples({
+    "set {_values::*} to mongo values of {_document}"
+})
 public class ExprMongoValues extends SimpleExpression<Object> {
 
     static {

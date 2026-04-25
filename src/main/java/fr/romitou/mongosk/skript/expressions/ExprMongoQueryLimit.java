@@ -13,9 +13,14 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 
 @Name("Mongo query filter")
-@Description("Sets the maximum number of documents to be retrieved through this request. This is optional.")
-@Examples({"set {_query} to new mongosk query",
-    "set mongo limit of {_query} to 7"})
+@Description({
+    "Sets the maximum number of documents to be returned by the query.",
+    "This is optional and helps prevent loading too many documents into memory."
+})
+@Examples({
+    "set {_query} to new mongosk query",
+    "set mongo limit of {_query} to 50"
+})
 @Since("2.0.0")
 public class ExprMongoQueryLimit extends SimplePropertyExpression<MongoSKQuery, Number> {
 

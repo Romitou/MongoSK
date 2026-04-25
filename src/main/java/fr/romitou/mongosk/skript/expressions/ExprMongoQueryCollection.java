@@ -14,9 +14,14 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 
 @Name("Mongo query collection")
-@Description("Defines the collection in which the query will run.")
-@Examples({"set {_query} to new mongosk query",
-    "set mongo collection of {_query} to {mycollection}"})
+@Description({
+    "Defines the collection in which the query will run.",
+    "This is required for the query to know where to execute."
+})
+@Examples({
+    "set {_query} to new mongosk query",
+    "set mongo collection of {_query} to {mycollection}"
+})
 @Since("2.0.0")
 public class ExprMongoQueryCollection extends SimplePropertyExpression<MongoSKQuery, MongoSKCollection> {
 

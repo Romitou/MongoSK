@@ -27,8 +27,8 @@ public class LocationCodec implements MongoSKCodec<Location> {
         Number yaw = document.get("yaw", Number.class);
         Number pitch = document.get("pitch", Number.class);
         return new Location(world, x.doubleValue(), y.doubleValue(), z.doubleValue(),
-            yaw != null ? yaw.floatValue() : 0F,
-            pitch != null ? pitch.floatValue() : 0F);
+                yaw != null ? yaw.floatValue() : 0F,
+                pitch != null ? pitch.floatValue() : 0F);
     }
 
     @Nonnull

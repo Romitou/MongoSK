@@ -18,11 +18,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Name("Drop Mongo collection")
-@Description("This effect will allow you to completely delete a collection, and thus all its associated documents. " +
-    "Be careful, this effect is not saved and cannot be used by default to avoid any problem. " +
-    "If you want to activate it, go to the MongoSK configuration.")
-@Examples({"set {mycollection} to mongo collection named \"myCollection\" of {mydatabase}",
-    "drop mongo colection {mycollection}"})
+@Description({
+    "This effect allows you to completely delete a collection, erasing all its associated documents.",
+    "Due to its destructive nature, this effect is disabled by default.",
+    "To enable it, you must configure 'allow-drop.collection' in the MongoSK configuration file."
+})
+@Examples({
+    "set {mycollection} to mongo collection named \"myCollection\" of {mydatabase}",
+    "drop mongo collection {mycollection}"
+})
 @Since("2.0.3")
 public class EffDropMongoCollection extends Effect {
 

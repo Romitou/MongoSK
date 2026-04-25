@@ -5,9 +5,7 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.lang.Effect;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.*;
 import ch.njol.util.Kleenean;
 import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
@@ -15,17 +13,21 @@ import org.bukkit.event.Event;
 
 import java.util.Arrays;
 import java.util.List;
-
 @Name("Mongo section document value")
-@Description("This effect can only be used in a Mongo section document, and allows quick assignment of fields to a given document. " +
-    "Be aware that this syntax is only available for basic data manipulation. If your manipulation is not possible via this section, you can perfectly well use the classic field definition expression in addition to this section.")
-@Examples({"set {_nested} to a new mongo document with:",
-    "\tmongo \"number\": 100",
-    "\tmongo \"boolean\": false",
+@Description({
+    "This effect can only be used within a Mongo section document, and allows quick assignment of fields to the given document.",
+    "Be aware that this syntax is intended for basic data manipulation.",
+    "For complex scenarios, you can use the classic field definition expressions alongside this section."
+})
+@Examples({
+    "set {_nested} to a new mongo document with:",
+    "	mongo \"number\": 100",
+    "	mongo \"boolean\": false",
     "set {_doc} to a new mongo document with:",
-    "\tmongo \"simpleField\": \"Hello!\"",
-    "\tmongo \"nestedObject\": {_nested}",
-    "broadcast {_doc}'s mongo json"})
+    "	mongo \"simpleField\": \"Hello!\"",
+    "	mongo \"nestedObject\": {_nested}",
+    "broadcast {_doc}'s mongo json"
+})
 @Since("2.1.0") // New class from 2.3.0, but section backported for older versions :)
 public class SectMongoValue extends Effect {
 
@@ -48,8 +50,8 @@ public class SectMongoValue extends Effect {
         isSingle = parseResult.mark == 1
             ? Kleenean.TRUE
             : parseResult.mark == 2
-              ? Kleenean.FALSE
-              : Kleenean.UNKNOWN;
+            ? Kleenean.FALSE
+            : Kleenean.UNKNOWN;
         exprKey = (Expression<String>) exprs[0];
         exprValue = exprs[1].getConvertedExpression(Object.class);
         return exprValue != null;

@@ -25,15 +25,14 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 @Name("Mongo distinct query")
-@Description("The distinct query is useful when you want to retrieve a specific field from each document in a given " +
-    "collection. For example, if you have documents with a \"name\" field, you can use this expression to retrieve " +
-    "all the \"name\" fields of the documents in the collection. Useful, isn't it?" +
-    "This expression does not accept constructed queries because there is no need to use it. " +
-    "They can only be used with the find query.")
-@Examples({"set {_names::*} to all mongo fields distincted by \"name\" of collection {myCollection}",
-    "",
-    "set {_filter} to mongosk filter where field \"admin\" is true",
-    "set {_adminNames::*} to all mongo fields distincted by \"name\" with filter {_filter} of collection {myCollection}"})
+@Description({
+    "Retrieves all distinct values for a specific field across a collection.",
+    "The expression will return a list of unique values found in the specified field."
+})
+@Examples({
+    "set {_distinctNames::*} to mongo distinct values of field \"name\" of {mycollection}",
+    "broadcast \"Unique names: %{_distinctNames::*}%\""
+})
 @Since("2.2.1")
 public class ExprMongoDisctinctResult extends SimpleExpression<Object> {
 

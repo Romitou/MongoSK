@@ -20,9 +20,14 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 
 @Name("Mongo projection")
-@Description("Creates a projection for mongo queries, allowing you to include or exclude specific fields from returned documents.")
-@Examples({"set {_proj} to mongo projection including fields \"field1\" and \"field2\"",
-    "set {_proj} to mongo projection excluding fields \"field3\" and \"field4\""})
+@Description({
+    "Creates a projection for Mongo queries, allowing you to include or exclude specific fields from the returned documents.",
+    "This is useful for optimizing query payloads by only requesting necessary data."
+})
+@Examples({
+    "set {_proj} to mongo projection including fields \"field1\" and \"field2\"",
+    "set {_proj} to mongo projection excluding fields \"field3\" and \"field4\""
+})
 @Since("2.4.2")
 public class ExprMongoProjection extends SimpleExpression<MongoSKProjection> {
 

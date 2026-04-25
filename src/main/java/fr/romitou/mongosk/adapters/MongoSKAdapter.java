@@ -15,6 +15,8 @@ import org.bson.codecs.configuration.CodecConfigurationException;
 import javax.annotation.Nullable;
 import java.io.StreamCorruptedException;
 import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MongoSKAdapter {

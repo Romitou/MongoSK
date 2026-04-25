@@ -13,9 +13,14 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 
 @Name("Mongo query skip")
-@Description("Sets the number of documents to be skipped during the request. This is optional.")
-@Examples({"set {_query} to new mongosk query",
-    "set mongo skip of {_query} to 12"})
+@Description({
+    "Sets the number of documents to be skipped during the query execution.",
+    "This is optional and commonly used for pagination."
+})
+@Examples({
+    "set {_query} to new mongosk query",
+    "set mongo skip of {_query} to 12"
+})
 @Since("2.0.0")
 public class ExprMongoQuerySkip extends SimplePropertyExpression<MongoSKQuery, Number> {
 

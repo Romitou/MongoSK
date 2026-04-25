@@ -14,9 +14,14 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 
 @Name("Mongo query sort")
-@Description("Defines the sortings to be applied to the query. This is optional.")
-@Examples({"set {_query} to new mongosk query",
-    "set mongo sort of {_query} to mongo ascending sort by field \"test\""})
+@Description({
+    "Defines the sorting criteria to be applied to the query.",
+    "This is optional and helps in ordering the returned documents."
+})
+@Examples({
+    "set {_query} to new mongosk query",
+    "set mongo sort of {_query} to mongo ascending sort by field \"test\""
+})
 @Since("2.0.0")
 public class ExprMongoQuerySort extends SimplePropertyExpression<MongoSKQuery, MongoSKSort> {
 

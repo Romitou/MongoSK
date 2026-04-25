@@ -1,10 +1,10 @@
 package fr.romitou.mongosk;
 
-import org.bukkit.Bukkit;
-
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.bukkit.Bukkit;
 
 public class LoggerHelper {
 

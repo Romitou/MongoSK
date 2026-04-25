@@ -13,8 +13,13 @@ import fr.romitou.mongosk.elements.MongoSKDocument;
 import org.bukkit.event.Event;
 
 @Name("Mongo document keys")
-@Description("With this expression, retrieve all the keys of a document. The expression returns a list of text.")
-@Examples({"set {_keys::*} to mongo keys of {_document}"})
+@Description({
+    "With this expression, retrieve all the keys (field names) of a document.",
+    "The expression returns a list of text strings representing the keys."
+})
+@Examples({
+    "set {_keys::*} to mongo keys of {_document}"
+})
 public class ExprMongoKeys extends SimpleExpression<String> {
 
     static {

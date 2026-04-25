@@ -9,14 +9,18 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
+import com.mongodb.client.model.DeleteOneModel;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.ReplaceOneModel;
+import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.bulk.BulkWriteResult;
-import com.mongodb.client.model.*;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertManyResult;
+import com.mongodb.client.result.UpdateResult;
 import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.SubscriberHelpers;
 import fr.romitou.mongosk.elements.MongoSKCollection;
 import fr.romitou.mongosk.elements.MongoSKDocument;
-import org.bson.Document;
 import org.bukkit.event.Event;
 
 import javax.annotation.Nonnull;
@@ -24,22 +28,23 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.bson.Document;
+import com.mongodb.client.model.WriteModel;
 
 @Name("Manage Mongo document")
-@Description("Firstly, you can insert your Mongo document in the collection you want, with an automatically generated " +
-    "unique identifier if not specified or already existing. This will not replace existing documents with the same " +
-    "identifier, but will insert a new one. Secondly, if you want to replace the document, you can use the replace syntax. " +
-    "Thirdly, you can use upsert to insert the document if it does not exist, or replace it if it does. " +
-    "Finally, to remove the document, simply use remove. " +
-    "This effect is only a shortcut and simply executes a query with \"_id\" as the unique identifier. " +
-    "If you have changed the unique ID field, you should not use this effect.")
-@Examples({"set {_document} to a new mongo document",
-    "set mongo field \"playerName\" of {_document} to \"Romitou\"",
+@Description({
+    "This effect provides shortcuts to manage documents within a collection.",
+    "You can insert a document (generating a new ID if needed), update/replace an existing document, upsert (insert if not exists, update if exists), or remove it entirely.",
+    "Note: This effect relies on the \"_id\" field as the unique identifier. If you have modified the \"_id\" field manually, behavior may be unexpected and using specialized queries is recommended."
+})
+@Examples({
+    "set {_document} to a new mongo document",
+    "set mongo value \"playerName\" of {_document} to \"MongoUser\"",
     "insert mongo document {_document} into collection {mycollection}",
-    "",
     "update mongo document {_document} of {mycollection}",
     "upsert mongo document {_document} into {mycollection}",
-    "remove mongo documents {_doc1} and {_doc2} from {mycollection}"})
+    "remove mongo documents {_doc1} and {_doc2} from {mycollection}"
+})
 @Since("2.0.0")
 public class EffManageMongoDocument extends Effect {
 
