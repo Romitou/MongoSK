@@ -1,26 +1,17 @@
-<p align="center"><img width=600px src="https://upload.wikimedia.org/wikipedia/fr/thumb/4/45/MongoDB-Logo.svg/1200px-MongoDB-Logo.svg.png"></p>  
+<p align="center"><img width=600px src="https://upload.wikimedia.org/wikipedia/en/thumb/5/5a/MongoDB_Fores-Green.svg/1920px-MongoDB_Fores-Green.svg.png"></p>  
 <h2 align="center">MongoSK</h2>  
 <p align="center">MongoSK is an add-on for Skript for data gestion with a MongoDB database.</p>  
 
-## ⭐️ What's new in 2.0?
-A new major version of MongoSK is now available! Now let's take a look at what's new.
-
-- ⚡️ **Database queries are executed asynchronously**<br/>
-  *The code has been rewritten using the [mongodb-driver-reactivestreams](https://github.com/mongodb/mongo-java-driver-reactivestreams) library*
+## Features
 
 - ⚙️ **Automatic and intelligent transformation of all sorts of data**<br/>
-  *You can now store all types of Skript as items, players, blocks, etc. MongoSK does the job for you!*
+  *You can store all types of Skript as items, players, blocks, etc. MongoSK does the job for you!*
 
-- 🔊 **Simple and understandable debugging to quickly identify problems**<br/>
-  *The information are relevant and useful for both novice users and developers of the plugin*
+- 🔬 **Advanced queries for specific queries**<br/>
+  *You are able to target more precise data in your queries with a lot of options*
 
-- 🔬 **Addition of advanced queries for specific queries**<br/>
-  *You are now able to target more precise data in your queries with a lot of options*
-
-- 🤙 **More logical and smart syntaxes**<br/>
+- 🤙 **Logical and smart syntaxes**<br/>
   *Syntaxes have been reworked to be more consistent and logical*
-
-⚠️ The support of the MongoSK 1 versions __will be dropped__ at March 31, 2021. We strongly recommend that you update. If you already have a script with MongoSK 1, you can find the update instructions on this [discussion](https://github.com/Romitou/MongoSK/discussions/23).
 
 ## 🚀 Download and installation
 You want to use MongoSK? Great! First, make sure you read the [documentation](https://github.com/Romitou/MongoSK/wiki/1.-MongoDB,-what-is-that?-%F0%9F%8D%83) to learn more about how MongoDB works and how to get started.
