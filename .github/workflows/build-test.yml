@@ -15,7 +15,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean shadowJar
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: MongoSK
           path: build/libs/**
