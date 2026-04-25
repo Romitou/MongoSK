@@ -8,6 +8,7 @@ import fr.romitou.mongosk.elements.MongoSKDocument;
 import fr.romitou.mongosk.utils.BinaryUtils;
 import org.bson.BsonDocument;
 import org.bson.Document;
+import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.configuration.CodecConfigurationException;
 import org.bson.types.Binary;
@@ -26,6 +27,9 @@ public class MongoSKAdapter {
     public final static Boolean ADAPTERS_ENABLED = MongoSK.getInstance().getConfig().getBoolean("skript-adapters.enabled", false);
     public final static Boolean SAFE_DESERIALIZATION = MongoSK.getInstance().getConfig().getBoolean("skript-adapters.safe-data", true);
     public final static List<String> DISABLED_CODECS = MongoSK.getInstance().getConfig().getStringList("skript-adapters.disabled");
+
+    private final static Codec<Document> DOCUMENT_CODEC = MongoClientSettings.getDefaultCodecRegistry().get(Document.class);
+    private final static DecoderContext DECODER_CONTEXT = DecoderContext.builder().build();
 
     private final static List<MongoSKCodec<?>> loadedCodecs = new ArrayList<>();
     private final static List<String> loadedCodecNames = new ArrayList<>();
@@ -131,8 +135,7 @@ public class MongoSKAdapter {
         } catch (StreamCorruptedException ex) {
             LoggerHelper.severe("An error occurred during the deserialization of the document: " + ex.getMessage(),
                 "Requested codec: " + codecName,
-                "Original value class: " + doc,
-                "Document JSON: " + doc.toJson()
+                "Original value class: " + doc.getClass().getName()
             );
             return new MongoSKDocument(doc, null);
         }
@@ -190,9 +193,7 @@ public class MongoSKAdapter {
     }
 
     public static Document bsonDocumentToDocument(BsonDocument bsonDocument) {
-        return MongoClientSettings.getDefaultCodecRegistry()
-            .get(Document.class)
-            .decode(bsonDocument.asBsonReader(), DecoderContext.builder().build());
+        return DOCUMENT_CODEC.decode(bsonDocument.asBsonReader(), DECODER_CONTEXT);
     }
 
 }
