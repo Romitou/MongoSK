@@ -1,0 +1,20 @@
+test "mongo-filter-basic":
+    set {_f1} to a new mongosk filter where field "a" is true
+    set {_f2} to a new mongosk filter where field "b" is not false
+    set {_f3} to a new mongosk filter where field "c" is greater than 10
+    set {_f4} to a new mongosk filter where field "d" is less than 5
+    set {_f5} to a new mongosk filter where field "e" is greater than or equal to 20
+    set {_f6} to a new mongosk filter where field "f" is less than or equal to 30
+
+    set {_display} to "%{_f1}%"
+    assert {_display} is "mongosk filter where field ""a"" equals true" with "incorrect filter display is"
+
+    set {_display2} to "%{_f3}%"
+    assert {_display2} is "mongosk filter where field ""c"" greater than 10" with "incorrect filter display greater than"
+
+test "mongo-filter-exists":
+    set {_f1} to a new mongosk filter where field "key" exists
+    set {_f2} to a new mongosk filter where field "other" does not exist
+
+    set {_display} to "%{_f1}%"
+    assert {_display} is "mongosk filter where field ""key"" exists " with "incorrect filter display exists"

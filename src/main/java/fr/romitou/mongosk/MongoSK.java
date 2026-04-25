@@ -7,6 +7,7 @@ import com.mongodb.reactivestreams.client.MongoClient;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import fr.romitou.mongosk.elements.MongoSKServer;
 import fr.romitou.mongosk.skript.SkriptTypes;
+import fr.romitou.mongosk.utils.WorldCache;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -104,6 +105,9 @@ public class MongoSK extends JavaPlugin {
             "Server version: " + this.getServer().getVersion()
         );
         LoggerHelper.info("If you need help, go to GitHub or to our Discord: https://discord.com/invite/6jeQkRcMkk");
+
+        // Register Event Listeners
+        pluginManager.registerEvents(new WorldCache(), this);
 
         // Register Metrics.
         // Learn more: https://bstats.org/getting-started

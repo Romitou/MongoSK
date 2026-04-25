@@ -1,8 +1,8 @@
 package fr.romitou.mongosk.adapters.codecs;
 
 import fr.romitou.mongosk.adapters.MongoSKCodec;
+import fr.romitou.mongosk.utils.WorldCache;
 import org.bson.Document;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import javax.annotation.Nonnull;
@@ -15,7 +15,7 @@ public class WorldCodec implements MongoSKCodec<World> {
         String name = document.getString("name");
         if (name == null)
             throw new StreamCorruptedException("Cannot retrieve name field from document!");
-        World world = Bukkit.getWorld(name);
+        World world = WorldCache.getWorld(name);
         if (world == null)
             throw new StreamCorruptedException("Cannot parse given world name!");
         return world;

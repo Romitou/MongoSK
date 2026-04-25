@@ -52,7 +52,7 @@ public abstract class LegacyEffectSection extends Condition {
             commentField.setAccessible(true);
             comment = (String) commentField.get(this.node);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+            LoggerHelper.severe("Failed to retrieve comment from Node", e);
             comment = "";
         }
 
@@ -71,7 +71,7 @@ public abstract class LegacyEffectSection extends Condition {
             // Remove all nodes from this.node, since they are moved.
             nodeField.set(this.node, new ArrayList<>());
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+            LoggerHelper.severe("Failed to move nodes from Node to SectionNode", e);
         }
     }
 
@@ -170,7 +170,7 @@ public abstract class LegacyEffectSection extends Condition {
                 handlerList = (HandlerList) field.get(null);
             }
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+            LoggerHelper.severe("Failed to retrieve handlers from SkriptLogger", e);
         }
 
         // List of LogHandler that will be stopped
@@ -199,7 +199,7 @@ public abstract class LegacyEffectSection extends Condition {
             field.setAccessible(true);
             field.setBoolean(logHandler, true);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+            LoggerHelper.severe("Failed to patch RetainingLogHandler", e);
         }
     }
 
@@ -209,7 +209,7 @@ public abstract class LegacyEffectSection extends Condition {
             field.setAccessible(true);
             field.setBoolean(logHandler, true);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+            LoggerHelper.severe("Failed to patch ParseLogHandler", e);
         }
     }
 

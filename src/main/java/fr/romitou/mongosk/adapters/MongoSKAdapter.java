@@ -5,8 +5,10 @@ import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.adapters.codecs.*;
 import fr.romitou.mongosk.elements.MongoSKDocument;
+import fr.romitou.mongosk.utils.BinaryUtils;
 import org.bson.BsonDocument;
 import org.bson.Document;
+import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.configuration.CodecConfigurationException;
 import org.bson.types.Binary;
@@ -14,7 +16,10 @@ import org.bson.types.Binary;
 import javax.annotation.Nullable;
 import java.io.StreamCorruptedException;
 import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MongoSKAdapter {
 
@@ -23,7 +28,13 @@ public class MongoSKAdapter {
     public final static Boolean SAFE_DESERIALIZATION = MongoSK.getInstance().getConfig().getBoolean("skript-adapters.safe-data", true);
     public final static List<String> DISABLED_CODECS = MongoSK.getInstance().getConfig().getStringList("skript-adapters.disabled");
 
+    private final static Codec<Document> DOCUMENT_CODEC = MongoClientSettings.getDefaultCodecRegistry().get(Document.class);
+    private final static DecoderContext DECODER_CONTEXT = DecoderContext.builder().build();
+
     private final static List<MongoSKCodec<?>> loadedCodecs = new ArrayList<>();
+    private final static List<String> loadedCodecNames = new ArrayList<>();
+    private final static Map<String, MongoSKCodec<?>> loadedCodecsMap = new HashMap<>();
+    private final static Map<Class<?>, Optional<MongoSKCodec<?>>> loadedCodecsByClassMap = new ConcurrentHashMap<>();
     private final static List<Class<? extends MongoSKCodec<?>>> availableCodecs = Arrays.asList(
         BiomeCodec.class,
         BlockCodec.class,
@@ -71,36 +82,37 @@ public class MongoSKAdapter {
             }
             Class.forName(codecInstance.getReturnType().getCanonicalName());
             loadedCodecs.add(codecInstance);
+            loadedCodecNames.add(codecInstance.getName());
+            loadedCodecsMap.putIfAbsent(codecInstance.getName(), codecInstance);
+            loadedCodecsByClassMap.clear();
         } catch (NoClassDefFoundError | ClassNotFoundException e) {
             LoggerHelper.severe("Oops, the return class of the " + codec.getName() + " codec doesn't exists! Skipping registration.");
         } catch (ReflectiveOperationException e) {
-            LoggerHelper.severe("Oops, cannot load the " + codec.getName() + " codec! Look at the console for more details.");
-            e.printStackTrace();
+            LoggerHelper.severe("Oops, cannot load the " + codec.getName() + " codec!", e);
         }
     }
 
     public static List<String> getCodecNames() {
-        return loadedCodecs.stream()
-            .map(MongoSKCodec::getName)
-            .collect(Collectors.toList());
+        return new ArrayList<>(loadedCodecNames);
     }
 
     @SuppressWarnings("unchecked")
     @Nullable
     public static <T> MongoSKCodec<T> getCodecByName(String name) {
-        return (MongoSKCodec<T>) loadedCodecs.stream()
-            .filter(codec -> codec.getName().equals(name))
-            .findFirst()
-            .orElse(null);
+        return (MongoSKCodec<T>) loadedCodecsMap.get(name);
     }
 
     @SuppressWarnings("unchecked")
     @Nullable
     public static <T> MongoSKCodec<T> getCodecByClass(Class<? extends T> clazz) {
-        return (MongoSKCodec<T>) loadedCodecs.stream()
-            .filter(codec -> codec.getReturnType().isAssignableFrom(clazz))
-            .findFirst()
-            .orElse(null);
+        return (MongoSKCodec<T>) loadedCodecsByClassMap.computeIfAbsent(clazz, c -> {
+            for (MongoSKCodec<?> codec : loadedCodecs) {
+                if (codec.getReturnType().isAssignableFrom(c)) {
+                    return Optional.of(codec);
+                }
+            }
+            return Optional.empty();
+        }).orElse(null);
     }
 
     public static Object deserializeValue(Object value) {
@@ -123,8 +135,7 @@ public class MongoSKAdapter {
         } catch (StreamCorruptedException ex) {
             LoggerHelper.severe("An error occurred during the deserialization of the document: " + ex.getMessage(),
                 "Requested codec: " + codecName,
-                "Original value class: " + doc,
-                "Document JSON: " + doc.toJson()
+                "Original value class: " + doc.getClass().getName()
             );
             return new MongoSKDocument(doc, null);
         }
@@ -159,27 +170,30 @@ public class MongoSKAdapter {
     public static Object[] serializeArray(Object[] unsafeArray) {
         if (!ADAPTERS_ENABLED)
             return unsafeArray;
-        return Arrays.stream(unsafeArray).map(MongoSKAdapter::serializeObject).toArray(Object[]::new);
+
+        Object[] result = new Object[unsafeArray.length];
+        for (int i = 0; i < unsafeArray.length; i++) {
+            result[i] = MongoSKAdapter.serializeObject(unsafeArray[i]);
+        }
+        return result;
     }
 
     public static Object[] deserializeValues(Object[] unsafeValues) {
         if (!ADAPTERS_ENABLED)
             return unsafeValues;
-        return Arrays.stream(unsafeValues).map(MongoSKAdapter::deserializeValue).toArray(Object[]::new);
+        Object[] values = new Object[unsafeValues.length];
+        for (int i = 0; i < unsafeValues.length; i++) {
+            values[i] = MongoSKAdapter.deserializeValue(unsafeValues[i]);
+        }
+        return values;
     }
 
     public static byte[] getBinaryData(Object unsafeBinary) throws StreamCorruptedException {
-        if (unsafeBinary instanceof byte[])
-            return (byte[]) unsafeBinary;
-        else if (unsafeBinary instanceof Binary)
-            return ((Binary) unsafeBinary).getData();
-        throw new StreamCorruptedException("Cannot retrieve valid binary from document!");
+        return BinaryUtils.getBinaryData(unsafeBinary);
     }
 
     public static Document bsonDocumentToDocument(BsonDocument bsonDocument) {
-        return MongoClientSettings.getDefaultCodecRegistry()
-            .get(Document.class)
-            .decode(bsonDocument.asBsonReader(), DecoderContext.builder().build());
+        return DOCUMENT_CODEC.decode(bsonDocument.asBsonReader(), DECODER_CONTEXT);
     }
 
 }

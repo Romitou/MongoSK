@@ -52,3 +52,11 @@ test "mongo-embedded-values":
     set {_document} to mongo document
     set mongo embedded value "newList[2]" of {_document} to "filled"
     assert mongo json of {_document} is "{""newList"": [null, null, ""filled""]}" with "list auto-fill failed"
+
+    # Edge cases
+    set {_document} to mongo document
+    set mongo embedded value "deep.nested.array[1].field" of {_document} to "val"
+    assert mongo json of {_document} is "{""deep"": {""nested"": {""array"": [null, {""field"": ""val""}]}}}" with "deeply nested embedded array definition failed"
+
+    delete mongo embedded value "deep.nested.array[1].field" of {_document}
+    assert mongo json of {_document} is "{""deep"": {""nested"": {""array"": [null, {}]}}}" with "deeply nested embedded array deletion failed"

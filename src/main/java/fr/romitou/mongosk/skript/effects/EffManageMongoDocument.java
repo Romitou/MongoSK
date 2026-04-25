@@ -10,6 +10,8 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.ReplaceOneModel;
+import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertManyResult;
 import com.mongodb.client.result.UpdateResult;
@@ -81,13 +83,13 @@ public class EffManageMongoDocument extends Effect {
                 break;
             case 2:
                 long updateQuery = System.currentTimeMillis();
-                Arrays.stream(mongoSKDocuments).forEachOrdered(doc -> {
-                    SubscriberHelpers.ObservableSubscriber<UpdateResult> observableUpdateSubscriber = new SubscriberHelpers.OperationSubscriber<>();
-                    mongoSKCollection.getMongoCollection()
-                        .replaceOne(Filters.eq("_id", doc.getBsonDocument().get("_id")), doc.getBsonDocument())
-                        .subscribe(observableUpdateSubscriber);
-                    observableUpdateSubscriber.await();
-                });
+                SubscriberHelpers.ObservableSubscriber<BulkWriteResult> observableUpdateSubscriber = new SubscriberHelpers.OperationSubscriber<>();
+                mongoSKCollection.getMongoCollection()
+                    .bulkWrite(Arrays.stream(mongoSKDocuments)
+                        .map(doc -> new ReplaceOneModel<>(Filters.eq("_id", doc.getBsonDocument().get("_id")), doc.getBsonDocument()))
+                        .collect(Collectors.toList()))
+                    .subscribe(observableUpdateSubscriber);
+                observableUpdateSubscriber.await();
                 LoggerHelper.debug("Update query executed in " + (System.currentTimeMillis() - updateQuery) + "ms.");
                 break;
             case 3:

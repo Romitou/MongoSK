@@ -14,7 +14,9 @@ import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
+import fr.romitou.mongosk.elements.MongoQueryElement;
 import fr.romitou.mongosk.elements.MongoSKDocument;
+import fr.romitou.mongosk.utils.MongoPathParser;
 import org.bukkit.event.Event;
 
 import javax.annotation.Nonnull;
@@ -82,7 +84,7 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
         MongoSKDocument mongoSKDocument = exprMongoSKDocument.getSingle(e);
         if (fieldName == null || mongoSKDocument == null || mongoSKDocument.getBsonDocument() == null)
             return new Object[0];
-        ArrayList<MongoQueryElement> mongoQueryElements = buildQueryElementsFromString(fieldName);
+        ArrayList<MongoQueryElement> mongoQueryElements = MongoPathParser.parse(fieldName);
         try {
             Object value = mongoSKDocument.getEmbeddedValue(mongoQueryElements);
             if (isSingle) {
@@ -123,7 +125,7 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
             omega = Arrays.asList(MongoSKAdapter.serializeArray(delta));
         if (fieldName == null || mongoSKDocument == null || mongoSKDocument.getBsonDocument() == null)
             return;
-        ArrayList<MongoQueryElement> mongoQueryElements = buildQueryElementsFromString(fieldName);
+        ArrayList<MongoQueryElement> mongoQueryElements = MongoPathParser.parse(fieldName);
         switch (mode) {
             case SET:
                 mongoSKDocument.setEmbeddedValue(mongoQueryElements, isSingle ? omega.get(0) : omega);
@@ -178,104 +180,6 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
     @Nonnull
     public String toString(@Nullable Event e, boolean debug) {
         return "mongo " + (isSingle ? "value" : "list") + " named " + exprFieldName.toString(e, debug) + " of " + exprMongoSKDocument.toString(e, debug);
-    }
-
-    public class MongoQueryElement {
-        private final String key;
-        private final Integer index;
-
-        public MongoQueryElement(String key) {
-            this.key = key;
-            this.index = null;
-        }
-
-        public MongoQueryElement(int index) {
-            this.key = null;
-            this.index = index;
-        }
-
-        public boolean isIndex() {
-            return index != null;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public Integer getIndex() {
-            return index;
-        }
-
-        @Override
-        public String toString() {
-            return isIndex() ? "[" + index + "]" : key;
-        }
-    }
-
-    public ArrayList<MongoQueryElement> buildQueryElementsFromString(String path) {
-        ArrayList<MongoQueryElement> elements = new ArrayList<>();
-        StringBuilder current = new StringBuilder();
-        boolean inBracket = false;
-        boolean escapeNext = false;
-
-        for (int i = 0; i < path.length(); i++) {
-            char c = path.charAt(i);
-
-            if (escapeNext) {
-                current.append(c);
-                escapeNext = false;
-            } else if (c == '\\') {
-                escapeNext = true;
-            } else if (c == '.' && !inBracket) {
-                if (!current.isEmpty()) {
-                    elements.add(new MongoQueryElement(current.toString()));
-                    current.setLength(0);
-                }
-//                else {
-//                    LoggerHelper.severe("Empty field name found between dots",
-//                        "Path: " + path,
-//                        "Index: " + i
-//                    );
-//                }
-            } else if (c == '[') {
-                if (!current.isEmpty()) {
-                    elements.add(new MongoQueryElement(current.toString()));
-                    current.setLength(0);
-                }
-                inBracket = true;
-            } else if (c == ']') {
-                if (!inBracket) {
-                    LoggerHelper.severe("Unexpected closing bracket",
-                        "Path: " + path,
-                        "Index: " + i
-                    );
-                    continue;
-                }
-                inBracket = false;
-                try {
-                    int index = Integer.parseInt(current.toString());
-                    elements.add(new MongoQueryElement(index));
-                } catch (NumberFormatException e) {
-                    LoggerHelper.severe("Expected integer inside brackets",
-                        "Path: " + path,
-                        "Content: " + current
-                    );
-                }
-                current.setLength(0);
-            } else {
-                current.append(c);
-            }
-        }
-
-        if (!current.isEmpty() && !inBracket) {
-            elements.add(new MongoQueryElement(current.toString()));
-        } else if (inBracket) {
-            LoggerHelper.severe("Unclosed bracket in path",
-                "Path: " + path
-            );
-        }
-
-        return elements;
     }
 
 }

@@ -18,7 +18,10 @@ public class EntityCodec implements MongoSKCodec<Entity> {
             throw new StreamCorruptedException("Cannot retrieve id field from document!");
         try {
             UUID uuid = UUID.fromString(id);
-            Entity entity = Bukkit.getEntity(uuid);
+            Entity entity = Bukkit.getPlayer(uuid);
+            if (entity == null) {
+                entity = Bukkit.getEntity(uuid);
+            }
             if (entity == null)
                 throw new StreamCorruptedException("Cannot parse given entity ID!");
             return entity;

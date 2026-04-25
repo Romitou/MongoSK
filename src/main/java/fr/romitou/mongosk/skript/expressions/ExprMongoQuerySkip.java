@@ -31,7 +31,7 @@ public class ExprMongoQuerySkip extends SimplePropertyExpression<MongoSKQuery, N
     @Nonnull
     @Override
     public Number convert(MongoSKQuery query) {
-        return query.getLimit();
+        return query.getSkip();
     }
 
     @Override

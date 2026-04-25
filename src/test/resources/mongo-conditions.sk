@@ -1,0 +1,12 @@
+test "mongo-conditions":
+    set {_doc} to mongo document
+
+    assert mongosk document {_doc} is empty with "new document should be empty"
+
+    set mongo value "key" of {_doc} to "val"
+
+    assert mongosk document {_doc} is not empty with "document should not be empty after insert"
+    assert mongosk document {_doc} has key "key" with "document should have 'key'"
+    assert mongosk document {_doc} doesn't have key "other" with "document should not have 'other'"
+    assert mongosk document {_doc} has value "val" with "document should have value 'val'"
+    assert mongosk document {_doc} doesn't have value "other_val" with "document should not have value 'other_val'"

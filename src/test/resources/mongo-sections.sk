@@ -7,3 +7,16 @@ test "mongo-sections":
         mongo value "e": 8
         mongo value "f": 9 and 10
     assert mongo json of {_doc} is "{""a"": [1, 2, 3], ""b"": [4, 5, 6], ""c"": [1], ""d"": 7, ""e"": 8, ""f"": 9}" with "incorrect document scheme"
+
+test "mongo-sections-empty":
+    set {_doc} to a new mongo document with:
+        # Intentionally empty section
+
+    assert mongo json of {_doc} is "{}" with "empty document section failed"
+
+test "mongo-sections-strings":
+    set {_doc} to a new mongo document with:
+        mongo "key": "value"
+        mongo list "list": "a", "b", "c"
+
+    assert mongo json of {_doc} is "{""key"": ""value"", ""list"": [""a"", ""b"", ""c""]}" with "string document section failed"

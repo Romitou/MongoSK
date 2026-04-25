@@ -12,10 +12,10 @@ public class MoneyCodec implements MongoSKCodec<Money> {
     @Nonnull
     @Override
     public Money deserialize(Document document) throws StreamCorruptedException {
-        Double amount = document.getDouble("amount");
+        Number amount = document.get("amount", Number.class);
         if (amount == null)
             throw new StreamCorruptedException("Cannot retrieve amount field from document!");
-        return new Money(amount);
+        return new Money(amount.doubleValue());
     }
 
     @Nonnull

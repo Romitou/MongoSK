@@ -1,8 +1,8 @@
 package fr.romitou.mongosk.adapters.codecs;
 
 import fr.romitou.mongosk.adapters.MongoSKCodec;
+import fr.romitou.mongosk.utils.WorldCache;
 import org.bson.Document;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -13,20 +13,22 @@ public class LocationCodec implements MongoSKCodec<Location> {
     @Nonnull
     @Override
     public Location deserialize(Document document) throws StreamCorruptedException {
-        Double x = document.getDouble("x"),
-            y = document.getDouble("y"),
-            z = document.getDouble("z");
+        Number x = document.get("x", Number.class),
+            y = document.get("y", Number.class),
+            z = document.get("z", Number.class);
         String worldName = document.getString("world");
         if (x == null || y == null || z == null || worldName == null)
             throw new StreamCorruptedException("Cannot retrieve x, y, z fields or world field from document!");
 
-        World world = Bukkit.getWorld(worldName);
+        World world = WorldCache.getWorld(worldName);
         if (world == null)
             throw new StreamCorruptedException("Cannot parse given world name!");
 
-        Double yaw = document.get("yaw", 0D),
-            pitch = document.get("pitch", 0D);
-        return new Location(world, x, y, z, yaw.floatValue(), pitch.floatValue());
+        Number yaw = document.get("yaw", Number.class);
+        Number pitch = document.get("pitch", Number.class);
+        return new Location(world, x.doubleValue(), y.doubleValue(), z.doubleValue(),
+                yaw != null ? yaw.floatValue() : 0F,
+                pitch != null ? pitch.floatValue() : 0F);
     }
 
     @Nonnull

@@ -1,0 +1,9 @@
+test "mongo-sort-basic":
+    set {_s1} to mongo ascending sort by field "a"
+    set {_s2} to mongo descending sort by field "b"
+
+    set {_display1} to "%{_s1}%"
+    assert {_display1} is "mongosk ascending sort by fields ""a""" with "incorrect sort display ascending"
+
+    set {_display2} to "%{_s2}%"
+    assert {_display2} is "mongosk descending sort by fields ""b""" with "incorrect sort display descending"

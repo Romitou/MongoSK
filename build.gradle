@@ -8,7 +8,6 @@ version '2.4.0'
 
 repositories {
     mavenCentral()
-    maven { url = 'https://repo.destroystokyo.com/repository/maven-public/' }
     maven { url = 'https://repo.papermc.io/repository/maven-public/' }
     maven { url = 'https://jitpack.io' }
 }
@@ -21,6 +20,19 @@ dependencies {
         exclude module: 'worldguard'
         exclude module: 'worldguard-legacy'
     }
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    testImplementation group: 'io.papermc.paper', name: 'paper-api', version: '1.21.8-R0.1-SNAPSHOT'
+    testImplementation group: 'com.github.SkriptLang', name: 'Skript', version: '2.12.2', {
+        exclude module: 'Vault'
+        exclude module: 'worldguard'
+        exclude module: 'worldguard-legacy'
+    }
+}
+
+test {
+    useJUnitPlatform()
 }
 
 compileJava {
