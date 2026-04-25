@@ -40,7 +40,7 @@ public class MongoPathParser {
                 inBracket = true;
             } else if (c == ']') {
                 if (!inBracket) {
-                    LoggerHelper.severe("Unexpected closing bracket",
+                    LoggerHelper.warn("Unexpected closing bracket",
                         "Path: " + path,
                         "Index: " + i
                     );
@@ -51,7 +51,7 @@ public class MongoPathParser {
                     int index = Integer.parseInt(current.toString());
                     elements.add(new MongoQueryElement(index));
                 } catch (NumberFormatException e) {
-                    LoggerHelper.severe("Expected integer inside brackets",
+                    LoggerHelper.warn("Expected integer inside brackets",
                         "Path: " + path,
                         "Content: " + current
                     );
@@ -65,7 +65,7 @@ public class MongoPathParser {
         if (current.length() > 0 && !inBracket) {
             elements.add(new MongoQueryElement(current.toString()));
         } else if (inBracket) {
-            LoggerHelper.severe("Unclosed bracket in path",
+            LoggerHelper.warn("Unclosed bracket in path",
                 "Path: " + path
             );
         }
