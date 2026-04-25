@@ -54,6 +54,3 @@ jobs:
           skript_repo_ref: ${{ matrix.skript-version }}
           extra_plugins_directory: build/libs
           run_vanilla_tests: false
-          skript_repo_ref: ${{ matrix.skript-version }}
-          extra_plugins_directory: build/libs
-          run_vanilla_tests: false
