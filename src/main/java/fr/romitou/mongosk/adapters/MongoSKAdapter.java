@@ -57,7 +57,6 @@ public class MongoSKAdapter {
         TimePeriodCodec.class,
         TimespanCodec.class,
         VectorCodec.class,
-        VisualEffectCodec.class,
         WeatherTypeCodec.class,
         WorldCodec.class
     );
