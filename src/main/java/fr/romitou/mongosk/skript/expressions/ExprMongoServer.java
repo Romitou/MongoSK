@@ -20,6 +20,7 @@ import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.elements.MongoSKServer;
 import fr.romitou.mongosk.listeners.MongoCommandListener;
+import org.bson.UuidRepresentation;
 import org.bukkit.event.Event;
 
 import javax.annotation.Nonnull;
@@ -83,6 +84,7 @@ public class ExprMongoServer extends SimpleExpression<MongoSKServer> {
 
         // Build the Mongo client settings.
         MongoClientSettings.Builder settings = MongoClientSettings.builder()
+            .uuidRepresentation(UuidRepresentation.STANDARD)
             .applyConnectionString(connectionString)
             .applyToSocketSettings(builder -> builder
                 .connectTimeout(CONNECT_TIMEOUT, TimeUnit.MILLISECONDS)

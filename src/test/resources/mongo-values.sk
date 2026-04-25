@@ -60,3 +60,9 @@ test "mongo-embedded-values":
 
     delete mongo embedded value "deep.nested.array[1].field" of {_document}
     assert mongo json of {_document} is "{""deep"": {""nested"": {""array"": [null, {}]}}}" with "deeply nested embedded array deletion failed"
+
+test "mongo-uuid-value":
+    set {_document} to mongo document
+    set {_uuid} to random uuid
+    set mongo value "uuid" of {_document} to {_uuid}
+    assert mongo value "uuid" of {_document} is {_uuid} with "incorrect mongo value definition for UUID"
