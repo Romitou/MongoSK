@@ -8,6 +8,7 @@ import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.UnparsedLiteral;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import com.mongodb.client.model.Filters;
@@ -79,8 +80,15 @@ public class ExprMongoFilter extends SimpleExpression<MongoSKFilter> {
     @Override
     public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
         exprField = (Expression<String>) exprs[0];
-        if (exprs.length > 1)
+        if (exprs.length > 1) {
             exprObject = exprs[1];
+            if (exprObject instanceof UnparsedLiteral) {
+                exprObject = ((UnparsedLiteral) exprObject).getConvertedExpression(Object.class);
+                if (exprObject == null) {
+                    return false;
+                }
+            }
+        }
         this.mongoSKComparator = MongoSKComparator.values()[matchedPattern];
         return true;
     }
