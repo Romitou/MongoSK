@@ -1,10 +1,6 @@
 package fr.romitou.mongosk.skript.legacySections;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.Examples;
-import ch.njol.skript.doc.Name;
-import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -41,8 +37,8 @@ public class SectLegacyMongoValue extends Effect {
         isSingle = parseResult.mark == 1
             ? Kleenean.TRUE
             : parseResult.mark == 2
-            ? Kleenean.FALSE
-            : Kleenean.UNKNOWN;
+              ? Kleenean.FALSE
+              : Kleenean.UNKNOWN;
         exprKey = (Expression<String>) exprs[0];
         exprValue = exprs[1].getConvertedExpression(Object.class);
         return exprValue != null;

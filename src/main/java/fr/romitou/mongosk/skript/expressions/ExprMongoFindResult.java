@@ -34,7 +34,6 @@ import java.util.List;
     "Finally, you need to specify where the query should ask for the data, i.e. in which collection." +
     "The second way is to specify a Mongo request that you will have built beforehand. " +
     "This will allow you to better specify your request and create a more complex one." +
-    "" +
     "You also have the possibility to modify already existing documents and delete documents, " +
     "in the same way as for making your queries.")
 @Examples({"set {_docs::*} to all mongo documents of collection {mycollection}",

@@ -7,10 +7,10 @@ import org.bukkit.event.Event;
 /**
  * Class to create sections using variables, like this:
  * <code>
- *     set {_variable} to a new mongo document:
- *         mongo value "test": 1245
- *         mongo list "lol": "foo" and "bar"
- *     broadcast {_variable}'s mongo json
+ * set {_variable} to a new mongo document:
+ * mongo value "test": 1245
+ * mongo list "lol": "foo" and "bar"
+ * broadcast {_variable}'s mongo json
  * </code>
  *
  * @param <T> The value associated with this section

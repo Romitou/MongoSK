@@ -28,7 +28,6 @@ import java.util.List;
 @Description("The distinct query is useful when you want to retrieve a specific field from each document in a given " +
     "collection. For example, if you have documents with a \"name\" field, you can use this expression to retrieve " +
     "all the \"name\" fields of the documents in the collection. Useful, isn't it?" +
-    "" +
     "This expression does not accept constructed queries because there is no need to use it. " +
     "They can only be used with the find query.")
 @Examples({"set {_names::*} to all mongo fields distincted by \"name\" of collection {myCollection}",

@@ -62,11 +62,11 @@ public class MongoPathParserTest {
 
     @Test
     public void testUnclosedBracket() {
-         // "foo[0" -> unclosed bracket logged.
-         // "foo" is added, "[0" is skipped/logged.
-         ArrayList<MongoQueryElement> elements = MongoPathParser.parse("foo[0");
-         assertEquals(1, elements.size());
-         assertEquals(new MongoQueryElement("foo"), elements.get(0));
+        // "foo[0" -> unclosed bracket logged.
+        // "foo" is added, "[0" is skipped/logged.
+        ArrayList<MongoQueryElement> elements = MongoPathParser.parse("foo[0");
+        assertEquals(1, elements.size());
+        assertEquals(new MongoQueryElement("foo"), elements.get(0));
     }
 
     @Test

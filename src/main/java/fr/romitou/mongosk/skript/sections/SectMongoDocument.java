@@ -68,15 +68,18 @@ public class SectMongoDocument extends SectionExpression<MongoSKDocument> {
             this.trigger = this.loadCode(
                 sectionNode,
                 "create mongo document",
-                () -> {},
+                () -> {
+                },
                 EvtCreateMongoDocument.class
             );
         } else {
             this.trigger = this.loadCode(
                 sectionNode,
                 "create mongo document",
-                () -> {},
-                () -> {},
+                () -> {
+                },
+                () -> {
+                },
                 EvtCreateMongoDocument.class
             );
         }

@@ -43,8 +43,7 @@ import java.util.List;
     "      }",
     "   ]",
     "}" +
-    "" +
-    "set {_docfoo} to mongo embedded value with path \"doc.\\.foo\" of {doc}",
+        "set {_docfoo} to mongo embedded value with path \"doc.\\.foo\" of {doc}",
     "broadcast \"%{_docfoo}%\" # Output: bar",
     "",
     "set {_listnumbers} to mongo embedded value with path \"list[0].numbers[1]\" of {doc}",
@@ -161,7 +160,7 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
                 } else {
                     mongoSKDocument.setEmbeddedValue(mongoQueryElements, null);
                 }
-            break;
+                break;
         }
     }
 

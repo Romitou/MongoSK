@@ -11,14 +11,10 @@ import org.bson.Document;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.configuration.CodecConfigurationException;
-import org.bson.types.Binary;
 
 import javax.annotation.Nullable;
 import java.io.StreamCorruptedException;
 import java.util.*;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.stream.Collectors;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MongoSKAdapter {

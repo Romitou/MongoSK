@@ -4,7 +4,10 @@ import fr.romitou.mongosk.LoggerHelper;
 import org.bson.Document;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 public class MongoSKDocument {
 

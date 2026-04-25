@@ -5,7 +5,9 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.lang.*;
+import ch.njol.skript.lang.Effect;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
@@ -13,6 +15,7 @@ import org.bukkit.event.Event;
 
 import java.util.Arrays;
 import java.util.List;
+
 @Name("Mongo section document value")
 @Description("This effect can only be used in a Mongo section document, and allows quick assignment of fields to a given document. " +
     "Be aware that this syntax is only available for basic data manipulation. If your manipulation is not possible via this section, you can perfectly well use the classic field definition expression in addition to this section.")
@@ -45,8 +48,8 @@ public class SectMongoValue extends Effect {
         isSingle = parseResult.mark == 1
             ? Kleenean.TRUE
             : parseResult.mark == 2
-            ? Kleenean.FALSE
-            : Kleenean.UNKNOWN;
+              ? Kleenean.FALSE
+              : Kleenean.UNKNOWN;
         exprKey = (Expression<String>) exprs[0];
         exprValue = exprs[1].getConvertedExpression(Object.class);
         return exprValue != null;

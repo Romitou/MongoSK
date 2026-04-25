@@ -1,4 +1,5 @@
 package fr.romitou.mongosk.elements;
+
 import com.mongodb.client.model.Projections;
 import org.bson.conversions.Bson;
 import org.junit.jupiter.api.Test;
