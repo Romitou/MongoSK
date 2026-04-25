@@ -29,6 +29,7 @@ dependencies {
         exclude module: 'worldguard'
         exclude module: 'worldguard-legacy'
     }
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {

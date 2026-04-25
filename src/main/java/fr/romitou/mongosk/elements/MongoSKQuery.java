@@ -14,6 +14,7 @@ public class MongoSKQuery {
     private MongoSKCollection mongoSKCollection;
     private MongoSKFilter mongoSKFilter;
     private MongoSKSort mongoSKSort;
+    private MongoSKProjection mongoSKProjection;
     private Boolean diskUsage;
     private String comment;
     private Integer limit;
@@ -46,6 +47,14 @@ public class MongoSKQuery {
 
     public void setMongoSKSort(MongoSKSort mongoSKSort) {
         this.mongoSKSort = mongoSKSort;
+    }
+
+    public MongoSKProjection getMongoSKProjection() {
+        return mongoSKProjection;
+    }
+
+    public void setMongoSKProjection(MongoSKProjection mongoSKProjection) {
+        this.mongoSKProjection = mongoSKProjection;
     }
 
     public Boolean getDiskUsage() {
@@ -84,6 +93,7 @@ public class MongoSKQuery {
         LoggerHelper.debug("Informations about this MongoSK query:",
             "MongoSK Filter: " + this.mongoSKFilter,
             "MongoSK Sort: " + this.mongoSKSort,
+            "MongoSK Projection: " + this.mongoSKProjection,
             "Disk usage: " + this.diskUsage,
             "Comment: " + this.comment,
             "Limit: " + this.limit,
@@ -100,6 +110,8 @@ public class MongoSKQuery {
             findPublisher = findPublisher.limit(getLimit());
         if (getSkip() != null)
             findPublisher = findPublisher.skip(getSkip());
+        if (getMongoSKProjection() != null)
+            findPublisher = findPublisher.projection(getMongoSKProjection().getProjection());
         if (getDiskUsage() != null)
             findPublisher = findPublisher.allowDiskUse(getDiskUsage());
         if (getComment() != null)
@@ -118,6 +130,8 @@ public class MongoSKQuery {
             stringList.add("with " + mongoSKFilter.getDisplay());
         if (mongoSKSort != null)
             stringList.add("sorted by " + mongoSKSort.getDisplay());
+        if (mongoSKProjection != null)
+            stringList.add("with " + mongoSKProjection.getDisplay());
         if (getComment() != null)
             stringList.add("with comment \"" + getComment() + "\"");
         if (getDiskUsage() != null && !getDiskUsage())
@@ -135,6 +149,7 @@ public class MongoSKQuery {
             "mongoSKCollection=" + mongoSKCollection +
             ", mongoSKFilter=" + mongoSKFilter +
             ", mongoSKSort=" + mongoSKSort +
+            ", mongoSKProjection=" + mongoSKProjection +
             '}';
     }
 }

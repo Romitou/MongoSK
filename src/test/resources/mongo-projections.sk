@@ -1,0 +1,9 @@
+test "mongo-projection-including":
+    set {_proj} to mongo projection including fields "field1", "field2"
+    set {_display} to "%{_proj}%"
+    assert {_display} is "projection including fields [field1, field2]" with "incorrect including projection display"
+
+test "mongo-projection-excluding":
+    set {_proj} to mongo projection excluding fields "field3", "field4"
+    set {_display} to "%{_proj}%"
+    assert {_display} is "projection excluding fields [field3, field4]" with "incorrect excluding projection display"

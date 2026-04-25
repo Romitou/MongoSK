@@ -208,5 +208,30 @@ public class SkriptTypes {
             })
         );
 
+        Classes.registerClass(new ClassInfo<>(MongoSKProjection.class, "mongoskprojection")
+            .user("mongo(db|sk)?( |-)?projections?")
+            .defaultExpression(new EventValueExpression<>(MongoSKProjection.class))
+            .name("MongoSK Projection")
+            .description("Create a projection to include or exclude certain fields when retrieving documents.")
+            .since("TODO")
+            .parser(new Parser<MongoSKProjection>() {
+
+                @Override
+                public boolean canParse(ParseContext context) {
+                    return false;
+                }
+
+                @Override
+                public String toString(MongoSKProjection projection, int flags) {
+                    return projection.getDisplay();
+                }
+
+                @Override
+                public String toVariableNameString(MongoSKProjection projection) {
+                    return "mongoskprojection:" + projection;
+                }
+            })
+        );
+
     }
 }
