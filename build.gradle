@@ -21,8 +21,8 @@ dependencies {
         exclude module: 'worldguard-legacy'
     }
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:6.0.3'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:6.0.3'
     testImplementation group: 'io.papermc.paper', name: 'paper-api', version: '1.21.11-R0.1-SNAPSHOT'
     testImplementation group: 'com.github.SkriptLang', name: 'Skript', version: '2.15.0', {
         exclude module: 'Vault'
