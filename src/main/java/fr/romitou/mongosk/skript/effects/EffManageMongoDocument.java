@@ -13,9 +13,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOneModel;
 import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.bulk.BulkWriteResult;
-import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertManyResult;
-import com.mongodb.client.result.UpdateResult;
 import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.SubscriberHelpers;
 import fr.romitou.mongosk.elements.MongoSKCollection;
@@ -28,12 +26,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import com.mongodb.client.model.WriteModel;
 
 @Name("Manage Mongo document")
 @Description({
     "This effect provides shortcuts to manage documents within a collection.",
     "You can insert a document (generating a new ID if needed), update/replace an existing document, upsert (insert if not exists, update if exists), or remove it entirely.",
+    "Documents without \"_id\" field are skipped when updating or removing, and get a new ID when upserting.",
     "Note: This effect relies on the \"_id\" field as the unique identifier. If you have modified the \"_id\" field manually, behavior may be unexpected and using specialized queries is recommended."
 })
 @Examples({
@@ -87,6 +87,7 @@ public class EffManageMongoDocument extends Effect {
                 break;
             case 2:
                 List<WriteModel<Document>> updateList = Arrays.stream(mongoSKDocuments)
+                    .filter(doc -> hasId(doc, "update"))
                     .map(doc -> (WriteModel<Document>) new ReplaceOneModel<Document>(Filters.eq("_id", doc.getBsonDocument().get("_id")), doc.getBsonDocument()))
                     .collect(Collectors.toList());
                 if (!updateList.isEmpty()) {
@@ -101,6 +102,7 @@ public class EffManageMongoDocument extends Effect {
                 break;
             case 3:
                 List<WriteModel<Document>> deleteList = Arrays.stream(mongoSKDocuments)
+                    .filter(doc -> hasId(doc, "remove"))
                     .map(doc -> (WriteModel<Document>) new DeleteOneModel<Document>(Filters.eq("_id", doc.getBsonDocument().get("_id"))))
                     .collect(Collectors.toList());
                 if (!deleteList.isEmpty()) {
@@ -115,6 +117,9 @@ public class EffManageMongoDocument extends Effect {
                 break;
             case 4:
                 List<WriteModel<Document>> upsertList = Arrays.stream(mongoSKDocuments)
+                    // Without an ID, the document cannot exist in the collection: give it one so it is inserted
+                    // like with the insert mode, instead of being stored with a null ID.
+                    .peek(doc -> doc.getBsonDocument().putIfAbsent("_id", new ObjectId()))
                     .map(doc -> (WriteModel<Document>) new ReplaceOneModel<Document>(Filters.eq("_id", doc.getBsonDocument().get("_id")), doc.getBsonDocument(), new ReplaceOptions().upsert(true)))
                     .collect(Collectors.toList());
                 if (!upsertList.isEmpty()) {
@@ -129,6 +134,14 @@ public class EffManageMongoDocument extends Effect {
                 break;
         }
 
+    }
+
+    private static boolean hasId(MongoSKDocument document, String action) {
+        if (document.getBsonDocument().get("_id") != null)
+            return true;
+        LoggerHelper.warn("Cannot " + action + " a Mongo document without '_id' field, it has been skipped.",
+            "Document: " + document.getBsonDocument().toJson());
+        return false;
     }
 
     @Override
