@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
     "on script unload:",
     "\tclose mongo client {mongoclient}"
 })
-@Since("2.4.2")
+@Since("2.5.0")
 public class EffCloseMongoServer extends Effect {
 
     static {

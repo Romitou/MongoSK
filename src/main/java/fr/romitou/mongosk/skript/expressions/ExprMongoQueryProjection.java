@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
     "set {_query} to new mongosk query",
     "set mongo projection of {_query} to mongo projection excluding fields \"_id\" and \"bulky_data\""
 })
-@Since("2.4.2")
+@Since("2.5.0")
 public class ExprMongoQueryProjection extends SimplePropertyExpression<MongoSKQuery, MongoSKProjection> {
 
     static {

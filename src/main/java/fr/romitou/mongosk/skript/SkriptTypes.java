@@ -213,7 +213,7 @@ public class SkriptTypes {
             .defaultExpression(new EventValueExpression<>(MongoSKProjection.class))
             .name("MongoSK Projection")
             .description("Create a projection to include or exclude certain fields when retrieving documents.")
-            .since("TODO")
+            .since("2.5.0")
             .parser(new Parser<MongoSKProjection>() {
 
                 @Override

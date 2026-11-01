@@ -29,7 +29,7 @@ import java.util.Arrays;
     "set {_proj} to mongo projection including fields \"field1\" and \"field2\"",
     "set {_proj} to mongo projection excluding fields \"field3\" and \"field4\""
 })
-@Since("2.4.2")
+@Since("2.5.0")
 public class ExprMongoProjection extends SimpleExpression<MongoSKProjection> {
 
     static {

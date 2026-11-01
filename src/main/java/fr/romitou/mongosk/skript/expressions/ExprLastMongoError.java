@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
     "if last mongo error is set:",
     "\tbroadcast \"The request failed: %last mongo error%\""
 })
-@Since("2.4.2")
+@Since("2.5.0")
 public class ExprLastMongoError extends SimpleExpression<String> {
 
     static {
