@@ -13,7 +13,7 @@ public class MongoDeserializers {
     public static Object deserializeBsonValue(BsonValue value) {
         switch (value.getBsonType()) {
             case ARRAY:
-                return value.asArray().toArray();
+                return value.asArray().stream().map(MongoDeserializers::deserializeBsonValue).toArray();
             case INT32:
                 return value.asInt32().getValue();
             case INT64:
@@ -37,7 +37,7 @@ public class MongoDeserializers {
             case OBJECT_ID:
                 return value.asObjectId().getValue();
             case DECIMAL128:
-                return value.asDecimal128().intValue();
+                return value.asDecimal128().doubleValue();
             case REGULAR_EXPRESSION:
                 return value.asRegularExpression().getPattern();
             default:

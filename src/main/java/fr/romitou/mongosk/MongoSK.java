@@ -125,7 +125,7 @@ public class MongoSK extends JavaPlugin {
     private void registerMetrics() {
         Metrics metrics = new Metrics(this, 8537);
         metrics.addCustomChart(new Metrics.SimplePie("skript_version", () -> Skript.getVersion().toString()));
-        metrics.addCustomChart(new Metrics.SimplePie("adapters_enabled", MongoSKAdapter.ADAPTERS_ENABLED::toString));
+        metrics.addCustomChart(new Metrics.SimplePie("adapters_enabled", () -> String.valueOf(MongoSKAdapter.ADAPTERS_ENABLED)));
     }
 
     private void loadConfiguration() {

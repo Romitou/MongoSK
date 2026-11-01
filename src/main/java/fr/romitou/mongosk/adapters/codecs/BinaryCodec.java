@@ -8,6 +8,7 @@ import fr.romitou.mongosk.adapters.MongoSKCodec;
 import org.bson.Document;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.StreamCorruptedException;
 
 /**
@@ -43,13 +44,13 @@ public abstract class BinaryCodec<T> implements MongoSKCodec<T> {
         return deserialized;
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public Document serialize(T object) {
         Document document = new Document();
         SerializedVariable.Value serialized = Classes.serialize(object);
         if (serialized == null)
-            return new Document();
+            return null;
         document.put("binary", serialized.data);
         return document;
     }

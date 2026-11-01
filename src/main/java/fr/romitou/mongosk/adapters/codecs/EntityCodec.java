@@ -3,16 +3,21 @@ package fr.romitou.mongosk.adapters.codecs;
 import fr.romitou.mongosk.adapters.MongoSKCodec;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 
 import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 import java.util.UUID;
 
-public class EntityCodec implements MongoSKCodec<Entity> {
+/**
+ * Players are also entities, so they are stored with this codec. To keep the stored format (and filters on existing
+ * documents) unchanged, offline players are retrieved on deserialization, which is why this codec returns an Object.
+ */
+public class EntityCodec implements MongoSKCodec<Object> {
     @Nonnull
     @Override
-    public Entity deserialize(Document document) throws StreamCorruptedException {
+    public Object deserialize(Document document) throws StreamCorruptedException {
         String id = document.getString("id");
         if (id == null)
             throw new StreamCorruptedException("Cannot retrieve id field from document!");
@@ -22,9 +27,12 @@ public class EntityCodec implements MongoSKCodec<Entity> {
             if (entity == null) {
                 entity = Bukkit.getEntity(uuid);
             }
-            if (entity == null)
-                throw new StreamCorruptedException("Cannot parse given entity ID!");
-            return entity;
+            if (entity != null)
+                return entity;
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+            if (offlinePlayer.hasPlayedBefore())
+                return offlinePlayer;
+            throw new StreamCorruptedException("Cannot parse given entity ID!");
         } catch (IllegalArgumentException ex) {
             throw new StreamCorruptedException(ex.getMessage());
         }
@@ -32,15 +40,15 @@ public class EntityCodec implements MongoSKCodec<Entity> {
 
     @Nonnull
     @Override
-    public Document serialize(Entity entity) {
+    public Document serialize(Object entity) {
         Document document = new Document();
-        document.put("id", entity.getUniqueId().toString());
+        document.put("id", ((Entity) entity).getUniqueId().toString());
         return document;
     }
 
     @Nonnull
     @Override
-    public Class<? extends Entity> getReturnType() {
+    public Class<?> getReturnType() {
         return Entity.class;
     }
 

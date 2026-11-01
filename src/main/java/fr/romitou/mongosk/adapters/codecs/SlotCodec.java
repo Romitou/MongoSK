@@ -7,30 +7,38 @@ import org.bson.Document;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.StreamCorruptedException;
 
 /**
  * This class uses binaries fields with Skript serializers and deserializers.
  * The reason is that storing in binary will take up less space than storing all fields raw.
  */
-public class SlotCodec implements MongoSKCodec<Slot> {
+public class SlotCodec implements MongoSKCodec<Object> {
+    /**
+     * A slot is stored as its item, so it is read back as an item stack.
+     */
     @Nonnull
     @Override
-    public Slot deserialize(Document document) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Slot cannot be deserialized!");
-    }
-
-    @Nonnull
-    @Override
-    public Document serialize(Slot slot) {
+    public Object deserialize(Document document) throws StreamCorruptedException {
         MongoSKCodec<ItemStack> codec = MongoSKAdapter.getCodecByClass(ItemStack.class);
         if (codec == null)
-            return new Document();
-        return codec.serialize(slot.getItem());
+            throw new StreamCorruptedException("The item stack codec is required to read a slot!");
+        return codec.deserialize(document);
+    }
+
+    @Nullable
+    @Override
+    public Document serialize(Object slot) {
+        MongoSKCodec<ItemStack> codec = MongoSKAdapter.getCodecByClass(ItemStack.class);
+        if (codec == null)
+            return null;
+        return codec.serialize(((Slot) slot).getItem());
     }
 
     @Nonnull
     @Override
-    public Class<? extends Slot> getReturnType() {
+    public Class<?> getReturnType() {
         return Slot.class;
     }
 

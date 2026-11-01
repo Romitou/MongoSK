@@ -22,8 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MongoSKAdapter {
 
     public final static String DOCUMENT_FIELD = MongoSK.getInstance().getConfig().getString("skript-adapters.document-field", "__MongoSK__");
-    public final static Boolean ADAPTERS_ENABLED = MongoSK.getInstance().getConfig().getBoolean("skript-adapters.enabled", false);
-    public final static Boolean SAFE_DESERIALIZATION = MongoSK.getInstance().getConfig().getBoolean("skript-adapters.safe-data", true);
+    public final static boolean ADAPTERS_ENABLED = MongoSK.getInstance().getConfig().getBoolean("skript-adapters.enabled", false);
+    public final static boolean SAFE_DESERIALIZATION = MongoSK.getInstance().getConfig().getBoolean("skript-adapters.safe-data", true);
     public final static List<String> DISABLED_CODECS = MongoSK.getInstance().getConfig().getStringList("skript-adapters.disabled");
 
     private final static Codec<Document> DOCUMENT_CODEC = MongoClientSettings.getDefaultCodecRegistry().get(Document.class);
@@ -157,6 +157,11 @@ public class MongoSKAdapter {
         }
         LoggerHelper.debug("A codec has been found: " + codec.getName());
         Document serializedDocument = codec.serialize(unsafeObject);
+        if (serializedDocument == null) {
+            LoggerHelper.warn("The " + codec.getName() + " codec cannot serialize " + unsafeObject + ". "
+                + (SAFE_DESERIALIZATION ? "It has been removed from the document." : "No changes have been made to it."));
+            return SAFE_DESERIALIZATION ? null : unsafeObject;
+        }
         serializedDocument.put(DOCUMENT_FIELD, codec.getName());
         LoggerHelper.debug("Result of the serialization: ",
             "Initial object: " + unsafeObject,
