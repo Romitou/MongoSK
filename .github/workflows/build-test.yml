@@ -12,8 +12,8 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-      - name: Build with Gradle
-        run: ./gradlew clean shadowJar
+      - name: Build and run unit tests with Gradle
+        run: ./gradlew clean test shadowJar
       - name: Upload artifact
         uses: actions/upload-artifact@v6
         with:
@@ -21,8 +21,13 @@ jobs:
           path: build/libs/**
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [build]
+    services:
+      mongodb:
+        image: mongo:8.0
+        ports:
+          - 27017:27017
     strategy:
       fail-fast: false
       matrix:
@@ -37,20 +42,20 @@ jobs:
           name: MongoSK
           path: build/libs
           
-      - name: Run tests with Skript ${{ matrix.skript-version }} (legacy)
-        if: matrix.skript-version != '2.15.0'
-        uses: SkriptLang/skript-test-action@v1.2
-        with:
-          test_script_directory: src/test/resources
-          skript_repo_ref: ${{ matrix.skript-version }}
-          extra_plugins_directory: build/libs
-          run_vanilla_tests: false
+      - name: Install mongo-tools
+        run: |
+          wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2204-x86_64-100.9.4.deb
+          sudo dpkg -i mongodb-database-tools-ubuntu2204-x86_64-100.9.4.deb || sudo apt-get install -f -y
 
-      - name: Run tests with Skript ${{ matrix.skript-version }} (modern)
-        if: matrix.skript-version == '2.15.0'
-        uses: SkriptLang/skript-test-action@v1.3
+      - name: Import JSON fixture to MongoDB
+        run: |
+          mongoimport --host localhost --port 27017 --db testdb --collection players --file src/test/resources/fixtures/players.json
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
         with:
-          test_script_directory: src/test/resources
-          skript_repo_ref: ${{ matrix.skript-version }}
-          extra_plugins_directory: build/libs
-          run_vanilla_tests: false
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Run tests with Skript ${{ matrix.skript-version }}
+        run: .github/scripts/run-skript-tests.sh ${{ matrix.skript-version }} src/test/resources build/libs

@@ -1,0 +1,120 @@
+test "mongo-live-query":
+    set {_client} to a new mongosk client from connection string "mongodb://localhost:27017"
+    set {_db} to mongo database "testdb" of {_client}
+    set {_collection} to mongo collection "players" of {_db}
+
+    # Test exact match
+    set {_filter} to a new mongosk filter where field "playerName" is "Notch"
+    set {_docs::*} to all mongo documents with filter {_filter} of collection {_collection}
+    assert size of {_docs::*} is 1 with "Should find exactly 1 document for Notch"
+    set {_doc} to first element of {_docs::*}
+    assert mongo value "coins" of {_doc} is 1000 with "Notch should have 1000 coins"
+    assert mongo value "rank" of {_doc} is "admin" with "Notch should be admin"
+
+    # Test multiple results
+    set {_filter} to a new mongosk filter where field "coins" is greater than or equal to 500
+    set {_docs::*} to all mongo documents with filter {_filter} of collection {_collection}
+    assert size of {_docs::*} is 2 with "Should find 2 documents with coins >= 500"
+
+test "mongo-live-insert":
+    set {_client} to a new mongosk client from connection string "mongodb://localhost:27017"
+    set {_db} to mongo database "testdb" of {_client}
+    set {_collection} to mongo collection "players" of {_db}
+
+    # Insert a new player
+    set {_newDoc} to a new mongo document
+    set mongo value "playerName" of {_newDoc} to "Steve"
+    set mongo value "coins" of {_newDoc} to 250
+    set mongo value "rank" of {_newDoc} to "player"
+    insert mongo document {_newDoc} in collection {_collection}
+
+    # Verify insertion
+    set {_filter} to a new mongosk filter where field "playerName" is "Steve"
+    set {_docs::*} to all mongo documents with filter {_filter} of collection {_collection}
+    assert size of {_docs::*} is 1 with "Should find exactly 1 document for Steve after insertion"
+    set {_insertedDoc} to first element of {_docs::*}
+    assert mongo value "coins" of {_insertedDoc} is 250 with "Steve should have 250 coins"
+
+test "mongo-live-update":
+    set {_client} to a new mongosk client from connection string "mongodb://localhost:27017"
+    set {_db} to mongo database "testdb" of {_client}
+    set {_collection} to mongo collection "players" of {_db}
+
+    # Update a player
+    set {_filter} to a new mongosk filter where field "playerName" is "Jeb"
+    set {_docs::*} to all mongo documents with filter {_filter} of collection {_collection}
+    assert size of {_docs::*} is 1 with "Should find exactly 1 document for Jeb"
+
+    set {_updateDoc} to first element of {_docs::*}
+    set mongo value "coins" of {_updateDoc} to 1500
+    set mongo value "rank" of {_updateDoc} to "admin"
+    update mongo document {_updateDoc} in collection {_collection}
+
+    # Verify update
+    set {_filter} to a new mongosk filter where field "playerName" is "Jeb"
+    set {_docs::*} to all mongo documents with filter {_filter} of collection {_collection}
+    set {_updatedDoc} to first element of {_docs::*}
+    assert mongo value "coins" of {_updatedDoc} is 1500 with "Jeb should have 1500 coins after update"
+    assert mongo value "rank" of {_updatedDoc} is "admin" with "Jeb should be admin after update"
+
+test "mongo-live-delete":
+    set {_client} to a new mongosk client from connection string "mongodb://localhost:27017"
+    set {_db} to mongo database "testdb" of {_client}
+    set {_collection} to mongo collection "players" of {_db}
+
+    # Delete a player
+    set {_filter} to a new mongosk filter where field "playerName" is "Dinnerbone"
+    set {_docs::*} to all mongo documents with filter {_filter} of collection {_collection}
+    assert size of {_docs::*} is 1 with "Should find exactly 1 document for Dinnerbone"
+
+    set {_deleteDoc} to first element of {_docs::*}
+    remove mongo document {_deleteDoc} from collection {_collection}
+
+    # Verify deletion
+    set {_filter} to a new mongosk filter where field "playerName" is "Dinnerbone"
+    set {_docs::*} to all mongo documents with filter {_filter} of collection {_collection}
+    assert size of {_docs::*} is 0 with "Should find 0 documents for Dinnerbone after deletion"
+
+test "mongo-live-upsert-without-id":
+    set {_client} to a new mongosk client from connection string "mongodb://localhost:27017"
+    set {_db} to mongo database "testdb" of {_client}
+    set {_collection} to mongo collection "players" of {_db}
+
+    # Upserting a document without ID must insert it with a generated ID
+    set {_newDoc} to a new mongo document
+    set mongo value "playerName" of {_newDoc} to "Alex"
+    upsert mongo document {_newDoc} into collection {_collection}
+    assert mongo value "_id" of {_newDoc} is set with "Upserted document should have received an ID"
+
+    set {_filter} to a new mongosk filter where field "playerName" is "Alex"
+    set {_docs::*} to all mongo documents with filter {_filter} of collection {_collection}
+    assert size of {_docs::*} is 1 with "Should find exactly 1 document for Alex after upsert"
+
+test "mongo-live-distinct":
+    set {_client} to a new mongosk client from connection string "mongodb://localhost:27017"
+    set {_db} to mongo database "testdb" of {_client}
+    set {_collection} to mongo collection "players" of {_db}
+
+    set {_ranks::*} to all mongo fields distincted by field "rank" of collection {_collection}
+    assert {_ranks::*} contains "admin" with "Distinct ranks should contain admin"
+
+test "mongo-live-close":
+    set {_client} to a new mongosk client from connection string "mongodb://localhost:27017/?appName=closeTest"
+    close mongo client {_client}
+
+    # A new client must be opened once the previous one is closed
+    set {_client} to a new mongosk client from connection string "mongodb://localhost:27017/?appName=closeTest"
+    set {_databases::*} to all mongo databases of {_client}
+    assert size of {_databases::*} is greater than 0 with "A reopened client should be usable"
+    close mongo client {_client}
+
+test "mongo-live-last-error":
+    set {_client} to a new mongosk client from connection string "mongodb://localhost:27017"
+    set {_db} to mongo database "testdb" of {_client}
+    set {_collection} to mongo collection "players" of {_db}
+
+    set {_results::*} to results of mongo command "{""unknownMongoSKCommand"": 1}" in database {_db}
+    assert last mongo error is set with "An unknown command should set the last mongo error"
+
+    set {_docs::*} to all mongo documents of collection {_collection}
+    assert last mongo error is not set with "A successful request should reset the last mongo error"

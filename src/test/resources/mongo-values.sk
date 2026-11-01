@@ -5,12 +5,12 @@ test "mongo-values":
     assert mongo json of {_document} is "{""playerName"": ""Romitou"", ""coins"": 100}" with "incorrect mongo value definition"
 
 
-    set mongo list "fruitList" of {_document} to "kiwi", "pear"
-    set mongo list "appleList" of {_document} to "apple", "apple"
+    set mongo list "fruitList" of {_document} to "kiwi" and "pear"
+    set mongo list "appleList" of {_document} to "apple" and "apple"
     remove "apple" from mongo list "appleList" of {_document}
     assert mongo json of {_document} is "{""playerName"": ""Romitou"", ""coins"": 100, ""fruitList"": [""kiwi"", ""pear""], ""appleList"": [""apple""]}" with "incorrect mongo list definition"
 
-    set mongo list "appleList" of {_document} to "apple", "apple"
+    set mongo list "appleList" of {_document} to "apple" and "apple"
     remove all "apple" from mongo list "appleList" of {_document}
     assert mongo json of {_document} is "{""playerName"": ""Romitou"", ""coins"": 100, ""fruitList"": [""kiwi"", ""pear""], ""appleList"": []}" with "incorrect mongo list removal"
 
@@ -20,7 +20,7 @@ test "mongo-values":
     add "banana" to mongo list "fruitList" of {_document}
     assert mongo json of {_document} is "{""playerName"": ""Romitou"", ""fruitList"": [""kiwi"", ""pear"", ""banana""], ""appleList"": []}" with "incorrect mongo list addition"
 
-    set {_fruits::*} to "orange", "grape"
+    set {_fruits::*} to "orange" and "grape"
     add {_fruits::*} to mongo list "fruitList" of {_document}
     assert mongo json of {_document} is "{""playerName"": ""Romitou"", ""fruitList"": [""kiwi"", ""pear"", ""banana"", ""orange"", ""grape""], ""appleList"": []}" with "incorrect mongo list addition with list"
 
