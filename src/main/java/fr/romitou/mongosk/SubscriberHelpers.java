@@ -20,7 +20,9 @@ import com.mongodb.MongoTimeoutException;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +34,30 @@ import java.util.concurrent.TimeUnit;
  */
 public final class SubscriberHelpers {
 
+    // The error of the last Mongo request, or null if it succeeded. Requests are awaited sequentially by the scripts.
+    private static volatile String lastError;
+    // Maximum time to wait for a request, so that a request that never completes cannot freeze the server.
+    private static final long REQUEST_TIMEOUT = getRequestTimeout();
+
     private SubscriberHelpers() {
+    }
+
+    @Nullable
+    public static String getLastError() {
+        return lastError;
+    }
+
+    public static void setLastError(@Nullable String error) {
+        lastError = error;
+    }
+
+    private static long getRequestTimeout() {
+        try {
+            return MongoSK.getInstance().getConfig().getLong("timeouts.request", 30000);
+        } catch (Throwable t) {
+            // MongoSK not available or failed to load
+            return 30000;
+        }
     }
 
     /**
@@ -41,8 +66,9 @@ public final class SubscriberHelpers {
      * @param <T> The publishers result type
      */
     public static class ObservableSubscriber<T> implements Subscriber<T> {
-        private final List<T> receivedData = new ArrayList<>();
-        private final List<Throwable> errors = new ArrayList<>();
+        // Filled by the threads of the driver while the requests are awaited by the server thread.
+        private final List<T> receivedData = Collections.synchronizedList(new ArrayList<>());
+        private final List<Throwable> errors = Collections.synchronizedList(new ArrayList<>());
         private final CountDownLatch latch = new CountDownLatch(1);
         private volatile Subscription subscription;
 
@@ -75,13 +101,15 @@ public final class SubscriberHelpers {
         }
 
         public List<T> getReceivedData() {
-            return receivedData;
+            synchronized (receivedData) {
+                return new ArrayList<>(receivedData);
+            }
         }
 
         public Throwable getError() {
-            if (errors.size() > 0)
-                return errors.get(0);
-            return null;
+            synchronized (errors) {
+                return errors.isEmpty() ? null : errors.get(0);
+            }
         }
 
         public List<T> get() {
@@ -93,17 +121,20 @@ public final class SubscriberHelpers {
         }
 
         public ObservableSubscriber<T> await() {
-            return await(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+            return await(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
         }
 
         public ObservableSubscriber<T> await(final long timeout, final TimeUnit unit) {
+            setLastError(null);
             subscription.request(Integer.MAX_VALUE);
             try {
                 if (!latch.await(timeout, unit))
                     throw new MongoTimeoutException("Publisher onComplete timed out");
-                if (!errors.isEmpty())
-                    throw errors.get(0);
+                Throwable error = getError();
+                if (error != null)
+                    throw error;
             } catch (Throwable error) {
+                setLastError(error.getMessage() == null ? error.getClass().getSimpleName() : error.getMessage());
                 LoggerHelper.severe("An error occurred during a Mongo request: " + error.getMessage());
             }
             return this;

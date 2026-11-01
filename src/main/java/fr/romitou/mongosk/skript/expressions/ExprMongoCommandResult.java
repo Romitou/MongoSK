@@ -64,6 +64,7 @@ public class ExprMongoCommandResult extends SimpleExpression<MongoSKDocument> {
                 .runCommand(Document.parse(jsonString).toBsonDocument())
                 .subscribe(documentObservableSubscriber);
         } catch (BSONException | JsonParseException ex) {
+            SubscriberHelpers.setLastError(ex.getMessage());
             LoggerHelper.severe("An error occurred when changing the document's JSON: " + ex.getMessage(),
                 "Provided JSON: " + jsonString,
                 "Please check its validity on https://jsonlint.com."
