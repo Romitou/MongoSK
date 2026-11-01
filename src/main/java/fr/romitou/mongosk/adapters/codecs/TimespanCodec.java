@@ -3,12 +3,12 @@ package fr.romitou.mongosk.adapters.codecs;
 import ch.njol.skript.util.Timespan;
 import fr.romitou.mongosk.adapters.MongoSKCodec;
 import org.bson.Document;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 
 public class TimespanCodec implements MongoSKCodec<Timespan> {
-    @Nonnull
+    @NotNull
     @Override
     public Timespan deserialize(Document document) throws StreamCorruptedException {
         Long millis = document.getLong("millis");
@@ -17,7 +17,7 @@ public class TimespanCodec implements MongoSKCodec<Timespan> {
         return new Timespan(millis);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Document serialize(Timespan timespan) {
         Document document = new Document();
@@ -25,13 +25,13 @@ public class TimespanCodec implements MongoSKCodec<Timespan> {
         return document;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends Timespan> getReturnType() {
         return Timespan.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "timespan";

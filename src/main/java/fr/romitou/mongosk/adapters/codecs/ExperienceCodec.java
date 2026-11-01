@@ -3,12 +3,12 @@ package fr.romitou.mongosk.adapters.codecs;
 import ch.njol.skript.util.Experience;
 import fr.romitou.mongosk.adapters.MongoSKCodec;
 import org.bson.Document;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 
 public class ExperienceCodec implements MongoSKCodec<Experience> {
-    @Nonnull
+    @NotNull
     @Override
     public Experience deserialize(Document document) throws StreamCorruptedException {
         Integer xp = document.getInteger("xp");
@@ -17,7 +17,7 @@ public class ExperienceCodec implements MongoSKCodec<Experience> {
         return new Experience(xp);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Document serialize(Experience experience) {
         Document document = new Document();
@@ -25,13 +25,13 @@ public class ExperienceCodec implements MongoSKCodec<Experience> {
         return document;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends Experience> getReturnType() {
         return Experience.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "experience";

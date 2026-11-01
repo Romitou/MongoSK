@@ -4,12 +4,12 @@ import fr.romitou.mongosk.adapters.MongoSKCodec;
 import fr.romitou.mongosk.utils.WorldCache;
 import org.bson.Document;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 
 public class WorldCodec implements MongoSKCodec<World> {
-    @Nonnull
+    @NotNull
     @Override
     public World deserialize(Document document) throws StreamCorruptedException {
         String name = document.getString("name");
@@ -21,7 +21,7 @@ public class WorldCodec implements MongoSKCodec<World> {
         return world;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Document serialize(World world) {
         Document document = new Document();
@@ -29,13 +29,13 @@ public class WorldCodec implements MongoSKCodec<World> {
         return document;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends World> getReturnType() {
         return World.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "world";

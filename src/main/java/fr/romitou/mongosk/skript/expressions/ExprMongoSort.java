@@ -1,8 +1,5 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import org.skriptlang.skript.registration.DefaultSyntaxInfos;
-import ch.njol.skript.lang.ExpressionType;
-import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -15,9 +12,10 @@ import com.mongodb.client.model.Sorts;
 import fr.romitou.mongosk.elements.MongoSKSort;
 import org.bson.conversions.Bson;
 import org.bukkit.event.Event;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 @Name("Mongo sort")
 @Description({
@@ -31,8 +29,11 @@ import javax.annotation.Nullable;
 @Since("2.0.0")
 public class ExprMongoSort extends SimpleExpression<MongoSKSort> {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoSort.class, MongoSKSort.class).addPatterns("[[a] new] mongo[(db|sk)] (1¦asc[ending]|2¦desc[ending]) sort[ing] [by] field[s] %strings%").priority(ExpressionType.SIMPLE.priority()).build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EXPRESSION, SyntaxInfo.Expression.builder(ExprMongoSort.class, MongoSKSort.class)
+            .addPatterns("[[a] new] mongo[(db|sk)] (1:asc[ending]|2:desc[ending]) sort[ing] [by] field[s] %strings%")
+            .priority(SyntaxInfo.SIMPLE)
+            .build());
     }
 
     private Expression<String> exprFields;
@@ -40,14 +41,14 @@ public class ExprMongoSort extends SimpleExpression<MongoSKSort> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
         exprFields = (Expression<String>) exprs[0];
         isAscending = parseResult.mark == 1;
         return true;
     }
 
     @Override
-    protected MongoSKSort[] get(@Nonnull final Event e) {
+    protected MongoSKSort[] get(@NotNull final Event e) {
         String[] fields = exprFields.getArray(e);
         if (fields.length == 0)
             return new MongoSKSort[0];
@@ -64,13 +65,13 @@ public class ExprMongoSort extends SimpleExpression<MongoSKSort> {
         return true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends MongoSKSort> getReturnType() {
         return MongoSKSort.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String toString(@Nullable Event e, boolean debug) {
         return "mongosk " + (isAscending ? "ascending" : "descending") + " sort by fields " + exprFields.toString(e, debug);

@@ -17,10 +17,10 @@
 package fr.romitou.mongosk;
 
 import com.mongodb.MongoTimeoutException;
+import org.jetbrains.annotations.Nullable;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

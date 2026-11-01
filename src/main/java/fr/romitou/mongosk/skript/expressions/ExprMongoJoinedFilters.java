@@ -1,7 +1,5 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import org.skriptlang.skript.registration.DefaultSyntaxInfos;
-import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -14,9 +12,11 @@ import com.mongodb.client.model.Filters;
 import fr.romitou.mongosk.elements.MongoSKFilter;
 import org.bson.conversions.Bson;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 
 @Name("Mongo joined filters")
@@ -32,9 +32,10 @@ import java.util.Arrays;
 @Since("2.0.0")
 public class ExprMongoJoinedFilters extends SimpleExpression<MongoSKFilter> {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoJoinedFilters.class, MongoSKFilter.class).addPatterns("mongo[(sk|db)] joined filters %mongoskfilter% (1¦and|2¦or|3¦nor) %mongoskfilter%",
-            "mongo[(sk|db)] joined filters %mongoskfilters% with (1¦and|2¦or|3¦nor) [join] mode").build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EXPRESSION, SyntaxInfo.Expression.builder(ExprMongoJoinedFilters.class, MongoSKFilter.class)
+            .addPatterns("mongo[(sk|db)] joined filters %mongoskfilter% (1:and|2:or|3:nor) %mongoskfilter%", "mongo[(sk|db)] joined filters %mongoskfilters% with (1:and|2:or|3:nor) [join] mode")
+            .build());
     }
 
     private Expression<MongoSKFilter> exprFirstFilter, exprSecondFilter;
@@ -42,7 +43,7 @@ public class ExprMongoJoinedFilters extends SimpleExpression<MongoSKFilter> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         exprFirstFilter = (Expression<MongoSKFilter>) exprs[0];
         if (matchedPattern == 0)
             exprSecondFilter = (Expression<MongoSKFilter>) exprs[1];
@@ -51,7 +52,7 @@ public class ExprMongoJoinedFilters extends SimpleExpression<MongoSKFilter> {
     }
 
     @Override
-    protected MongoSKFilter[] get(@Nonnull Event e) {
+    protected MongoSKFilter[] get(@NotNull Event e) {
         Bson[] filters;
         if (exprSecondFilter == null) {
             MongoSKFilter[] mongoSKFilters = exprFirstFilter.getArray(e);
@@ -89,13 +90,13 @@ public class ExprMongoJoinedFilters extends SimpleExpression<MongoSKFilter> {
         return true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends MongoSKFilter> getReturnType() {
         return MongoSKFilter.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String toString(@Nullable final Event e, boolean debug) {
         String joinMode = parseMark == 1 ? " and " : parseMark == 2 ? " or " : " nor ";

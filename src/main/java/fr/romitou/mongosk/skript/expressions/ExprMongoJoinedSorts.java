@@ -1,8 +1,5 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import org.skriptlang.skript.registration.DefaultSyntaxInfos;
-import ch.njol.skript.lang.ExpressionType;
-import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -15,9 +12,11 @@ import com.mongodb.client.model.Sorts;
 import fr.romitou.mongosk.elements.MongoSKSort;
 import org.bson.conversions.Bson;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -34,21 +33,24 @@ import java.util.stream.Collectors;
 @Since("2.0.0")
 public class ExprMongoJoinedSorts extends SimpleExpression<MongoSKSort> {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoJoinedSorts.class, MongoSKSort.class).addPatterns("mongo[(sk|db)] joined sorts %mongosksorts%").priority(ExpressionType.SIMPLE.priority()).build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EXPRESSION, SyntaxInfo.Expression.builder(ExprMongoJoinedSorts.class, MongoSKSort.class)
+            .addPatterns("mongo[(sk|db)] joined sorts %mongosksorts%")
+            .priority(SyntaxInfo.SIMPLE)
+            .build());
     }
 
     private Expression<MongoSKSort> exprSort;
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         exprSort = (Expression<MongoSKSort>) exprs[0];
         return true;
     }
 
     @Override
-    protected MongoSKSort[] get(@Nonnull Event e) {
+    protected MongoSKSort[] get(@NotNull Event e) {
         MongoSKSort[] sorts = exprSort.getArray(e);
         if (sorts.length == 0)
             return new MongoSKSort[0];
@@ -61,13 +63,13 @@ public class ExprMongoJoinedSorts extends SimpleExpression<MongoSKSort> {
         return true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends MongoSKSort> getReturnType() {
         return MongoSKSort.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String toString(@Nullable final Event e, boolean debug) {
         return "mongo joined sorts " + exprSort.toString(e, debug);

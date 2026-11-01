@@ -5,12 +5,12 @@ import fr.romitou.mongosk.utils.WorldCache;
 import org.bson.Document;
 import org.bukkit.Chunk;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 
 public class ChunkCodec implements MongoSKCodec<Chunk> {
-    @Nonnull
+    @NotNull
     @Override
     public Chunk deserialize(Document document) throws StreamCorruptedException {
         Integer x = document.getInteger("x"),
@@ -24,7 +24,7 @@ public class ChunkCodec implements MongoSKCodec<Chunk> {
         return world.getChunkAt(x, z);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Document serialize(Chunk chunk) {
         Document document = new Document();
@@ -34,13 +34,13 @@ public class ChunkCodec implements MongoSKCodec<Chunk> {
         return document;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends Chunk> getReturnType() {
         return Chunk.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "chunk";

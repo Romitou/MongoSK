@@ -8,26 +8,28 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
+import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.model.DeleteOneModel;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOneModel;
 import com.mongodb.client.model.ReplaceOptions;
-import com.mongodb.bulk.BulkWriteResult;
+import com.mongodb.client.model.WriteModel;
 import com.mongodb.client.result.InsertManyResult;
 import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.SubscriberHelpers;
 import fr.romitou.mongosk.elements.MongoSKCollection;
 import fr.romitou.mongosk.elements.MongoSKDocument;
+import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.bson.Document;
-import org.bson.types.ObjectId;
-import com.mongodb.client.model.WriteModel;
 
 @Name("Manage Mongo document")
 @Description({
@@ -47,8 +49,10 @@ import com.mongodb.client.model.WriteModel;
 @Since("2.0.0")
 public class EffManageMongoDocument extends Effect {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.EFFECT, org.skriptlang.skript.registration.SyntaxInfo.builder(EffManageMongoDocument.class).addPatterns("(1¦insert|2¦(replace|update)|3¦remove|4¦upsert) mongo[(sk|db)] doc[ument][s] %mongoskdocuments% (in[to]|of|from) [collection] %mongoskcollection%").build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EFFECT, SyntaxInfo.builder(EffManageMongoDocument.class)
+            .addPatterns("(1:insert|2:(replace|update)|3:remove|4:upsert) mongo[(sk|db)] doc[ument][s] %mongoskdocuments% (in[to]|of|from) [collection] %mongoskcollection%")
+            .build());
     }
 
     private Expression<MongoSKDocument> exprMongoSKDocument;
@@ -57,7 +61,7 @@ public class EffManageMongoDocument extends Effect {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         exprMongoSKDocument = (Expression<MongoSKDocument>) exprs[0];
         exprMongoSKCollection = (Expression<MongoSKCollection>) exprs[1];
         this.parseMark = parseResult.mark;
@@ -65,7 +69,7 @@ public class EffManageMongoDocument extends Effect {
     }
 
     @Override
-    protected void execute(@Nonnull final Event e) {
+    protected void execute(@NotNull final Event e) {
         MongoSKDocument[] mongoSKDocuments = exprMongoSKDocument.getArray(e);
         MongoSKCollection mongoSKCollection = exprMongoSKCollection.getSingle(e);
         if (mongoSKDocuments.length == 0 || mongoSKCollection == null)
@@ -145,7 +149,7 @@ public class EffManageMongoDocument extends Effect {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public String toString(@Nullable final Event e, boolean debug) {
         return "save mongo document " + exprMongoSKDocument.toString(e, debug) + " into " + exprMongoSKCollection.toString(e, debug);
     }

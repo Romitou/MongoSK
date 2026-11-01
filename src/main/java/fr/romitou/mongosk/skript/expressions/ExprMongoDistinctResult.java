@@ -1,8 +1,5 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import org.skriptlang.skript.registration.DefaultSyntaxInfos;
-import ch.njol.skript.lang.ExpressionType;
-import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -19,9 +16,11 @@ import fr.romitou.mongosk.elements.MongoSKCollection;
 import fr.romitou.mongosk.elements.MongoSKFilter;
 import org.bson.BsonValue;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 @Name("Mongo distinct query")
@@ -36,8 +35,11 @@ import java.util.List;
 @Since("2.2.1")
 public class ExprMongoDistinctResult extends SimpleExpression<Object> {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoDistinctResult.class, Object.class).addPatterns("(1¦first|2¦all) mongo[(sk|db)] field[s] distincted by [field] %string% [(with|by) [filter] %-mongoskfilter%] (of|from) collection %mongoskcollection%").priority(ExpressionType.SIMPLE.priority()).build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EXPRESSION, SyntaxInfo.Expression.builder(ExprMongoDistinctResult.class, Object.class)
+            .addPatterns("(1:first|2:all) mongo[(sk|db)] field[s] distincted by [field] %string% [(with|by) [filter] %-mongoskfilter%] (of|from) collection %mongoskcollection%")
+            .priority(SyntaxInfo.SIMPLE)
+            .build());
     }
 
     private Expression<String> exprDistinctedBy;
@@ -47,7 +49,7 @@ public class ExprMongoDistinctResult extends SimpleExpression<Object> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(@Nonnull Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
+    public boolean init(@NotNull Expression<?>[] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         exprDistinctedBy = (Expression<String>) exprs[0];
         exprMongoSKFilter = (Expression<MongoSKFilter>) exprs[1];
         exprMongoSKCollection = (Expression<MongoSKCollection>) exprs[2];
@@ -56,7 +58,7 @@ public class ExprMongoDistinctResult extends SimpleExpression<Object> {
     }
 
     @Override
-    protected Object[] get(@Nonnull final Event e) {
+    protected Object[] get(@NotNull final Event e) {
 
         String distinctedBy = exprDistinctedBy.getSingle(e);
         MongoSKCollection mongoSKCollection = exprMongoSKCollection.getSingle(e);
@@ -90,13 +92,13 @@ public class ExprMongoDistinctResult extends SimpleExpression<Object> {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public Class<?> getReturnType() {
         return Object.class;
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public String toString(@Nullable final Event e, final boolean debug) {
         return (isFirstDocument ? "first mongosk document" : "all mongosk documents") + " distincted by field " + exprDistinctedBy.toString(e, debug) + (exprMongoSKFilter == null ? "" : "with filter " + exprMongoSKFilter.toString(e, debug)) + " of collection " + exprMongoSKCollection.toString(e, debug);
     }

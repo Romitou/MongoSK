@@ -4,12 +4,12 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
+import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
-import ch.njol.skript.lang.ExpressionType;
 import fr.romitou.mongosk.elements.MongoSKCollection;
 import fr.romitou.mongosk.elements.MongoSKDatabase;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 @Name("Mongo name")
 @Description({
@@ -24,28 +24,28 @@ import javax.annotation.Nonnull;
 @Since("2.0.0")
 public class ExprMongoName extends SimplePropertyExpression<Object, String> {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.EXPRESSION, org.skriptlang.skript.registration.DefaultSyntaxInfos.Expression.builder(ExprMongoName.class, String.class).addPatterns(ch.njol.skript.expressions.base.PropertyExpression.getPatterns("mongo[(db|sk)] name[s]",
-            "mongoskdatabases/mongoskcollections")).priority(ExpressionType.PROPERTY.priority()).build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EXPRESSION,
+            PropertyExpression.infoBuilder(ExprMongoName.class, String.class, "mongo[(db|sk)] name[s]", "mongoskdatabases/mongoskcollections", false).build());
     }
 
     @Override
     public String convert(Object ctx) {
-        if (ctx instanceof MongoSKCollection)
-            return ((MongoSKCollection) ctx).getMongoCollection().getNamespace().getCollectionName();
-        else if (ctx instanceof MongoSKDatabase)
-            return ((MongoSKDatabase) ctx).getMongoDatabase().getName();
-        return null;
+        return switch (ctx) {
+            case MongoSKCollection collection -> collection.getMongoCollection().getNamespace().getCollectionName();
+            case MongoSKDatabase database -> database.getMongoDatabase().getName();
+            default -> null;
+        };
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public Class<? extends String> getReturnType() {
         return String.class;
     }
 
     @Override
-    @Nonnull
+    @NotNull
     protected String getPropertyName() {
         return "mongo name";
     }

@@ -2,8 +2,8 @@ package fr.romitou.mongosk.adapters.codecs;
 
 import fr.romitou.mongosk.adapters.MongoSKCodec;
 import org.bson.Document;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 
 public abstract class EnumCodec<T extends Enum<T>> implements MongoSKCodec<T> {
@@ -16,7 +16,7 @@ public abstract class EnumCodec<T extends Enum<T>> implements MongoSKCodec<T> {
         this.name = name;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public T deserialize(Document document) throws StreamCorruptedException {
         String enumName = document.getString("name");
@@ -29,7 +29,7 @@ public abstract class EnumCodec<T extends Enum<T>> implements MongoSKCodec<T> {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Document serialize(T object) {
         Document document = new Document();
@@ -37,13 +37,13 @@ public abstract class EnumCodec<T extends Enum<T>> implements MongoSKCodec<T> {
         return document;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends T> getReturnType() {
         return clazz;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return name;

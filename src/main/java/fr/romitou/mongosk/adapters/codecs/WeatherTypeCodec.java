@@ -3,12 +3,12 @@ package fr.romitou.mongosk.adapters.codecs;
 import ch.njol.skript.util.WeatherType;
 import fr.romitou.mongosk.adapters.MongoSKCodec;
 import org.bson.Document;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 
 public class WeatherTypeCodec implements MongoSKCodec<WeatherType> {
-    @Nonnull
+    @NotNull
     @Override
     public WeatherType deserialize(Document document) throws StreamCorruptedException {
         String name = document.getString("name");
@@ -20,7 +20,7 @@ public class WeatherTypeCodec implements MongoSKCodec<WeatherType> {
         return weatherType;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Document serialize(WeatherType weatherType) {
         Document document = new Document();
@@ -28,13 +28,13 @@ public class WeatherTypeCodec implements MongoSKCodec<WeatherType> {
         return document;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends WeatherType> getReturnType() {
         return WeatherType.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "weatherType";

@@ -6,9 +6,10 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.*;
 import ch.njol.util.Kleenean;
-import fr.romitou.mongosk.MongoSK;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import org.bukkit.event.Event;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,26 +28,29 @@ import java.util.List;
     "	mongo \"nestedObject\": {_nested}",
     "broadcast {_doc}'s mongo json"
 })
-@Since("2.1.0") // New class from 2.3.0, but section backported for older versions :)
+@Since("2.1.0")
 public class SectMongoValue extends Effect {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.EFFECT, org.skriptlang.skript.registration.SyntaxInfo.builder(SectMongoValue.class).addPatterns("mongo[(sk|db)] [(1¦(field|value)|2¦(array|list))] %string%\\: %objects%").build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EFFECT, SyntaxInfo.builder(SectMongoValue.class)
+            .addPatterns("mongo[(sk|db)] [(1:(field|value)|2:(array|list))] %string%\\: %objects%")
+            .build());
     }
 
     private Expression<String> exprKey;
     private Expression<?> exprValue;
     private Kleenean isSingle;
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean init(Expression<?>[] exprs, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
         if (!getParser().isCurrentEvent(SectMongoDocument.EvtCreateMongoDocument.class))
             return false;
-        isSingle = parseResult.mark == 1
-            ? Kleenean.TRUE
-            : parseResult.mark == 2
-            ? Kleenean.FALSE
-            : Kleenean.UNKNOWN;
+        isSingle = switch (parseResult.mark) {
+            case 1 -> Kleenean.TRUE;
+            case 2 -> Kleenean.FALSE;
+            default -> Kleenean.UNKNOWN;
+        };
         exprKey = (Expression<String>) exprs[0];
         exprValue = exprs[1].getConvertedExpression(Object.class);
         return exprValue != null;
@@ -56,22 +60,13 @@ public class SectMongoValue extends Effect {
     protected void execute(Event event) {
         SectMongoDocument.EvtCreateMongoDocument mongoDocumentEvent = (SectMongoDocument.EvtCreateMongoDocument) event;
         String key = exprKey.getSingle(event);
-        List<?> omega = Arrays.asList(MongoSKAdapter.serializeArray(exprValue.getArray(event)));
-        switch (isSingle) {
-            case UNKNOWN:
-                mongoDocumentEvent
-                    .getMongoDocument()
-                    .getBsonDocument()
-                    .put(key, omega.size() == 1 ? omega.get(0) : omega);
-                break;
-            case TRUE:
-            case FALSE:
-                mongoDocumentEvent
-                    .getMongoDocument()
-                    .getBsonDocument()
-                    .put(key, isSingle == Kleenean.TRUE ? omega.get(0) : omega);
-                break;
-        }
+        List<?> values = Arrays.asList(MongoSKAdapter.serializeArray(exprValue.getArray(event)));
+        Object value = switch (isSingle) {
+            case TRUE -> values.get(0);
+            case FALSE -> values;
+            case UNKNOWN -> values.size() == 1 ? values.get(0) : values;
+        };
+        mongoDocumentEvent.getMongoDocument().getBsonDocument().put(key, value);
     }
 
     @Override

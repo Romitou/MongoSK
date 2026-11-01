@@ -18,6 +18,17 @@ You want to use MongoSK? Great! First, make sure you read the [documentation](ht
 
 Then, all you have to do is install this add-on! To do so, go to the [releases](https://github.com/Romitou/MongoSK/releases) menu and download the [latest version](https://github.com/Romitou/MongoSK/releases/latest). Then drag this add-on into your `plugins` folder, and here we go!
 
+### Requirements
+MongoSK supports the latest three stable versions of Skript and Minecraft. Each version of Skript only runs on the Minecraft versions it supports:
+
+| Skript | Minecraft        |
+|--------|------------------|
+| 2.17   | 26.1, 26.2, 26.3 |
+| 2.16   | 26.1, 26.2       |
+| 2.15   | 26.1             |
+
+Java 25 is required.
+
 ## ⚡ Quick start
 ```applescript
 on script load:

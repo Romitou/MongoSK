@@ -10,8 +10,9 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import fr.romitou.mongosk.elements.MongoSKDocument;
 import org.bukkit.event.Event;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 @Name("Mongo document is empty?")
 @Description({
@@ -26,26 +27,28 @@ import javax.annotation.Nonnull;
 @Since("2.1.0")
 public class CondMongoDocIsEmpty extends Condition {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.CONDITION, org.skriptlang.skript.registration.SyntaxInfo.builder(CondMongoDocIsEmpty.class).addPatterns("mongo[(sk|db)] document[s] %mongoskdocuments% (is|are)[(1¦(n't| not))] empty").build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.CONDITION, SyntaxInfo.builder(CondMongoDocIsEmpty.class)
+            .addPatterns("mongo[(sk|db)] document[s] %mongoskdocuments% (is|are)[(1:(n't| not))] empty")
+            .build());
     }
 
     private Expression<MongoSKDocument> exprMongoSKDocument;
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
         exprMongoSKDocument = (Expression<MongoSKDocument>) exprs[0];
         setNegated(parseResult.mark == 1);
         return true;
     }
 
     @Override
-    public boolean check(@Nonnull Event e) {
+    public boolean check(@NotNull Event e) {
         return exprMongoSKDocument.check(e, doc -> doc.getBsonDocument().isEmpty(), isNegated());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String toString(Event e, boolean debug) {
         return exprMongoSKDocument.toString(e, debug) + (isNegated() ? " is" : " isn't") + " empty ";

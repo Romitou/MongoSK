@@ -5,4 +5,4 @@ website: https://github.com/Romitou/MongoSK
 author: Romitou
 main: fr.romitou.mongosk.MongoSK
 depend: [Skript]
-api-version: '1.13'
+api-version: '26.1'

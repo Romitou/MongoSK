@@ -1,8 +1,5 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import org.skriptlang.skript.registration.DefaultSyntaxInfos;
-import ch.njol.skript.lang.ExpressionType;
-import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -19,9 +16,10 @@ import org.bson.BSONException;
 import org.bson.Document;
 import org.bson.json.JsonParseException;
 import org.bukkit.event.Event;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 @Name("Mongo command result")
 @Description({
@@ -37,8 +35,11 @@ import javax.annotation.Nullable;
 @Since("2.0.3")
 public class ExprMongoCommandResult extends SimpleExpression<MongoSKDocument> {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoCommandResult.class, MongoSKDocument.class).addPatterns("(results|documents) of mongo[(sk|db)] command %string% (of|in) database %mongoskdatabase%").priority(ExpressionType.SIMPLE.priority()).build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EXPRESSION, SyntaxInfo.Expression.builder(ExprMongoCommandResult.class, MongoSKDocument.class)
+            .addPatterns("(results|documents) of mongo[(sk|db)] command %string% (of|in) database %mongoskdatabase%")
+            .priority(SyntaxInfo.SIMPLE)
+            .build());
     }
 
     private Expression<String> exprJsonString;
@@ -46,14 +47,14 @@ public class ExprMongoCommandResult extends SimpleExpression<MongoSKDocument> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         exprJsonString = (Expression<String>) exprs[0];
         exprMongoSKDatabase = (Expression<MongoSKDatabase>) exprs[1];
         return true;
     }
 
     @Override
-    protected MongoSKDocument[] get(@Nonnull Event e) {
+    protected MongoSKDocument[] get(@NotNull Event e) {
         String jsonString = exprJsonString.getSingle(e);
         MongoSKDatabase mongoSKDatabase = exprMongoSKDatabase.getSingle(e);
         if (jsonString == null || mongoSKDatabase == null)
@@ -84,13 +85,13 @@ public class ExprMongoCommandResult extends SimpleExpression<MongoSKDocument> {
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends MongoSKDocument> getReturnType() {
         return MongoSKDocument.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String toString(@Nullable Event e, boolean debug) {
         return "result of mongo command " + exprJsonString.toString(e, debug) + " of database " + exprMongoSKDatabase.toString(e, debug);

@@ -5,9 +5,9 @@ import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import fr.romitou.mongosk.adapters.MongoSKCodec;
 import org.bson.Document;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.StreamCorruptedException;
 
 /**
@@ -18,7 +18,7 @@ public class SlotCodec implements MongoSKCodec<Object> {
     /**
      * A slot is stored as its item, so it is read back as an item stack.
      */
-    @Nonnull
+    @NotNull
     @Override
     public Object deserialize(Document document) throws StreamCorruptedException {
         MongoSKCodec<ItemStack> codec = MongoSKAdapter.getCodecByClass(ItemStack.class);
@@ -36,13 +36,13 @@ public class SlotCodec implements MongoSKCodec<Object> {
         return codec.serialize(((Slot) slot).getItem());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<?> getReturnType() {
         return Slot.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         // Tell MongoSK to deserialize this Slot as an ItemStack.

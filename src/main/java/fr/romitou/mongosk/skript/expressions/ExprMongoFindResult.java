@@ -1,7 +1,5 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import org.skriptlang.skript.registration.DefaultSyntaxInfos;
-import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -22,9 +20,11 @@ import fr.romitou.mongosk.elements.MongoSKFilter;
 import fr.romitou.mongosk.elements.MongoSKQuery;
 import org.bson.Document;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 @Name("Mongo find query")
@@ -40,9 +40,10 @@ import java.util.List;
 @Since("2.0.0")
 public class ExprMongoFindResult extends SimpleExpression<MongoSKDocument> {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoFindResult.class, MongoSKDocument.class).addPatterns("[find] (1¦first|2¦all) mongo[(sk|db)] document[s] [(with|by) [filter] %-mongoskfilter%] (of|from) collection %mongoskcollection%",
-            "[find] (1¦first|2¦all) mongo[(sk|db)] document[s] (of|from) query %mongoskquery%").build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EXPRESSION, SyntaxInfo.Expression.builder(ExprMongoFindResult.class, MongoSKDocument.class)
+            .addPatterns("[find] (1:first|2:all) mongo[(sk|db)] document[s] [(with|by) [filter] %-mongoskfilter%] (of|from) collection %mongoskcollection%", "[find] (1:first|2:all) mongo[(sk|db)] document[s] (of|from) query %mongoskquery%")
+            .build());
     }
 
     private Expression<MongoSKFilter> exprMongoSKFilter;
@@ -52,7 +53,7 @@ public class ExprMongoFindResult extends SimpleExpression<MongoSKDocument> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(@Nonnull Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
+    public boolean init(@NotNull Expression<?>[] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         if (matchedPattern == 0) {
             exprMongoSKFilter = (Expression<MongoSKFilter>) exprs[0];
             exprMongoSKCollection = (Expression<MongoSKCollection>) exprs[1];
@@ -63,7 +64,7 @@ public class ExprMongoFindResult extends SimpleExpression<MongoSKDocument> {
     }
 
     @Override
-    protected MongoSKDocument[] get(@Nonnull final Event e) {
+    protected MongoSKDocument[] get(@NotNull final Event e) {
         MongoSKQuery query = buildQuery(e);
         if (query == null || query.getMongoSKCollection() == null)
             return new MongoSKDocument[0];
@@ -95,7 +96,7 @@ public class ExprMongoFindResult extends SimpleExpression<MongoSKDocument> {
     }
 
     @Override
-    public void change(@Nonnull final Event e, Object[] delta, @Nonnull Changer.ChangeMode mode) {
+    public void change(@NotNull final Event e, Object[] delta, @NotNull Changer.ChangeMode mode) {
         MongoSKQuery query = buildQuery(e);
         if (query == null)
             return;
@@ -152,13 +153,13 @@ public class ExprMongoFindResult extends SimpleExpression<MongoSKDocument> {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public Class<? extends MongoSKDocument> getReturnType() {
         return MongoSKDocument.class;
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public String toString(@Nullable final Event e, final boolean debug) {
         String prefix = isFirstDocument ? "first mongosk document" : "all mongosk documents";
         if (exprMongoSKQuery != null)

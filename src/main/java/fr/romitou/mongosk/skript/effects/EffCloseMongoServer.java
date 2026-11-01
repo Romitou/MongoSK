@@ -10,9 +10,10 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import fr.romitou.mongosk.elements.MongoSKServer;
 import org.bukkit.event.Event;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 @Name("Close Mongo client")
 @Description({
@@ -23,29 +24,31 @@ import javax.annotation.Nullable;
     "on script unload:",
     "\tclose mongo client {mongoclient}"
 })
-@Since("2.4.2")
+@Since("3.0.0")
 public class EffCloseMongoServer extends Effect {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.EFFECT, org.skriptlang.skript.registration.SyntaxInfo.builder(EffCloseMongoServer.class).addPatterns("close [the] mongo[(sk|db)] (client|server|connection)[s] %mongoskservers%").build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EFFECT, SyntaxInfo.builder(EffCloseMongoServer.class)
+            .addPatterns("close [the] mongo[(sk|db)] (client|server|connection)[s] %mongoskservers%")
+            .build());
     }
 
     private Expression<MongoSKServer> exprMongoSKServer;
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         exprMongoSKServer = (Expression<MongoSKServer>) exprs[0];
         return true;
     }
 
     @Override
-    protected void execute(@Nonnull Event e) {
+    protected void execute(@NotNull Event e) {
         for (MongoSKServer mongoSKServer : exprMongoSKServer.getArray(e))
             mongoSKServer.close();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String toString(@Nullable Event e, boolean debug) {
         return "close mongo client " + exprMongoSKServer.toString(e, debug);

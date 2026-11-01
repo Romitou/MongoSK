@@ -1,8 +1,5 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import org.skriptlang.skript.registration.DefaultSyntaxInfos;
-import ch.njol.skript.lang.ExpressionType;
-import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -15,9 +12,11 @@ import com.mongodb.client.model.Projections;
 import fr.romitou.mongosk.elements.MongoSKProjection;
 import org.bson.conversions.Bson;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 
 @Name("Mongo projection")
@@ -29,11 +28,14 @@ import java.util.Arrays;
     "set {_proj} to mongo projection including fields \"field1\" and \"field2\"",
     "set {_proj} to mongo projection excluding fields \"field3\" and \"field4\""
 })
-@Since("2.4.2")
+@Since("3.0.0")
 public class ExprMongoProjection extends SimpleExpression<MongoSKProjection> {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoProjection.class, MongoSKProjection.class).addPatterns("mongo[(db|sk)] projection (1¦including|2¦excluding) [the] field[s] %strings%").priority(ExpressionType.SIMPLE.priority()).build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EXPRESSION, SyntaxInfo.Expression.builder(ExprMongoProjection.class, MongoSKProjection.class)
+            .addPatterns("mongo[(db|sk)] projection (1:including|2:excluding) [the] field[s] %strings%")
+            .priority(SyntaxInfo.SIMPLE)
+            .build());
     }
 
     private Expression<String> exprFields;
@@ -41,14 +43,14 @@ public class ExprMongoProjection extends SimpleExpression<MongoSKProjection> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(@Nonnull Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
+    public boolean init(@NotNull Expression<?>[] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         exprFields = (Expression<String>) exprs[0];
         isIncluding = parseResult.mark == 1;
         return true;
     }
 
     @Override
-    protected MongoSKProjection[] get(@Nonnull final Event e) {
+    protected MongoSKProjection[] get(@NotNull final Event e) {
         String[] fields = exprFields.getArray(e);
         if (fields == null || fields.length == 0) return new MongoSKProjection[0];
 
@@ -68,13 +70,13 @@ public class ExprMongoProjection extends SimpleExpression<MongoSKProjection> {
         return true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends MongoSKProjection> getReturnType() {
         return MongoSKProjection.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String toString(@Nullable final Event e, final boolean debug) {
         if (e != null) {

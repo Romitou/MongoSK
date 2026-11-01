@@ -2,22 +2,28 @@ package fr.romitou.mongosk.adapters.codecs;
 
 import fr.romitou.mongosk.adapters.MongoSKCodec;
 import org.bson.Document;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.block.Biome;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
+import java.util.Locale;
 
 public class BiomeCodec implements MongoSKCodec<Biome> {
-    @Nonnull
+    @NotNull
     @Override
     public Biome deserialize(Document document) throws StreamCorruptedException {
         String name = document.getString("name");
         if (name == null)
             throw new StreamCorruptedException("Cannot retrieve name field from document!");
-        return org.bukkit.Registry.BIOME.get(org.bukkit.NamespacedKey.minecraft(name.toLowerCase()));
+        Biome biome = Registry.BIOME.get(NamespacedKey.minecraft(name.toLowerCase(Locale.ROOT)));
+        if (biome == null)
+            throw new StreamCorruptedException("Cannot parse given biome name!");
+        return biome;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Document serialize(Biome biome) {
         Document document = new Document();
@@ -25,13 +31,13 @@ public class BiomeCodec implements MongoSKCodec<Biome> {
         return document;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends Biome> getReturnType() {
         return Biome.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "biome";

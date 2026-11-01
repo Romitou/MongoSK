@@ -3,13 +3,13 @@ package fr.romitou.mongosk.adapters.codecs;
 import fr.romitou.mongosk.adapters.MongoSKCodec;
 import org.bson.Document;
 import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 
 public class MaterialCodec implements MongoSKCodec<Material> {
 
-    @Nonnull
+    @NotNull
     @Override
     public Material deserialize(Document document) throws StreamCorruptedException {
         String name = document.getString("name");
@@ -21,7 +21,7 @@ public class MaterialCodec implements MongoSKCodec<Material> {
         return material;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Document serialize(Material material) {
         Document document = new Document();
@@ -30,13 +30,13 @@ public class MaterialCodec implements MongoSKCodec<Material> {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public Class<? extends Material> getReturnType() {
         return Material.class;
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public String getName() {
         return "material";
     }

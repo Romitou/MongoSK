@@ -3,13 +3,13 @@ package fr.romitou.mongosk.adapters.codecs;
 import ch.njol.skript.hooks.economy.classes.Money;
 import fr.romitou.mongosk.adapters.MongoSKCodec;
 import org.bson.Document;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 
 public class MoneyCodec implements MongoSKCodec<Money> {
 
-    @Nonnull
+    @NotNull
     @Override
     public Money deserialize(Document document) throws StreamCorruptedException {
         Number amount = document.get("amount", Number.class);
@@ -18,7 +18,7 @@ public class MoneyCodec implements MongoSKCodec<Money> {
         return new Money(amount.doubleValue());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Document serialize(Money money) {
         Document document = new Document();
@@ -27,13 +27,13 @@ public class MoneyCodec implements MongoSKCodec<Money> {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public Class<? extends Money> getReturnType() {
         return Money.class;
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public String getName() {
         return "money";
     }
