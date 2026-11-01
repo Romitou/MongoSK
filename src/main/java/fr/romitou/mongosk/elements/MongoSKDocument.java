@@ -2,8 +2,8 @@ package fr.romitou.mongosk.elements;
 
 import fr.romitou.mongosk.LoggerHelper;
 import org.bson.Document;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class MongoSKDocument {

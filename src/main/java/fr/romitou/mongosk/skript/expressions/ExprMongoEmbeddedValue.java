@@ -1,8 +1,5 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import org.skriptlang.skript.registration.DefaultSyntaxInfos;
-import ch.njol.skript.lang.ExpressionType;
-import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -19,9 +16,11 @@ import fr.romitou.mongosk.elements.MongoQueryElement;
 import fr.romitou.mongosk.elements.MongoSKDocument;
 import fr.romitou.mongosk.utils.MongoPathParser;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,8 +44,11 @@ import java.util.List;
 @Since("2.3.0")
 public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoEmbeddedValue.class, Object.class).addPatterns("mongo[(sk|db)] embedded (1¦(field|value)|2¦(array|list)) [with path] %string% of %mongoskdocument%").priority(ExpressionType.SIMPLE.priority()).build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EXPRESSION, SyntaxInfo.Expression.builder(ExprMongoEmbeddedValue.class, Object.class)
+            .addPatterns("mongo[(sk|db)] embedded (1:(field|value)|2:(array|list)) [with path] %string% of %mongoskdocument%")
+            .priority(SyntaxInfo.SIMPLE)
+            .build());
     }
 
     private Expression<String> exprFieldName;
@@ -55,7 +57,7 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         exprFieldName = (Expression<String>) exprs[0];
         exprMongoSKDocument = (Expression<MongoSKDocument>) exprs[1];
         isSingle = parseResult.mark == 1;
@@ -63,7 +65,7 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
     }
 
     @Override
-    protected Object[] get(@Nonnull final Event e) {
+    protected Object[] get(@NotNull final Event e) {
         String fieldName = exprFieldName.getSingle(e);
         MongoSKDocument mongoSKDocument = exprMongoSKDocument.getSingle(e);
         if (fieldName == null || mongoSKDocument == null || mongoSKDocument.getBsonDocument() == null)
@@ -155,13 +157,13 @@ public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public Class<?> getReturnType() {
         return Object.class;
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public String toString(@Nullable Event e, boolean debug) {
         return "mongo " + (isSingle ? "value" : "list") + " named " + exprFieldName.toString(e, debug) + " of " + exprMongoSKDocument.toString(e, debug);
     }

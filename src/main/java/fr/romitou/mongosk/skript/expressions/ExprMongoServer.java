@@ -1,8 +1,5 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import org.skriptlang.skript.registration.DefaultSyntaxInfos;
-import ch.njol.skript.lang.ExpressionType;
-import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -19,14 +16,16 @@ import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
 import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.MongoSK;
-import fr.romitou.mongosk.SubscriberHelpers;
 import fr.romitou.mongosk.elements.MongoSKServer;
+import fr.romitou.mongosk.skript.effects.MongoEffect;
 import fr.romitou.mongosk.listeners.MongoCommandListener;
 import org.bson.UuidRepresentation;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.concurrent.TimeUnit;
 
 @Name("Mongo server")
@@ -48,21 +47,24 @@ public class ExprMongoServer extends SimpleExpression<MongoSKServer> {
     private final int CONNECT_TIMEOUT = MongoSK.getInstance().getConfig().getInt("timeouts.connect", 10000);
     private final int READ_TIMEOUT = MongoSK.getInstance().getConfig().getInt("timeouts.read", 10000);
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoServer.class, MongoSKServer.class).addPatterns("[[a] new] mongo[(sk|db)] (client|server) (with|from) [connection (string|uri|address)] %string%").priority(ExpressionType.SIMPLE.priority()).build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EXPRESSION, SyntaxInfo.Expression.builder(ExprMongoServer.class, MongoSKServer.class)
+            .addPatterns("[[a] new] mongo[(sk|db)] (client|server) (with|from) [connection (string|uri|address)] %string%")
+            .priority(SyntaxInfo.SIMPLE)
+            .build());
     }
 
     private Expression<?> exprRawConnectionString;
 
     @Override
-    public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         exprRawConnectionString = exprs[0];
         return true;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected MongoSKServer[] get(@Nonnull final Event e) {
+    protected MongoSKServer[] get(@NotNull final Event e) {
         String rawConnectionString = (exprRawConnectionString instanceof VariableString)
             ? ((VariableString) exprRawConnectionString).getSingle(e)
             : ((Expression<String>) exprRawConnectionString).getSingle(e);
@@ -76,23 +78,23 @@ public class ExprMongoServer extends SimpleExpression<MongoSKServer> {
             MongoSKServer openServer = MongoSK.getOpenServer(rawConnectionString);
             if (openServer != null)
                 return new MongoSKServer[]{openServer};
-            MongoSKServer mongoSKServer = createServer(rawConnectionString);
+            MongoSKServer mongoSKServer = createServer(e, rawConnectionString);
             return mongoSKServer == null ? new MongoSKServer[0] : new MongoSKServer[]{mongoSKServer};
         }
     }
 
     @Nullable
-    private MongoSKServer createServer(String rawConnectionString) {
+    private MongoSKServer createServer(Event e, String rawConnectionString) {
         // Validate the connection string.
         ConnectionString connectionString;
         try {
             connectionString = new ConnectionString(rawConnectionString);
         } catch (IllegalArgumentException ex) {
-            SubscriberHelpers.setLastError(ex.getMessage());
+            MongoEffect.setLastError(e, ex.getMessage());
             LoggerHelper.severe("Your connection string is invalid: " + ex.getMessage().toLowerCase());
             return null;
         } catch (MongoClientException ex) {
-            SubscriberHelpers.setLastError(ex.getMessage());
+            MongoEffect.setLastError(e, ex.getMessage());
             LoggerHelper.severe("An error occurred while creating the client: " + ex.getMessage().toLowerCase());
             return null;
         }
@@ -134,13 +136,13 @@ public class ExprMongoServer extends SimpleExpression<MongoSKServer> {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public Class<? extends MongoSKServer> getReturnType() {
         return MongoSKServer.class;
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public String toString(@Nullable Event e, boolean debug) {
         return "new mongosk server from connection string " + exprRawConnectionString.toString(e, debug);
     }

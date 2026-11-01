@@ -4,30 +4,27 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
-import ch.njol.util.Kleenean;
 import com.mongodb.client.model.DeleteOneModel;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOneModel;
 import com.mongodb.client.model.ReplaceOptions;
-import com.mongodb.bulk.BulkWriteResult;
-import com.mongodb.client.result.InsertManyResult;
+import com.mongodb.client.model.WriteModel;
+import com.mongodb.reactivestreams.client.MongoCollection;
 import fr.romitou.mongosk.LoggerHelper;
-import fr.romitou.mongosk.SubscriberHelpers;
 import fr.romitou.mongosk.elements.MongoSKCollection;
 import fr.romitou.mongosk.elements.MongoSKDocument;
-import org.bukkit.event.Event;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import com.mongodb.client.model.WriteModel;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Name("Manage Mongo document")
 @Description({
@@ -45,10 +42,12 @@ import com.mongodb.client.model.WriteModel;
     "remove mongo documents {_doc1} and {_doc2} from {mycollection}"
 })
 @Since("2.0.0")
-public class EffManageMongoDocument extends Effect {
+public class EffManageMongoDocument extends MongoEffect {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.EFFECT, org.skriptlang.skript.registration.SyntaxInfo.builder(EffManageMongoDocument.class).addPatterns("(1¦insert|2¦(replace|update)|3¦remove|4¦upsert) mongo[(sk|db)] doc[ument][s] %mongoskdocuments% (in[to]|of|from) [collection] %mongoskcollection%").build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EFFECT, SyntaxInfo.builder(EffManageMongoDocument.class)
+            .addPatterns("(1:insert|2:(replace|update)|3:remove|4:upsert) mongo[(sk|db)] doc[ument][s] %mongoskdocuments% (in[to]|of|from) [collection] %mongoskcollection%")
+            .build());
     }
 
     private Expression<MongoSKDocument> exprMongoSKDocument;
@@ -57,7 +56,7 @@ public class EffManageMongoDocument extends Effect {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
+    protected boolean load(Expression<?>[] exprs, int matchedPattern, SkriptParser.ParseResult parseResult) {
         exprMongoSKDocument = (Expression<MongoSKDocument>) exprs[0];
         exprMongoSKCollection = (Expression<MongoSKCollection>) exprs[1];
         this.parseMark = parseResult.mark;
@@ -65,75 +64,34 @@ public class EffManageMongoDocument extends Effect {
     }
 
     @Override
-    protected void execute(@Nonnull final Event e) {
+    protected @Nullable Request<?> prepare(@NotNull final Event e) {
         MongoSKDocument[] mongoSKDocuments = exprMongoSKDocument.getArray(e);
         MongoSKCollection mongoSKCollection = exprMongoSKCollection.getSingle(e);
         if (mongoSKDocuments.length == 0 || mongoSKCollection == null)
-            return;
-        switch (parseMark) {
-            case 1:
-                List<Document> insertList = Arrays.stream(mongoSKDocuments)
-                    .map(MongoSKDocument::getBsonDocument)
-                    .collect(Collectors.toList());
-                if (!insertList.isEmpty()) {
-                    long insertQuery = System.currentTimeMillis();
-                    SubscriberHelpers.ObservableSubscriber<InsertManyResult> observableInsertSubscriber = new SubscriberHelpers.OperationSubscriber<>();
-                    mongoSKCollection.getMongoCollection()
-                        .insertMany(insertList)
-                        .subscribe(observableInsertSubscriber);
-                    observableInsertSubscriber.await();
-                    LoggerHelper.debug("Insert query executed in " + (System.currentTimeMillis() - insertQuery) + "ms.");
-                }
-                break;
-            case 2:
-                List<WriteModel<Document>> updateList = Arrays.stream(mongoSKDocuments)
-                    .filter(doc -> hasId(doc, "update"))
-                    .map(doc -> (WriteModel<Document>) new ReplaceOneModel<Document>(Filters.eq("_id", doc.getBsonDocument().get("_id")), doc.getBsonDocument()))
-                    .collect(Collectors.toList());
-                if (!updateList.isEmpty()) {
-                    long updateQuery = System.currentTimeMillis();
-                    SubscriberHelpers.ObservableSubscriber<BulkWriteResult> observableUpdateSubscriber = new SubscriberHelpers.OperationSubscriber<>();
-                    mongoSKCollection.getMongoCollection()
-                        .bulkWrite(updateList)
-                        .subscribe(observableUpdateSubscriber);
-                    observableUpdateSubscriber.await();
-                    LoggerHelper.debug("Update query executed in " + (System.currentTimeMillis() - updateQuery) + "ms.");
-                }
-                break;
-            case 3:
-                List<WriteModel<Document>> deleteList = Arrays.stream(mongoSKDocuments)
-                    .filter(doc -> hasId(doc, "remove"))
-                    .map(doc -> (WriteModel<Document>) new DeleteOneModel<Document>(Filters.eq("_id", doc.getBsonDocument().get("_id"))))
-                    .collect(Collectors.toList());
-                if (!deleteList.isEmpty()) {
-                    long deleteQuery = System.currentTimeMillis();
-                    SubscriberHelpers.ObservableSubscriber<BulkWriteResult> observableDeleteSubscriber = new SubscriberHelpers.OperationSubscriber<>();
-                    mongoSKCollection.getMongoCollection()
-                        .bulkWrite(deleteList)
-                        .subscribe(observableDeleteSubscriber);
-                    observableDeleteSubscriber.await();
-                    LoggerHelper.debug("Delete query executed in " + (System.currentTimeMillis() - deleteQuery) + "ms.");
-                }
-                break;
-            case 4:
-                List<WriteModel<Document>> upsertList = Arrays.stream(mongoSKDocuments)
-                    // Without an ID, the document cannot exist in the collection: give it one so it is inserted
-                    // like with the insert mode, instead of being stored with a null ID.
-                    .peek(doc -> doc.getBsonDocument().putIfAbsent("_id", new ObjectId()))
-                    .map(doc -> (WriteModel<Document>) new ReplaceOneModel<Document>(Filters.eq("_id", doc.getBsonDocument().get("_id")), doc.getBsonDocument(), new ReplaceOptions().upsert(true)))
-                    .collect(Collectors.toList());
-                if (!upsertList.isEmpty()) {
-                    long upsertQuery = System.currentTimeMillis();
-                    SubscriberHelpers.ObservableSubscriber<BulkWriteResult> observableUpsertSubscriber = new SubscriberHelpers.OperationSubscriber<>();
-                    mongoSKCollection.getMongoCollection()
-                        .bulkWrite(upsertList)
-                        .subscribe(observableUpsertSubscriber);
-                    observableUpsertSubscriber.await();
-                    LoggerHelper.debug("Upsert query executed in " + (System.currentTimeMillis() - upsertQuery) + "ms.");
-                }
-                break;
+            return null;
+        MongoCollection<Document> collection = mongoSKCollection.getMongoCollection();
+        if (parseMark == 1) {
+            return Request.withoutResult(collection.insertMany(Arrays.stream(mongoSKDocuments)
+                .map(MongoSKDocument::getBsonDocument)
+                .toList()));
         }
-
+        List<WriteModel<Document>> writes = switch (parseMark) {
+            case 2 -> Arrays.stream(mongoSKDocuments)
+                .filter(doc -> hasId(doc, "update"))
+                .<WriteModel<Document>>map(doc -> new ReplaceOneModel<>(Filters.eq("_id", doc.getBsonDocument().get("_id")), doc.getBsonDocument()))
+                .toList();
+            case 3 -> Arrays.stream(mongoSKDocuments)
+                .filter(doc -> hasId(doc, "remove"))
+                .<WriteModel<Document>>map(doc -> new DeleteOneModel<>(Filters.eq("_id", doc.getBsonDocument().get("_id"))))
+                .toList();
+            default -> Arrays.stream(mongoSKDocuments)
+                // Without an ID, the document cannot exist in the collection: give it one so it is inserted
+                // like with the insert mode, instead of being stored with a null ID.
+                .peek(doc -> doc.getBsonDocument().putIfAbsent("_id", new ObjectId()))
+                .<WriteModel<Document>>map(doc -> new ReplaceOneModel<>(Filters.eq("_id", doc.getBsonDocument().get("_id")), doc.getBsonDocument(), new ReplaceOptions().upsert(true)))
+                .toList();
+        };
+        return writes.isEmpty() ? null : Request.withoutResult(collection.bulkWrite(writes));
     }
 
     private static boolean hasId(MongoSKDocument document, String action) {
@@ -145,7 +103,7 @@ public class EffManageMongoDocument extends Effect {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public String toString(@Nullable final Event e, boolean debug) {
         return "save mongo document " + exprMongoSKDocument.toString(e, debug) + " into " + exprMongoSKCollection.toString(e, debug);
     }

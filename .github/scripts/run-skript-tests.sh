@@ -14,15 +14,6 @@ git clone --quiet --depth 1 --branch "$SKRIPT_REF" --recurse-submodules --shallo
     https://github.com/SkriptLang/Skript.git "$SKRIPT_DIR"
 cd "$SKRIPT_DIR"
 
-# Before Skript 2.12, the test platform downloads Paper with the PaperMC v2 API, which has been shut down.
-# Use the test environment of Skript 2.12, which downloads it with the current API.
-ENVIRONMENT_JAVA=src/main/java/ch/njol/skript/test/platform/Environment.java
-if ! grep -q "fill.papermc.io" "$ENVIRONMENT_JAVA"; then
-    echo "Patching the Paper download of the Skript test platform"
-    curl -sSfL -o "$ENVIRONMENT_JAVA" \
-        https://raw.githubusercontent.com/SkriptLang/Skript/2.12.2/src/main/java/ch/njol/skript/test/platform/Environment.java
-fi
-
 # Only run the MongoSK tests, not the vanilla Skript ones.
 rm -rf src/test/skript/tests/*
 cp -r "$TEST_SCRIPTS_DIR" src/test/skript/tests/custom

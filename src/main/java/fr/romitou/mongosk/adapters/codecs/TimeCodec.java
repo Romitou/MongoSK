@@ -3,12 +3,12 @@ package fr.romitou.mongosk.adapters.codecs;
 import ch.njol.skript.util.Time;
 import fr.romitou.mongosk.adapters.MongoSKCodec;
 import org.bson.Document;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 
 public class TimeCodec implements MongoSKCodec<Time> {
-    @Nonnull
+    @NotNull
     @Override
     public Time deserialize(Document document) throws StreamCorruptedException {
         Integer time = document.getInteger("time");
@@ -17,7 +17,7 @@ public class TimeCodec implements MongoSKCodec<Time> {
         return new Time(time);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Document serialize(Time time) {
         Document document = new Document();
@@ -25,13 +25,13 @@ public class TimeCodec implements MongoSKCodec<Time> {
         return document;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends Time> getReturnType() {
         return Time.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "time";

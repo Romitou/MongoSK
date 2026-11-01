@@ -5,12 +5,12 @@ import fr.romitou.mongosk.utils.WorldCache;
 import org.bson.Document;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 
 public class LocationCodec implements MongoSKCodec<Location> {
-    @Nonnull
+    @NotNull
     @Override
     public Location deserialize(Document document) throws StreamCorruptedException {
         Number x = document.get("x", Number.class),
@@ -31,7 +31,7 @@ public class LocationCodec implements MongoSKCodec<Location> {
                 pitch != null ? pitch.floatValue() : 0F);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Document serialize(Location location) {
         Document document = new Document();
@@ -44,13 +44,13 @@ public class LocationCodec implements MongoSKCodec<Location> {
         return document;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends Location> getReturnType() {
         return Location.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "location";

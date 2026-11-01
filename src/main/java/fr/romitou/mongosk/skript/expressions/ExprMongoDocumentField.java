@@ -1,9 +1,6 @@
 package fr.romitou.mongosk.skript.expressions;
 
 import ch.njol.skript.Skript;
-import org.skriptlang.skript.registration.DefaultSyntaxInfos;
-import ch.njol.skript.lang.ExpressionType;
-import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -18,9 +15,11 @@ import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import fr.romitou.mongosk.elements.MongoSKDocument;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +34,9 @@ import java.util.List;
 @Examples({
     "command test:",
     "	trigger:",
-    "		set {_doc} to first mongo document from {mycollection}",
+    "		set {_query} to a new mongo query with:",
+    "			collection: {mycollection}",
+    "		execute mongo query {_query} and store the result in {_doc}",
     "		if mongo value \"player\" of {_doc} is not set:",
     "			set mongo value \"player\" of {_doc} to player",
     "		set {_player} to mongo value \"player\" of {_doc}",
@@ -45,8 +46,11 @@ import java.util.List;
 public class ExprMongoDocumentField extends SimpleExpression<Object> {
 
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoDocumentField.class, Object.class).addPatterns("mongo[(sk|db)] (1¦(field|value)|2¦(array|list)) [named] %string% of %mongoskdocument%").priority(ExpressionType.SIMPLE.priority()).build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EXPRESSION, SyntaxInfo.Expression.builder(ExprMongoDocumentField.class, Object.class)
+            .addPatterns("mongo[(sk|db)] (1:(field|value)|2:(array|list)) [named] %string% of %mongoskdocument%")
+            .priority(SyntaxInfo.SIMPLE)
+            .build());
     }
 
     private Expression<String> exprFieldName;
@@ -55,7 +59,7 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         exprFieldName = (Expression<String>) exprs[0];
         exprMongoSKDocument = (Expression<MongoSKDocument>) exprs[1];
         isSingle = parseResult.mark == 1;
@@ -63,7 +67,7 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
     }
 
     @Override
-    protected Object[] get(@Nonnull final Event e) {
+    protected Object[] get(@NotNull final Event e) {
         String fieldName = exprFieldName.getSingle(e);
         MongoSKDocument mongoSKDocument = exprMongoSKDocument.getSingle(e);
         if (fieldName == null || mongoSKDocument == null || mongoSKDocument.getBsonDocument() == null)
@@ -108,7 +112,7 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
     }
 
     @Override
-    public void change(@Nonnull final Event e, Object[] delta, @Nonnull Changer.ChangeMode mode) {
+    public void change(@NotNull final Event e, Object[] delta, @NotNull Changer.ChangeMode mode) {
         String fieldName = exprFieldName.getSingle(e);
         MongoSKDocument mongoSKDocument = exprMongoSKDocument.getSingle(e);
         List<?> omega = new ArrayList<>();
@@ -174,13 +178,13 @@ public class ExprMongoDocumentField extends SimpleExpression<Object> {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public Class<?> getReturnType() {
         return Object.class;
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public String toString(@Nullable Event e, boolean debug) {
         return "mongo " + (isSingle ? "value" : "list") + " named " + exprFieldName.toString(e, debug) + " of " + exprMongoSKDocument.toString(e, debug);
     }

@@ -5,14 +5,14 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
+import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
-import ch.njol.skript.lang.ExpressionType;
 import ch.njol.util.coll.CollectionUtils;
 import fr.romitou.mongosk.elements.MongoSKProjection;
 import fr.romitou.mongosk.elements.MongoSKQuery;
 import org.bukkit.event.Event;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 @Name("Mongo query projection")
 @Description({
@@ -23,15 +23,15 @@ import javax.annotation.Nonnull;
     "set {_query} to new mongosk query",
     "set mongo projection of {_query} to mongo projection excluding fields \"_id\" and \"bulky_data\""
 })
-@Since("2.5.0")
+@Since("3.0.0")
 public class ExprMongoQueryProjection extends SimplePropertyExpression<MongoSKQuery, MongoSKProjection> {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.EXPRESSION, org.skriptlang.skript.registration.DefaultSyntaxInfos.Expression.builder(ExprMongoQueryProjection.class, MongoSKProjection.class).addPatterns(ch.njol.skript.expressions.base.PropertyExpression.getPatterns("mongo[(db|sk)] projection",
-            "mongoskqueries")).priority(ExpressionType.PROPERTY.priority()).build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EXPRESSION,
+            PropertyExpression.infoBuilder(ExprMongoQueryProjection.class, MongoSKProjection.class, "mongo[(db|sk)] projection", "mongoskqueries", false).build());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public MongoSKProjection convert(MongoSKQuery query) {
         return query.getMongoSKProjection();
@@ -49,7 +49,7 @@ public class ExprMongoQueryProjection extends SimplePropertyExpression<MongoSKQu
     }
 
     @Override
-    public void change(@Nonnull Event e, Object[] delta, @Nonnull Changer.ChangeMode mode) {
+    public void change(@NotNull Event e, Object[] delta, @NotNull Changer.ChangeMode mode) {
         MongoSKQuery mongoSKQuery = getExpr().getSingle(e);
         if (mongoSKQuery == null)
             return;
@@ -64,13 +64,13 @@ public class ExprMongoQueryProjection extends SimplePropertyExpression<MongoSKQu
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends MongoSKProjection> getReturnType() {
         return MongoSKProjection.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected String getPropertyName() {
         return "mongo projection";

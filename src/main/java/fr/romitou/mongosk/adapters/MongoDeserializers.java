@@ -11,38 +11,23 @@ public class MongoDeserializers {
     }
 
     public static Object deserializeBsonValue(BsonValue value) {
-        switch (value.getBsonType()) {
-            case ARRAY:
-                return value.asArray().stream().map(MongoDeserializers::deserializeBsonValue).toArray();
-            case INT32:
-                return value.asInt32().getValue();
-            case INT64:
-                return value.asInt64().getValue();
-            case BINARY:
-                return value.asBinary().getData();
-            case DOUBLE:
-                return value.asDouble().getValue();
-            case STRING:
-                return value.asString().getValue();
-            case SYMBOL:
-                return value.asSymbol().getSymbol();
-            case BOOLEAN:
-                return value.asBoolean().getValue();
-            case DOCUMENT:
-                return MongoSKAdapter.deserializeValue(MongoSKAdapter.bsonDocumentToDocument(value.asDocument()));
-            case DATE_TIME:
-                return value.asDateTime().getValue();
-            case TIMESTAMP:
-                return value.asTimestamp().getValue();
-            case OBJECT_ID:
-                return value.asObjectId().getValue();
-            case DECIMAL128:
-                return value.asDecimal128().doubleValue();
-            case REGULAR_EXPRESSION:
-                return value.asRegularExpression().getPattern();
-            default:
-                return null;
-        }
+        return switch (value.getBsonType()) {
+            case ARRAY -> value.asArray().stream().map(MongoDeserializers::deserializeBsonValue).toArray();
+            case INT32 -> value.asInt32().getValue();
+            case INT64 -> value.asInt64().getValue();
+            case BINARY -> value.asBinary().getData();
+            case DOUBLE -> value.asDouble().getValue();
+            case STRING -> value.asString().getValue();
+            case SYMBOL -> value.asSymbol().getSymbol();
+            case BOOLEAN -> value.asBoolean().getValue();
+            case DOCUMENT -> MongoSKAdapter.deserializeValue(MongoSKAdapter.bsonDocumentToDocument(value.asDocument()));
+            case DATE_TIME -> value.asDateTime().getValue();
+            case TIMESTAMP -> value.asTimestamp().getValue();
+            case OBJECT_ID -> value.asObjectId().getValue();
+            case DECIMAL128 -> value.asDecimal128().doubleValue();
+            case REGULAR_EXPRESSION -> value.asRegularExpression().getPattern();
+            default -> null;
+        };
     }
 
 }

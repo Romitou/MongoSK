@@ -5,8 +5,8 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
+import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
-import ch.njol.skript.lang.ExpressionType;
 import ch.njol.util.coll.CollectionUtils;
 import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.elements.MongoSKDocument;
@@ -14,9 +14,9 @@ import org.bson.BSONException;
 import org.bson.Document;
 import org.bson.json.JsonParseException;
 import org.bukkit.event.Event;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 @Name("Mongo document JSON")
 @Description({
@@ -31,26 +31,26 @@ import javax.annotation.Nullable;
 @Since("2.0.0")
 public class ExprMongoDocumentJson extends SimplePropertyExpression<MongoSKDocument, String> {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.EXPRESSION, org.skriptlang.skript.registration.DefaultSyntaxInfos.Expression.builder(ExprMongoDocumentJson.class, String.class).addPatterns(ch.njol.skript.expressions.base.PropertyExpression.getPatterns("mongo[(db|sk)] json",
-            "mongoskdocuments")).priority(ExpressionType.PROPERTY.priority()).build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EXPRESSION,
+            PropertyExpression.infoBuilder(ExprMongoDocumentJson.class, String.class, "mongo[(db|sk)] json", "mongoskdocuments", false).build());
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public String convert(MongoSKDocument document) {
         return document.getBsonDocument().toJson();
     }
 
     @Override
-    public Class<?>[] acceptChange(@Nonnull Changer.ChangeMode mode) {
+    public Class<?>[] acceptChange(@NotNull Changer.ChangeMode mode) {
         if (mode == Changer.ChangeMode.SET)
             return CollectionUtils.array(String.class);
         return null;
     }
 
     @Override
-    public void change(@Nonnull final Event e, Object[] delta, @Nullable Changer.ChangeMode mode) {
+    public void change(@NotNull final Event e, Object[] delta, @Nullable Changer.ChangeMode mode) {
         if (delta == null)
             return;
         MongoSKDocument mongoSKDocument = getExpr().getSingle(e);
@@ -70,13 +70,13 @@ public class ExprMongoDocumentJson extends SimplePropertyExpression<MongoSKDocum
     }
 
     @Override
-    @Nonnull
+    @NotNull
     protected String getPropertyName() {
         return "mongosk json";
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public Class<? extends String> getReturnType() {
         return String.class;
     }

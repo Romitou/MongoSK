@@ -3,12 +3,12 @@ package fr.romitou.mongosk.adapters.codecs;
 import fr.romitou.mongosk.adapters.MongoSKCodec;
 import org.bson.Document;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 
 public class VectorCodec implements MongoSKCodec<Vector> {
-    @Nonnull
+    @NotNull
     @Override
     public Vector deserialize(Document document) throws StreamCorruptedException {
         Integer x = document.getInteger("x"),
@@ -19,7 +19,7 @@ public class VectorCodec implements MongoSKCodec<Vector> {
         return new Vector(x, y, z);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Document serialize(Vector vector) {
         Document document = new Document();
@@ -29,13 +29,13 @@ public class VectorCodec implements MongoSKCodec<Vector> {
         return document;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends Vector> getReturnType() {
         return Vector.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "vector";

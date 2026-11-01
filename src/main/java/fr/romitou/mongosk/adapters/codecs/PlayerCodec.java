@@ -4,13 +4,13 @@ import fr.romitou.mongosk.adapters.MongoSKCodec;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 import java.util.UUID;
 
 public class PlayerCodec implements MongoSKCodec<OfflinePlayer> {
-    @Nonnull
+    @NotNull
     @Override
     public OfflinePlayer deserialize(Document document) throws StreamCorruptedException {
         String rawUuid = document.getString("uuid");
@@ -24,7 +24,7 @@ public class PlayerCodec implements MongoSKCodec<OfflinePlayer> {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Document serialize(OfflinePlayer player) {
         Document document = new Document();
@@ -32,13 +32,13 @@ public class PlayerCodec implements MongoSKCodec<OfflinePlayer> {
         return document;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends OfflinePlayer> getReturnType() {
         return OfflinePlayer.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "player";

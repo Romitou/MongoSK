@@ -1,8 +1,5 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import org.skriptlang.skript.registration.DefaultSyntaxInfos;
-import ch.njol.skript.lang.ExpressionType;
-import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -12,6 +9,8 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import fr.romitou.mongosk.elements.MongoSKDocument;
 import org.bukkit.event.Event;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 @Name("Mongo document values")
 @Description({
@@ -23,8 +22,11 @@ import org.bukkit.event.Event;
 })
 public class ExprMongoValues extends SimpleExpression<Object> {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoValues.class, Object.class).addPatterns("mongo[(sk|db)] values of [document] %mongoskdocument%").priority(ExpressionType.SIMPLE.priority()).build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EXPRESSION, SyntaxInfo.Expression.builder(ExprMongoValues.class, Object.class)
+            .addPatterns("mongo[(sk|db)] values of [document] %mongoskdocument%")
+            .priority(SyntaxInfo.SIMPLE)
+            .build());
     }
 
     private Expression<MongoSKDocument> exprDocument;

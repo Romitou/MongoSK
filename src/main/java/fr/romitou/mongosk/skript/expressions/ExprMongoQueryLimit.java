@@ -5,13 +5,13 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
+import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
-import ch.njol.skript.lang.ExpressionType;
 import ch.njol.util.coll.CollectionUtils;
 import fr.romitou.mongosk.elements.MongoSKQuery;
 import org.bukkit.event.Event;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 @Name("Mongo query filter")
 @Description({
@@ -25,12 +25,12 @@ import javax.annotation.Nonnull;
 @Since("2.0.0")
 public class ExprMongoQueryLimit extends SimplePropertyExpression<MongoSKQuery, Number> {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.EXPRESSION, org.skriptlang.skript.registration.DefaultSyntaxInfos.Expression.builder(ExprMongoQueryLimit.class, Number.class).addPatterns(ch.njol.skript.expressions.base.PropertyExpression.getPatterns("mongo[(db|sk)] limit",
-            "mongoskqueries")).priority(ExpressionType.PROPERTY.priority()).build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EXPRESSION,
+            PropertyExpression.infoBuilder(ExprMongoQueryLimit.class, Number.class, "mongo[(db|sk)] limit", "mongoskqueries", false).build());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Number convert(MongoSKQuery query) {
         return query.getLimit();
@@ -48,7 +48,7 @@ public class ExprMongoQueryLimit extends SimplePropertyExpression<MongoSKQuery, 
     }
 
     @Override
-    public void change(@Nonnull Event e, Object[] delta, @Nonnull Changer.ChangeMode mode) {
+    public void change(@NotNull Event e, Object[] delta, @NotNull Changer.ChangeMode mode) {
         MongoSKQuery mongoSKQuery = getExpr().getSingle(e);
         if (mongoSKQuery == null || delta == null)
             return;
@@ -64,13 +64,13 @@ public class ExprMongoQueryLimit extends SimplePropertyExpression<MongoSKQuery, 
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends Number> getReturnType() {
         return Number.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected String getPropertyName() {
         return "mongo limit";

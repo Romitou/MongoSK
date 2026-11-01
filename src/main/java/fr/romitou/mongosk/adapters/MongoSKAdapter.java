@@ -11,12 +11,12 @@ import org.bson.Document;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.configuration.CodecConfigurationException;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.StreamCorruptedException;
 import java.util.*;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MongoSKAdapter {
@@ -33,7 +33,7 @@ public class MongoSKAdapter {
     private final static List<String> loadedCodecNames = new ArrayList<>();
     private final static Map<String, MongoSKCodec<?>> loadedCodecsMap = new HashMap<>();
     private final static Map<Class<?>, Optional<MongoSKCodec<?>>> loadedCodecsByClassMap = new ConcurrentHashMap<>();
-    private final static List<Class<? extends MongoSKCodec<?>>> availableCodecs = Arrays.asList(
+    private final static List<Class<? extends MongoSKCodec<?>>> availableCodecs = List.of(
         BiomeCodec.class,
         BlockCodec.class,
         ChunkCodec.class,
@@ -77,12 +77,11 @@ public class MongoSKAdapter {
                 LoggerHelper.info("Codec " + codecInstance.getName() + " is disabled, skipping registration.");
                 return;
             }
-            Class.forName(codecInstance.getReturnType().getCanonicalName());
             loadedCodecs.add(codecInstance);
             loadedCodecNames.add(codecInstance.getName());
             loadedCodecsMap.putIfAbsent(codecInstance.getName(), codecInstance);
             loadedCodecsByClassMap.clear();
-        } catch (NoClassDefFoundError | ClassNotFoundException e) {
+        } catch (NoClassDefFoundError e) {
             LoggerHelper.severe("Oops, the return class of the " + codec.getName() + " codec doesn't exists! Skipping registration.");
         } catch (ReflectiveOperationException e) {
             LoggerHelper.severe("Oops, cannot load the " + codec.getName() + " codec!", e);
@@ -113,9 +112,8 @@ public class MongoSKAdapter {
     }
 
     public static Object deserializeValue(Object value) {
-        if (!(value instanceof Document))
+        if (!(value instanceof Document doc))
             return value;
-        Document doc = (Document) value;
         if (!doc.containsKey(DOCUMENT_FIELD))
             return new MongoSKDocument(doc, null);
         String codecName = doc.getString(DOCUMENT_FIELD);
@@ -141,8 +139,8 @@ public class MongoSKAdapter {
     public static Object serializeObject(Object unsafeObject) {
         if (unsafeObject == null)
             return null;
-        if (unsafeObject instanceof MongoSKDocument)
-            return ((MongoSKDocument) unsafeObject).getBsonDocument();
+        if (unsafeObject instanceof MongoSKDocument document)
+            return document.getBsonDocument();
         LoggerHelper.debug("Searching codec for " + unsafeObject.getClass() + " class...");
         MongoSKCodec<Object> codec = MongoSKAdapter.getCodecByClass(unsafeObject.getClass());
         if (codec == null) {

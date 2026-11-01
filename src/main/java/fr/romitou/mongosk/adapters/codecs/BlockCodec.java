@@ -5,12 +5,12 @@ import fr.romitou.mongosk.utils.WorldCache;
 import org.bson.Document;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 
 public class BlockCodec implements MongoSKCodec<Block> {
-    @Nonnull
+    @NotNull
     @Override
     public Block deserialize(Document document) throws StreamCorruptedException {
         String worldName = document.getString("world");
@@ -25,7 +25,7 @@ public class BlockCodec implements MongoSKCodec<Block> {
         return world.getBlockAt(x, y, z);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Document serialize(Block block) {
         Document document = new Document();
@@ -36,13 +36,13 @@ public class BlockCodec implements MongoSKCodec<Block> {
         return document;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends Block> getReturnType() {
         return Block.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "block";

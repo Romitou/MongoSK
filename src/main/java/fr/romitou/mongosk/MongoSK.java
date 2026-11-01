@@ -1,64 +1,25 @@
 package fr.romitou.mongosk;
 
 import ch.njol.skript.Skript;
-import org.skriptlang.skript.addon.SkriptAddon;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import fr.romitou.mongosk.elements.MongoSKServer;
-import fr.romitou.mongosk.skript.SkriptTypes;
+import fr.romitou.mongosk.skript.MongoSKModule;
 import fr.romitou.mongosk.utils.WorldCache;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.event.Event;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.addon.SkriptAddon;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MongoSK extends JavaPlugin {
 
+    private static final int BSTATS_PLUGIN_ID = 8537;
     private static final List<MongoSKServer> mongoSKServers = new CopyOnWriteArrayList<>();
     private static MongoSK instance;
-    private static PluginManager pluginManager;
-    private static Plugin skriptPlugin;
-    private static SkriptAddon skriptAddon;
-
-    public boolean canLoad() {
-        // Make some safe checks to be sure Skript is installed, enabled, and ready to register this addon.
-        LoggerHelper.info("Checking the availability of Skript...");
-
-        pluginManager = this.getServer().getPluginManager();
-        skriptPlugin = pluginManager.getPlugin("Skript");
-
-        if (skriptPlugin == null) {
-            LoggerHelper.severe("Skript is not installed on your server!",
-                "MongoSK cannot work without Skript.",
-                "Please install Skript and restart your server."
-            );
-            return false;
-        }
-
-        if (!pluginManager.isPluginEnabled(skriptPlugin)) {
-            LoggerHelper.severe("Skript is not enabled on your server!",
-                "MongoSK cannot work without Skript.",
-                "Please enable Skript and restart your server."
-            );
-            return false;
-        }
-
-        try {
-            Skript.isAcceptRegistrations();
-        } catch (IllegalStateException e) {
-            LoggerHelper.severe("Skript is not ready to accept registrations!",
-                "MongoSK cannot work without Skript.",
-                "Please report this issue in our Discord server or on GitHub."
-            );
-            return false;
-        }
-
-        return true;
-    }
 
     @Override
     public void onEnable() {
@@ -66,37 +27,31 @@ public class MongoSK extends JavaPlugin {
 
         long start = System.currentTimeMillis();
 
-        // Load the configuration.
-        this.loadConfiguration();
+        this.saveDefaultConfig();
 
-        if (!this.canLoad()) {
-            pluginManager.disablePlugin(this);
+        if (!Skript.isAcceptRegistrations()) {
+            LoggerHelper.severe("Skript is not ready to accept registrations!",
+                "MongoSK cannot work without Skript.",
+                "Please check that Skript is enabled, and report this issue in our Discord server or on GitHub otherwise."
+            );
+            this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        // Register the SkriptAddon and try to load classes.
         LoggerHelper.info("Registration of the MongoSK syntaxes...");
         try {
-            // Skript.getAddonInstance() returns the addon of Skript itself, not ours: MongoSK must register its own
-            // addon, otherwise its classes are searched in the Skript jar and no syntax is registered.
-            ch.njol.skript.SkriptAddon legacyAddon = ch.njol.skript.Skript.registerAddon(this);
-            skriptAddon = legacyAddon;
-            // The types must be registered before the syntaxes which use them.
-            new SkriptTypes();
-            legacyAddon.loadClasses(
-                "fr.romitou.mongosk.skript",
-                "conditions", "effects", "events", "expressions", "sections"
-            );
-        } catch (IOException | LinkageError e) {
+            SkriptAddon addon = Skript.instance().registerAddon(MongoSK.class, this.getName());
+            addon.loadModules(new MongoSKModule());
+        } catch (LinkageError e) {
             LoggerHelper.severe("MongoSK could not load and register some syntax elements.",
-                "Try to update your version of Skript and MongoSK, and try again only with these two plugins.",
+                "Your version of Skript is probably not supported: please update it, and update MongoSK.",
                 "If the problem persists, please open an issue on GitHub.",
                 "More information about this exception: " + e.getMessage()
             );
+            this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        // Register MongoSK codecs.
         if (MongoSKAdapter.ADAPTERS_ENABLED) {
             LoggerHelper.info("Loading MongoSK adapters and codecs...");
             MongoSKAdapter.loadCodecs();
@@ -104,36 +59,23 @@ public class MongoSK extends JavaPlugin {
 
         LoggerHelper.info("MongoSK has been activated and the syntaxes has been loaded successfully in " + (System.currentTimeMillis() - start) + "ms!",
             "MongoSK version: " + this.getDescription().getVersion(),
-            "Skript version: " + skriptPlugin.getDescription().getVersion(),
+            "Skript version: " + Skript.getVersion(),
             "Server version: " + this.getServer().getVersion()
         );
         LoggerHelper.info("If you need help, go to GitHub or to our Discord: https://discord.com/invite/6jeQkRcMkk");
 
-        // Register Event Listeners
-        pluginManager.registerEvents(new WorldCache(), this);
+        this.getServer().getPluginManager().registerEvents(new WorldCache(), this);
 
-        // Register Metrics.
         // Learn more: https://bstats.org/getting-started
-        this.registerMetrics();
+        Metrics metrics = new Metrics(this, BSTATS_PLUGIN_ID);
+        metrics.addCustomChart(new SimplePie("skript_version", () -> Skript.getVersion().toString()));
+        metrics.addCustomChart(new SimplePie("adapters_enabled", () -> String.valueOf(MongoSKAdapter.ADAPTERS_ENABLED)));
     }
 
     @Override
     public void onDisable() {
-        this.closeAllConnections();
-    }
-
-    private void registerMetrics() {
-        Metrics metrics = new Metrics(this, 8537);
-        metrics.addCustomChart(new Metrics.SimplePie("skript_version", () -> Skript.getVersion().toString()));
-        metrics.addCustomChart(new Metrics.SimplePie("adapters_enabled", () -> String.valueOf(MongoSKAdapter.ADAPTERS_ENABLED)));
-    }
-
-    private void loadConfiguration() {
-        // Save the default config if not existent
-        this.saveDefaultConfig();
-    }
-
-    private void closeAllConnections() {
+        // Writes made just before the server stops must reach MongoDB before the clients are closed.
+        MongoRequest.awaitPending();
         mongoSKServers.forEach(MongoSKServer::close);
         mongoSKServers.clear();
     }
@@ -163,10 +105,6 @@ public class MongoSK extends JavaPlugin {
 
     public static MongoSK getInstance() {
         return instance;
-    }
-
-    public static SkriptAddon getAddonInstance() {
-        return skriptAddon;
     }
 
 }

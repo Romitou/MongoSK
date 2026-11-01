@@ -4,17 +4,15 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
-import ch.njol.util.Kleenean;
 import fr.romitou.mongosk.MongoSK;
-import fr.romitou.mongosk.SubscriberHelpers;
 import fr.romitou.mongosk.elements.MongoSKDatabase;
 import org.bukkit.event.Event;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 @Name("Drop Mongo database")
 @Description({
@@ -27,35 +25,35 @@ import javax.annotation.Nullable;
     "drop mongo database {mydatabase}"
 })
 @Since("2.0.3")
-public class EffDropMongoDatabase extends Effect {
+public class EffDropMongoDatabase extends MongoEffect {
 
     private final static boolean CAN_DROP = MongoSK.getInstance().getConfig().getBoolean("allow-drop.database", false);
 
-    static {
+    public static void register(SyntaxRegistry registry) {
         if (CAN_DROP)
-            fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.EFFECT, org.skriptlang.skript.registration.SyntaxInfo.builder(EffDropMongoDatabase.class).addPatterns("drop [the] mongo[(sk|db)] database %mongoskdatabase%").build());
+            registry.register(SyntaxRegistry.EFFECT, SyntaxInfo.builder(EffDropMongoDatabase.class)
+                .addPatterns("drop [the] mongo[(sk|db)] database %mongoskdatabase%")
+                .build());
     }
 
     private Expression<MongoSKDatabase> exprMongoSKDatabase;
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
+    protected boolean load(Expression<?>[] exprs, int matchedPattern, SkriptParser.ParseResult parseResult) {
         exprMongoSKDatabase = (Expression<MongoSKDatabase>) exprs[0];
         return true;
     }
 
     @Override
-    protected void execute(@Nonnull Event e) {
+    protected @Nullable Request<?> prepare(Event e) {
         MongoSKDatabase mongoSKDatabase = exprMongoSKDatabase.getSingle(e);
         if (mongoSKDatabase == null)
-            return;
-        SubscriberHelpers.ObservableSubscriber<Void> voidSubscriber = new SubscriberHelpers.OperationSubscriber<>();
-        mongoSKDatabase.getMongoDatabase().drop().subscribe(voidSubscriber);
-        voidSubscriber.await();
+            return null;
+        return Request.withoutResult(mongoSKDatabase.getMongoDatabase().drop());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String toString(@Nullable Event e, boolean debug) {
         return "drop the mongo database " + exprMongoSKDatabase.toString(e, debug);

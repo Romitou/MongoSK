@@ -1,14 +1,14 @@
 package fr.romitou.mongosk.adapters;
 
 import org.bson.Document;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.StreamCorruptedException;
 
 public interface MongoSKCodec<T> {
 
-    @Nonnull
+    @NotNull
     T deserialize(Document document) throws StreamCorruptedException;
 
     /**
@@ -17,10 +17,10 @@ public interface MongoSKCodec<T> {
     @Nullable
     Document serialize(T object);
 
-    @Nonnull
+    @NotNull
     Class<? extends T> getReturnType();
 
-    @Nonnull
+    @NotNull
     String getName();
 
 }

@@ -7,10 +7,10 @@ import java.io.StreamCorruptedException;
 public class BinaryUtils {
 
     public static byte[] getBinaryData(Object unsafeBinary) throws StreamCorruptedException {
-        if (unsafeBinary instanceof byte[])
-            return (byte[]) unsafeBinary;
-        else if (unsafeBinary instanceof Binary)
-            return ((Binary) unsafeBinary).getData();
+        if (unsafeBinary instanceof byte[] bytes)
+            return bytes;
+        if (unsafeBinary instanceof Binary binary)
+            return binary.getData();
         throw new StreamCorruptedException("Cannot retrieve valid binary from document!");
     }
 

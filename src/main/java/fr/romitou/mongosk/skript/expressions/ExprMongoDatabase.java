@@ -1,8 +1,5 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import org.skriptlang.skript.registration.DefaultSyntaxInfos;
-import ch.njol.skript.lang.ExpressionType;
-import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -15,9 +12,10 @@ import com.mongodb.reactivestreams.client.MongoDatabase;
 import fr.romitou.mongosk.elements.MongoSKDatabase;
 import fr.romitou.mongosk.elements.MongoSKServer;
 import org.bukkit.event.Event;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 @Name("Mongo database")
 @Description({
@@ -31,8 +29,11 @@ import javax.annotation.Nullable;
 @Since("2.0.0")
 public class ExprMongoDatabase extends SimpleExpression<MongoSKDatabase> {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoDatabase.class, MongoSKDatabase.class).addPatterns("[the] mongo[(sk|db)] database [named] %string% (of|from) %mongoskserver%").priority(ExpressionType.SIMPLE.priority()).build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EXPRESSION, SyntaxInfo.Expression.builder(ExprMongoDatabase.class, MongoSKDatabase.class)
+            .addPatterns("[the] mongo[(sk|db)] database [named] %string% (of|from) %mongoskserver%")
+            .priority(SyntaxInfo.SIMPLE)
+            .build());
     }
 
     private Expression<String> exprDatabaseName;
@@ -40,14 +41,14 @@ public class ExprMongoDatabase extends SimpleExpression<MongoSKDatabase> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] exprs, int matchedPattern, @Nonnull Kleenean isDelayed, @Nonnull SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         exprDatabaseName = (Expression<String>) exprs[0];
         exprMongoSKServer = (Expression<MongoSKServer>) exprs[1];
         return true;
     }
 
     @Override
-    protected MongoSKDatabase[] get(@Nonnull final Event e) {
+    protected MongoSKDatabase[] get(@NotNull final Event e) {
         String databaseName = exprDatabaseName.getSingle(e);
         MongoSKServer mongoSKServer = exprMongoSKServer.getSingle(e);
         if (databaseName == null || mongoSKServer == null)
@@ -64,13 +65,13 @@ public class ExprMongoDatabase extends SimpleExpression<MongoSKDatabase> {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public Class<? extends MongoSKDatabase> getReturnType() {
         return MongoSKDatabase.class;
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public String toString(@Nullable Event e, boolean debug) {
         return "mongosk database named " + exprDatabaseName.toString(e, debug) + " from " + exprMongoSKServer.toString(e, debug);
     }

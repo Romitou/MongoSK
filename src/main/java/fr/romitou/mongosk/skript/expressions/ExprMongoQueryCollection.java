@@ -5,14 +5,14 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
+import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
-import ch.njol.skript.lang.ExpressionType;
 import ch.njol.util.coll.CollectionUtils;
 import fr.romitou.mongosk.elements.MongoSKCollection;
 import fr.romitou.mongosk.elements.MongoSKQuery;
 import org.bukkit.event.Event;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 @Name("Mongo query collection")
 @Description({
@@ -26,12 +26,12 @@ import javax.annotation.Nonnull;
 @Since("2.0.0")
 public class ExprMongoQueryCollection extends SimplePropertyExpression<MongoSKQuery, MongoSKCollection> {
 
-    static {
-        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.EXPRESSION, org.skriptlang.skript.registration.DefaultSyntaxInfos.Expression.builder(ExprMongoQueryCollection.class, MongoSKCollection.class).addPatterns(ch.njol.skript.expressions.base.PropertyExpression.getPatterns("mongo[(db|sk)] collection",
-            "mongoskqueries")).priority(ExpressionType.PROPERTY.priority()).build());
+    public static void register(SyntaxRegistry registry) {
+        registry.register(SyntaxRegistry.EXPRESSION,
+            PropertyExpression.infoBuilder(ExprMongoQueryCollection.class, MongoSKCollection.class, "mongo[(db|sk)] collection", "mongoskqueries", false).build());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public MongoSKCollection convert(MongoSKQuery query) {
         return query.getMongoSKCollection();
@@ -49,7 +49,7 @@ public class ExprMongoQueryCollection extends SimplePropertyExpression<MongoSKQu
     }
 
     @Override
-    public void change(@Nonnull Event e, Object[] delta, @Nonnull Changer.ChangeMode mode) {
+    public void change(@NotNull Event e, Object[] delta, @NotNull Changer.ChangeMode mode) {
         MongoSKQuery mongoSKQuery = getExpr().getSingle(e);
         if (mongoSKQuery == null || delta == null)
             return;
@@ -59,13 +59,13 @@ public class ExprMongoQueryCollection extends SimplePropertyExpression<MongoSKQu
         mongoSKQuery.setMongoSKCollection((MongoSKCollection) delta[0]);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends MongoSKCollection> getReturnType() {
         return MongoSKCollection.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected String getPropertyName() {
         return "mongo collection";

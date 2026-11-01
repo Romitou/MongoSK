@@ -3,12 +3,12 @@ package fr.romitou.mongosk.adapters.codecs;
 import ch.njol.skript.util.Date;
 import fr.romitou.mongosk.adapters.MongoSKCodec;
 import org.bson.Document;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 
 public class DateCodec implements MongoSKCodec<Date> {
-    @Nonnull
+    @NotNull
     @Override
     public Date deserialize(Document document) throws StreamCorruptedException {
         Long timestamp = document.getLong("timestamp");
@@ -17,7 +17,7 @@ public class DateCodec implements MongoSKCodec<Date> {
         return new Date(timestamp);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Document serialize(Date date) {
         Document document = new Document();
@@ -25,13 +25,13 @@ public class DateCodec implements MongoSKCodec<Date> {
         return document;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends Date> getReturnType() {
         return Date.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "date";

@@ -31,44 +31,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        skript-version: ['2.17.1', '2.16.2', '2.15.4', '2.14.3', '2.13.2']
-        mc-version: ['26.3', '26.2', '26.1', '1.21', '1.20']
+        # The latest three stable versions of Skript, on the versions of Minecraft they support among the latest three.
         include:
-          # Gradle 8.7, used by Skript 2.13.2, cannot run on Java 25.
-          - skript-version: '2.13.2'
-            java-version: '21'
-        exclude:
-          # Skript 2.17.1 dropped support for Minecraft 1.20
-          - skript-version: '2.17.1'
-            mc-version: '1.20'
-          # Skript 2.16.2 does not support Minecraft 26.3 or 1.20
-          - skript-version: '2.16.2'
-            mc-version: '26.3'
-          - skript-version: '2.16.2'
-            mc-version: '1.20'
-          # Skript 2.15.4 supports Minecraft 1.21 to 26.1
-          - skript-version: '2.15.4'
-            mc-version: '26.3'
-          - skript-version: '2.15.4'
-            mc-version: '26.2'
-          - skript-version: '2.15.4'
-            mc-version: '1.20'
-          # Skript 2.14.3 supports Minecraft 1.21 only
-          - skript-version: '2.14.3'
-            mc-version: '26.3'
-          - skript-version: '2.14.3'
-            mc-version: '26.2'
-          - skript-version: '2.14.3'
-            mc-version: '26.1'
-          - skript-version: '2.14.3'
-            mc-version: '1.20'
-          # Skript 2.13.2 supports Minecraft 1.20 and 1.21 only
-          - skript-version: '2.13.2'
-            mc-version: '26.3'
-          - skript-version: '2.13.2'
-            mc-version: '26.2'
-          - skript-version: '2.13.2'
-            mc-version: '26.1'
+          - { skript-version: '2.17.1', mc-version: '26.3' }
+          - { skript-version: '2.17.1', mc-version: '26.2' }
+          - { skript-version: '2.17.1', mc-version: '26.1' }
+          - { skript-version: '2.16.2', mc-version: '26.2' }
+          - { skript-version: '2.16.2', mc-version: '26.1' }
+          - { skript-version: '2.15.4', mc-version: '26.1' }
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -88,11 +58,11 @@ jobs:
         run: |
           mongoimport --host localhost --port 27017 --db testdb --collection players --file src/test/resources/fixtures/players.json
 
-      - name: Set up JDK ${{ matrix.java-version || '25' }}
+      - name: Set up JDK 25
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: ${{ matrix.java-version || '25' }}
+          java-version: '25'
 
       - name: Run tests with Skript ${{ matrix.skript-version }} on Minecraft ${{ matrix.mc-version }}
         run: .github/scripts/run-skript-tests.sh ${{ matrix.skript-version }} ${{ matrix.mc-version }} src/test/resources build/libs

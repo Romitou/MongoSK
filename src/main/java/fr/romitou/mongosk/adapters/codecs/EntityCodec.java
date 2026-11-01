@@ -5,8 +5,8 @@ import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.StreamCorruptedException;
 import java.util.UUID;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
  * documents) unchanged, offline players are retrieved on deserialization, which is why this codec returns an Object.
  */
 public class EntityCodec implements MongoSKCodec<Object> {
-    @Nonnull
+    @NotNull
     @Override
     public Object deserialize(Document document) throws StreamCorruptedException {
         String id = document.getString("id");
@@ -38,7 +38,7 @@ public class EntityCodec implements MongoSKCodec<Object> {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Document serialize(Object entity) {
         Document document = new Document();
@@ -46,13 +46,13 @@ public class EntityCodec implements MongoSKCodec<Object> {
         return document;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<?> getReturnType() {
         return Entity.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "entity";

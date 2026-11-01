@@ -6,9 +6,9 @@ import ch.njol.skript.variables.SerializedVariable;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import fr.romitou.mongosk.adapters.MongoSKCodec;
 import org.bson.Document;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.StreamCorruptedException;
 
 /**
@@ -25,7 +25,7 @@ public abstract class BinaryCodec<T> implements MongoSKCodec<T> {
         this.name = name;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public T deserialize(Document document) throws StreamCorruptedException {
         Object unsafeObject = document.get("binary");
@@ -55,13 +55,13 @@ public abstract class BinaryCodec<T> implements MongoSKCodec<T> {
         return document;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends T> getReturnType() {
         return clazz;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return name;
