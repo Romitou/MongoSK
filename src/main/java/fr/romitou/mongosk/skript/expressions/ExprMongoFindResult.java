@@ -48,7 +48,7 @@ public class ExprMongoFindResult extends SimpleExpression<MongoSKDocument> {
     private Expression<MongoSKFilter> exprMongoSKFilter;
     private Expression<MongoSKCollection> exprMongoSKCollection;
     private Expression<MongoSKQuery> exprMongoSKQuery;
-    private Boolean isFirstDocument;
+    private boolean isFirstDocument;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -125,6 +125,7 @@ public class ExprMongoFindResult extends SimpleExpression<MongoSKDocument> {
                     .subscribe(updateSubscriber);
                 updateSubscriber.await();
                 LoggerHelper.debug("Simple replace query executed in " + (System.currentTimeMillis() - replaceQuery) + "ms.");
+                break;
             default:
                 break;
         }
@@ -159,11 +160,11 @@ public class ExprMongoFindResult extends SimpleExpression<MongoSKDocument> {
     @Override
     @Nonnull
     public String toString(@Nullable final Event e, final boolean debug) {
-        if (e != null) {
-            MongoSKQuery query = buildQuery(e);
-            if (query != null)
-                return (isFirstDocument ? "first mongosk document" : "all mongosk documents") + query.getDisplay();
-        }
-        return (isFirstDocument ? "first mongosk document" : "all mongosk documents") + " of a query";
+        String prefix = isFirstDocument ? "first mongosk document" : "all mongosk documents";
+        if (exprMongoSKQuery != null)
+            return prefix + " of query " + exprMongoSKQuery.toString(e, debug);
+        return prefix
+            + (exprMongoSKFilter == null ? "" : " with filter " + exprMongoSKFilter.toString(e, debug))
+            + " of collection " + exprMongoSKCollection.toString(e, debug);
     }
 }
