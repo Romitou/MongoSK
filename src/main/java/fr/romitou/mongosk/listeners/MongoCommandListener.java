@@ -22,6 +22,9 @@ public class MongoCommandListener implements CommandListener {
     }
 
     public void commandStarted(CommandStartedEvent event) {
+        // Building the events is costly (the command is converted), so skip it if no script listens to them.
+        if (MongoCommandStarted.getHandlerList().getRegisteredListeners().length == 0)
+            return;
         MONGOSK.callEvent(new MongoCommandStarted(mongoSKServer, event.getCommand(), event.getDatabaseName()));
     }
 
@@ -31,6 +34,8 @@ public class MongoCommandListener implements CommandListener {
      * @param event the event
      */
     public void commandSucceeded(CommandSucceededEvent event) {
+        if (MongoCommandSucceeded.getHandlerList().getRegisteredListeners().length == 0)
+            return;
         MONGOSK.callEvent(new MongoCommandSucceeded(mongoSKServer, event.getResponse(), event.getElapsedTime(TimeUnit.MILLISECONDS)));
     }
 
@@ -40,6 +45,8 @@ public class MongoCommandListener implements CommandListener {
      * @param event the event
      */
     public void commandFailed(CommandFailedEvent event) {
+        if (MongoCommandFailed.getHandlerList().getRegisteredListeners().length == 0)
+            return;
         MONGOSK.callEvent(new MongoCommandFailed(mongoSKServer, event.getThrowable(), event.getElapsedTime(TimeUnit.MILLISECONDS)));
     }
 
