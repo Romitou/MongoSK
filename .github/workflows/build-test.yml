@@ -33,6 +33,10 @@ jobs:
       matrix:
         skript-version: ['2.17.1', '2.16.2', '2.15.4', '2.14.3', '2.13.2']
         mc-version: ['26.3', '26.2', '26.1', '1.21', '1.20']
+        include:
+          # Gradle 8.7, used by Skript 2.13.2, cannot run on Java 25.
+          - skript-version: '2.13.2'
+            java-version: '21'
         exclude:
           # Skript 2.17.1 dropped support for Minecraft 1.20
           - skript-version: '2.17.1'
@@ -84,11 +88,11 @@ jobs:
         run: |
           mongoimport --host localhost --port 27017 --db testdb --collection players --file src/test/resources/fixtures/players.json
 
-      - name: Set up JDK 25
+      - name: Set up JDK ${{ matrix.java-version || '25' }}
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: '25'
+          java-version: ${{ matrix.java-version || '25' }}
 
       - name: Run tests with Skript ${{ matrix.skript-version }} on Minecraft ${{ matrix.mc-version }}
         run: .github/scripts/run-skript-tests.sh ${{ matrix.skript-version }} ${{ matrix.mc-version }} src/test/resources build/libs
