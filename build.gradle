@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'com.gradleup.shadow' version '9.0.0-beta4'
+    id 'com.gradleup.shadow' version '9.2.2'
 }
 
 group 'fr.romitou.mongosk'
@@ -21,8 +21,8 @@ dependencies {
         exclude module: 'worldguard-legacy'
     }
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.13.4'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.13.4'
     testImplementation group: 'io.papermc.paper', name: 'paper-api', version: '1.21.11-R0.1-SNAPSHOT'
     testImplementation group: 'com.github.SkriptLang', name: 'Skript', version: '2.15.0', {
         exclude module: 'Vault'
@@ -37,7 +37,8 @@ test {
 }
 
 compileJava {
-    options.compilerArgs += ['-source', '1.8', '-target', '1.8']
+    // Skript 2.10, the oldest supported version, requires Java 17.
+    options.compilerArgs += ['-source', '17', '-target', '17']
     options.encoding = 'UTF-8'
 }
 
