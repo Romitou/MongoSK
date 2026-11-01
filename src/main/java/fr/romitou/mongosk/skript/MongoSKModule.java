@@ -8,11 +8,18 @@ import fr.romitou.mongosk.skript.effects.EffCreateMongoCollection;
 import fr.romitou.mongosk.skript.effects.EffDropMongoCollection;
 import fr.romitou.mongosk.skript.effects.EffDropMongoDatabase;
 import fr.romitou.mongosk.skript.effects.EffManageMongoDocument;
+import fr.romitou.mongosk.skript.effects.EffMongoCommand;
+import fr.romitou.mongosk.skript.effects.EffMongoCount;
+import fr.romitou.mongosk.skript.effects.EffMongoDistinct;
+import fr.romitou.mongosk.skript.effects.EffMongoFind;
+import fr.romitou.mongosk.skript.effects.EffMongoList;
+import fr.romitou.mongosk.skript.effects.EffMongoModifyQuery;
 import fr.romitou.mongosk.skript.events.MongoCommandFailed;
 import fr.romitou.mongosk.skript.events.MongoCommandStarted;
 import fr.romitou.mongosk.skript.events.MongoCommandSucceeded;
 import fr.romitou.mongosk.skript.expressions.*;
 import fr.romitou.mongosk.skript.sections.SectMongoDocument;
+import fr.romitou.mongosk.skript.sections.SectMongoQuery;
 import fr.romitou.mongosk.skript.sections.SectMongoValue;
 import org.skriptlang.skript.addon.AddonModule;
 import org.skriptlang.skript.addon.SkriptAddon;
@@ -43,21 +50,21 @@ public final class MongoSKModule implements AddonModule {
             EffDropMongoCollection::register,
             EffDropMongoDatabase::register,
             EffManageMongoDocument::register,
+            EffMongoCommand::register,
+            EffMongoCount::register,
+            EffMongoDistinct::register,
+            EffMongoFind::register,
+            EffMongoList::register,
+            EffMongoModifyQuery::register,
             // Expressions
-            ExprAllMongoCollections::register,
-            ExprAllMongoDatabases::register,
             ExprLastMongoError::register,
             ExprMongoCollection::register,
             ExprMongoCollectionDatabase::register,
-            ExprMongoCollectionDocCount::register,
-            ExprMongoCommandResult::register,
             ExprMongoDatabase::register,
-            ExprMongoDistinctResult::register,
             ExprMongoDocumentField::register,
             ExprMongoDocumentJson::register,
             ExprMongoEmbeddedValue::register,
             ExprMongoFilter::register,
-            ExprMongoFindResult::register,
             ExprMongoJoinedFilters::register,
             ExprMongoJoinedSorts::register,
             ExprMongoKeys::register,
@@ -78,6 +85,7 @@ public final class MongoSKModule implements AddonModule {
             ExprNewMongoQuery::register,
             // Sections
             SectMongoDocument::register,
+            SectMongoQuery::register,
             SectMongoValue::register
         );
 

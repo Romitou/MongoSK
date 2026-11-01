@@ -74,6 +74,8 @@ public class MongoSK extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        // Writes made just before the server stops must reach MongoDB before the clients are closed.
+        MongoRequest.awaitPending();
         mongoSKServers.forEach(MongoSKServer::close);
         mongoSKServers.clear();
     }

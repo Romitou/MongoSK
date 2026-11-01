@@ -34,7 +34,9 @@ import java.util.List;
 @Examples({
     "command test:",
     "	trigger:",
-    "		set {_doc} to first mongo document from {mycollection}",
+    "		set {_query} to a new mongo query with:",
+    "			collection: {mycollection}",
+    "		execute mongo query {_query} and store the result in {_doc}",
     "		if mongo value \"player\" of {_doc} is not set:",
     "			set mongo value \"player\" of {_doc} to player",
     "		set {_player} to mongo value \"player\" of {_doc}",

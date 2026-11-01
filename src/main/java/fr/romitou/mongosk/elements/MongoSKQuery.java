@@ -1,5 +1,6 @@
 package fr.romitou.mongosk.elements;
 
+import com.mongodb.client.model.CountOptions;
 import com.mongodb.client.model.Filters;
 import com.mongodb.reactivestreams.client.FindPublisher;
 import com.mongodb.reactivestreams.client.MongoCollection;
@@ -102,10 +103,18 @@ public class MongoSKQuery {
     }
 
 
+    /**
+     * @return the collection targeted by this query
+     * @throws IllegalStateException if this query has no collection
+     */
+    public MongoCollection<Document> requireMongoCollection() {
+        if (mongoSKCollection == null)
+            throw new IllegalStateException("The Mongo query has no collection");
+        return mongoSKCollection.getMongoCollection();
+    }
+
     public FindPublisher<Document> buildFindPublisher() {
-        MongoCollection<Document> mongoCollection = getMongoSKCollection().getMongoCollection();
-        FindPublisher<Document> findPublisher;
-        findPublisher = (getMongoSKFilter() == null) ? mongoCollection.find() : mongoCollection.find(getMongoSKFilter().getFilter());
+        FindPublisher<Document> findPublisher = requireMongoCollection().find(getMongoSKFilter().getFilter());
         if (getLimit() != null)
             findPublisher = findPublisher.limit(getLimit());
         if (getSkip() != null)
@@ -119,6 +128,18 @@ public class MongoSKQuery {
         if (getMongoSKSort() != null)
             findPublisher = findPublisher.sort(getMongoSKSort().getSort());
         return findPublisher;
+    }
+
+    /**
+     * @return the options limiting the documents counted by this query
+     */
+    public CountOptions buildCountOptions() {
+        CountOptions countOptions = new CountOptions();
+        if (getLimit() != null)
+            countOptions.limit(getLimit());
+        if (getSkip() != null)
+            countOptions.skip(getSkip());
+        return countOptions;
     }
 
     public String getDisplay() {

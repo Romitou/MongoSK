@@ -8,7 +8,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
-import fr.romitou.mongosk.SubscriberHelpers;
+import fr.romitou.mongosk.skript.effects.MongoEffect;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,12 +17,12 @@ import org.skriptlang.skript.registration.SyntaxRegistry;
 
 @Name("Last Mongo error")
 @Description({
-    "Returns the error message of the last Mongo request, or nothing if it succeeded.",
+    "Returns the error message of the last Mongo request of the current event, or nothing if it succeeded.",
     "It allows to distinguish a request that failed from a request that returned no result.",
-    "It is reset each time a new request is executed."
+    "It is reset each time a new request is executed, and it is not shared between events: a request made in a function must be checked in this function."
 })
 @Examples({
-    "set {_docs::*} to all mongo documents of collection {mycollection}",
+    "execute mongo query {_query} and store the results in {_docs::*}",
     "if last mongo error is set:",
     "\tbroadcast \"The request failed: %last mongo error%\""
 })
@@ -43,7 +43,7 @@ public class ExprLastMongoError extends SimpleExpression<String> {
 
     @Override
     protected String[] get(@NotNull Event e) {
-        String lastError = SubscriberHelpers.getLastError();
+        String lastError = MongoEffect.getLastError(e);
         return lastError == null ? new String[0] : new String[]{lastError};
     }
 

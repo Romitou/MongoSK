@@ -46,7 +46,7 @@ timeouts:
     connect: 10000
     # The timeout for reading the data received from the server.
     read: 10000
-    # The maximum time to wait for a request to complete. As the requests are executed synchronously, this prevents
-    # a request that never completes from freezing your server. If the timeout is reached, the request is considered
-    # failed (see the 'last mongo error' expression).
+    # The maximum time to wait for a request to complete. If the timeout is reached, the request is cancelled and
+    # considered failed (see the 'last mongo error' expression), and the script continues. A write that was already sent
+    # may still be applied by MongoDB. Requests do not block the server: only the script waits for them.
     request: 30000

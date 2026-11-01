@@ -4,12 +4,9 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
-import ch.njol.util.Kleenean;
 import fr.romitou.mongosk.MongoSK;
-import fr.romitou.mongosk.SubscriberHelpers;
 import fr.romitou.mongosk.elements.MongoSKDatabase;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +25,7 @@ import org.skriptlang.skript.registration.SyntaxRegistry;
     "drop mongo database {mydatabase}"
 })
 @Since("2.0.3")
-public class EffDropMongoDatabase extends Effect {
+public class EffDropMongoDatabase extends MongoEffect {
 
     private final static boolean CAN_DROP = MongoSK.getInstance().getConfig().getBoolean("allow-drop.database", false);
 
@@ -43,19 +40,17 @@ public class EffDropMongoDatabase extends Effect {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
+    protected boolean load(Expression<?>[] exprs, int matchedPattern, SkriptParser.ParseResult parseResult) {
         exprMongoSKDatabase = (Expression<MongoSKDatabase>) exprs[0];
         return true;
     }
 
     @Override
-    protected void execute(@NotNull Event e) {
+    protected @Nullable Request<?> prepare(Event e) {
         MongoSKDatabase mongoSKDatabase = exprMongoSKDatabase.getSingle(e);
         if (mongoSKDatabase == null)
-            return;
-        SubscriberHelpers.ObservableSubscriber<Void> voidSubscriber = new SubscriberHelpers.OperationSubscriber<>();
-        mongoSKDatabase.getMongoDatabase().drop().subscribe(voidSubscriber);
-        voidSubscriber.await();
+            return null;
+        return Request.withoutResult(mongoSKDatabase.getMongoDatabase().drop());
     }
 
     @NotNull

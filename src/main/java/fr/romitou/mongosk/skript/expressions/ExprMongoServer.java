@@ -16,8 +16,8 @@ import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
 import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.MongoSK;
-import fr.romitou.mongosk.SubscriberHelpers;
 import fr.romitou.mongosk.elements.MongoSKServer;
+import fr.romitou.mongosk.skript.effects.MongoEffect;
 import fr.romitou.mongosk.listeners.MongoCommandListener;
 import org.bson.UuidRepresentation;
 import org.bukkit.event.Event;
@@ -78,23 +78,23 @@ public class ExprMongoServer extends SimpleExpression<MongoSKServer> {
             MongoSKServer openServer = MongoSK.getOpenServer(rawConnectionString);
             if (openServer != null)
                 return new MongoSKServer[]{openServer};
-            MongoSKServer mongoSKServer = createServer(rawConnectionString);
+            MongoSKServer mongoSKServer = createServer(e, rawConnectionString);
             return mongoSKServer == null ? new MongoSKServer[0] : new MongoSKServer[]{mongoSKServer};
         }
     }
 
     @Nullable
-    private MongoSKServer createServer(String rawConnectionString) {
+    private MongoSKServer createServer(Event e, String rawConnectionString) {
         // Validate the connection string.
         ConnectionString connectionString;
         try {
             connectionString = new ConnectionString(rawConnectionString);
         } catch (IllegalArgumentException ex) {
-            SubscriberHelpers.setLastError(ex.getMessage());
+            MongoEffect.setLastError(e, ex.getMessage());
             LoggerHelper.severe("Your connection string is invalid: " + ex.getMessage().toLowerCase());
             return null;
         } catch (MongoClientException ex) {
-            SubscriberHelpers.setLastError(ex.getMessage());
+            MongoEffect.setLastError(e, ex.getMessage());
             LoggerHelper.severe("An error occurred while creating the client: " + ex.getMessage().toLowerCase());
             return null;
         }

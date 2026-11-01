@@ -30,8 +30,10 @@ import java.util.Arrays;
 })
 @Examples({
     "set {_filter} to a new mongosk filter where field \"example\" is true",
-    "set {_doc} to first mongo document with filter {_filter} of collection {mycollection}",
-    "set {_docs::*} to all mongo documents with mongosk filter where \"example\" equals true of collection {mycollection}"
+    "set {_query} to a new mongo query with:",
+    "\tcollection: {mycollection}",
+    "\tfilter: {_filter}",
+    "execute mongo query {_query} and store the results in {_docs::*}"
 })
 @Since("2.0.0")
 public class ExprMongoFilter extends SimpleExpression<MongoSKFilter> {
