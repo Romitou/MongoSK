@@ -9,12 +9,31 @@ import java.util.Objects;
 public class MongoSKServer {
 
     private final String displayedName;
+    private final String connectionString;
     private final MongoClient mongoClient;
+    private volatile boolean closed;
 
-    public MongoSKServer(String displayedName, MongoClient mongoClient) {
+    public MongoSKServer(String displayedName, String connectionString, MongoClient mongoClient) {
         this.displayedName = displayedName;
+        this.connectionString = connectionString;
         this.mongoClient = mongoClient;
         MongoSK.registerServer(this);
+    }
+
+    public String getConnectionString() {
+        return connectionString;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
+
+    public synchronized void close() {
+        if (closed)
+            return;
+        closed = true;
+        MongoSK.unregisterServer(this);
+        mongoClient.close();
     }
 
     public String getDisplayedName() {

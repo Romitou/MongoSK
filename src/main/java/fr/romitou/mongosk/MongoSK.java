@@ -2,7 +2,6 @@ package fr.romitou.mongosk;
 
 import ch.njol.skript.Skript;
 import org.skriptlang.skript.addon.SkriptAddon;
-import com.mongodb.reactivestreams.client.MongoClient;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import fr.romitou.mongosk.elements.MongoSKServer;
 import fr.romitou.mongosk.skript.SkriptTypes;
@@ -11,14 +10,15 @@ import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MongoSK extends JavaPlugin {
 
-    private static final List<MongoSKServer> mongoSKServers = new ArrayList<>();
+    private static final List<MongoSKServer> mongoSKServers = new CopyOnWriteArrayList<>();
     private static MongoSK instance;
     private static PluginManager pluginManager;
     private static Plugin skriptPlugin;
@@ -134,10 +134,8 @@ public class MongoSK extends JavaPlugin {
     }
 
     private void closeAllConnections() {
-        mongoSKServers
-            .stream()
-            .map(MongoSKServer::getMongoClient)
-            .forEach(MongoClient::close);
+        mongoSKServers.forEach(MongoSKServer::close);
+        mongoSKServers.clear();
     }
 
     public void callEvent(Event event) {
@@ -148,6 +146,19 @@ public class MongoSK extends JavaPlugin {
 
     public static void registerServer(MongoSKServer mongoSKServer) {
         mongoSKServers.add(mongoSKServer);
+    }
+
+    public static void unregisterServer(MongoSKServer mongoSKServer) {
+        mongoSKServers.remove(mongoSKServer);
+    }
+
+    @Nullable
+    public static MongoSKServer getOpenServer(String connectionString) {
+        for (MongoSKServer mongoSKServer : mongoSKServers) {
+            if (!mongoSKServer.isClosed() && connectionString.equals(mongoSKServer.getConnectionString()))
+                return mongoSKServer;
+        }
+        return null;
     }
 
     public static MongoSK getInstance() {
