@@ -14,14 +14,14 @@ public class BiomeCodec implements MongoSKCodec<Biome> {
         String name = document.getString("name");
         if (name == null)
             throw new StreamCorruptedException("Cannot retrieve name field from document!");
-        return Biome.valueOf(name);
+        return org.bukkit.Registry.BIOME.get(org.bukkit.NamespacedKey.minecraft(name.toLowerCase()));
     }
 
     @Nonnull
     @Override
     public Document serialize(Biome biome) {
         Document document = new Document();
-        document.put("name", biome.name());
+        document.put("name", biome.getKey().getKey());
         return document;
     }
 

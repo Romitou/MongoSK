@@ -21,7 +21,7 @@ public class TimespanCodec implements MongoSKCodec<Timespan> {
     @Override
     public Document serialize(Timespan timespan) {
         Document document = new Document();
-        document.put("millis", timespan.getMilliSeconds());
+        document.put("millis", timespan.getDuration().toMillis());
         return document;
     }
 

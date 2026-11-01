@@ -21,7 +21,7 @@ public class DateCodec implements MongoSKCodec<Date> {
     @Override
     public Document serialize(Date date) {
         Document document = new Document();
-        document.put("timestamp", date.getTimestamp());
+        document.put("timestamp", date.getTime());
         return document;
     }
 
