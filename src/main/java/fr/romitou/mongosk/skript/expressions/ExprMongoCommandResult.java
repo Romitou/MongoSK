@@ -56,7 +56,7 @@ public class ExprMongoCommandResult extends SimpleExpression<MongoSKDocument> {
     protected MongoSKDocument[] get(@Nonnull Event e) {
         String jsonString = exprJsonString.getSingle(e);
         MongoSKDatabase mongoSKDatabase = exprMongoSKDatabase.getSingle(e);
-        if (mongoSKDatabase == null)
+        if (jsonString == null || mongoSKDatabase == null)
             return new MongoSKDocument[0];
         SubscriberHelpers.ObservableSubscriber<Document> documentObservableSubscriber = new SubscriberHelpers.OperationSubscriber<>();
         try {
