@@ -4,22 +4,21 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
-
 public class LoggerHelper {
 
     private static final Logger LOGGER;
     private static final boolean DEBUG;
-    private final static String PREFIX = "[MongoSK] ";
+    private final static String DEBUG_PREFIX = "[Debug] ";
 
     static {
         Logger logger = null;
         try {
-            logger = Bukkit.getLogger();
+            // The plugin logger already prefixes the messages with [MongoSK].
+            logger = MongoSK.getInstance().getLogger();
         } catch (Throwable t) {
-            // Bukkit not available or failed to load
+            // MongoSK not available or failed to load
             logger = Logger.getLogger("MongoSK");
-            logger.log(Level.FINE, "Bukkit logger not available, falling back to default logger", t);
+            logger.log(Level.FINE, "MongoSK logger not available, falling back to default logger", t);
         }
         if (logger == null) {
             logger = Logger.getLogger("MongoSK");
@@ -46,7 +45,8 @@ public class LoggerHelper {
 
     public static void debug(String... messages) {
         if (!DEBUG) return;
-        LOGGER.config(messages[0]);
+        // Bukkit only displays INFO and above, so debug messages are logged at INFO level with a prefix.
+        LOGGER.info(DEBUG_PREFIX + messages[0]);
         if (messages.length > 1)
             Arrays.stream(messages)
                 .skip(1)
@@ -75,7 +75,7 @@ public class LoggerHelper {
 
     private static void addDebugInfo(String message) {
         if (!DEBUG) return;
-        LOGGER.config("-> " + message);
+        LOGGER.info(DEBUG_PREFIX + "-> " + message);
     }
 
 }
