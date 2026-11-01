@@ -42,6 +42,14 @@ compileJava {
     options.encoding = 'UTF-8'
 }
 
+processResources {
+    // Keep the version of the plugin.yml in sync with the project version.
+    inputs.property 'version', project.version
+    filesMatching('plugin.yml') {
+        expand(version: project.version)
+    }
+}
+
 shadowJar {
     // Remove all classes of dependencies that are not used by the project
     minimize()
