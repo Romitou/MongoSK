@@ -18,6 +18,29 @@ You want to use MongoSK? Great! First, make sure you read the [documentation](ht
 
 Then, all you have to do is install this add-on! To do so, go to the [releases](https://github.com/Romitou/MongoSK/releases) menu and download the [latest version](https://github.com/Romitou/MongoSK/releases/latest). Then drag this add-on into your `plugins` folder, and here we go!
 
+## ⚡ Quick start
+```applescript
+on script load:
+    set {mongo} to a new mongo client with connection string "mongodb://localhost:27017/?appName=myServer"
+
+on join:
+    set {_database} to mongo database "server" of {mongo}
+    set {_collection} to mongo collection "players" of {_database}
+    set {_filter} to a new mongosk filter where field "uuid" is "%uuid of player%"
+    set {_doc} to first mongo document with filter {_filter} of collection {_collection}
+    if last mongo error is set:
+        send "Cannot load your data: %last mongo error%" to player
+        stop
+    if {_doc} is not set:
+        set {_doc} to a new mongo document
+        set mongo value "uuid" of {_doc} to "%uuid of player%"
+        set mongo value "coins" of {_doc} to 0
+        insert mongo document {_doc} into collection {_collection}
+
+on script unload:
+    close mongo client {mongo}
+```
+
 ## 🕵️ Support and documentation
 - **Discord server (faster):** https://discord.com/invite/6jeQkRcMkk
 - **GitHub Discussions:** https://github.com/Romitou/MongoSK/discussions
