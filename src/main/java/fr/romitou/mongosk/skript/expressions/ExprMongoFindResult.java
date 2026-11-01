@@ -1,13 +1,13 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import ch.njol.skript.Skript;
+import org.skriptlang.skript.registration.DefaultSyntaxInfos;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
@@ -41,13 +41,8 @@ import java.util.List;
 public class ExprMongoFindResult extends SimpleExpression<MongoSKDocument> {
 
     static {
-        Skript.registerExpression(
-            ExprMongoFindResult.class,
-            MongoSKDocument.class,
-            ExpressionType.COMBINED,
-            "[find] (1¦first|2¦all) mongo[(sk|db)] document[s] [(with|by) [filter] %-mongoskfilter%] (of|from) collection %mongoskcollection%",
-            "[find] (1¦first|2¦all) mongo[(sk|db)] document[s] (of|from) query %mongoskquery%"
-        );
+        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoFindResult.class, MongoSKDocument.class).addPatterns("[find] (1¦first|2¦all) mongo[(sk|db)] document[s] [(with|by) [filter] %-mongoskfilter%] (of|from) collection %mongoskcollection%",
+            "[find] (1¦first|2¦all) mongo[(sk|db)] document[s] (of|from) query %mongoskquery%").build());
     }
 
     private Expression<MongoSKFilter> exprMongoSKFilter;

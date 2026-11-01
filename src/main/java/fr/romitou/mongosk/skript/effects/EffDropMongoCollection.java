@@ -1,6 +1,5 @@
 package fr.romitou.mongosk.skript.effects;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -30,14 +29,11 @@ import javax.annotation.Nullable;
 @Since("2.0.3")
 public class EffDropMongoCollection extends Effect {
 
-    private final static Boolean CAN_DROP = MongoSK.getInstance().getConfig().getBoolean("allow-drop.collection", false);
+    private final static boolean CAN_DROP = MongoSK.getInstance().getConfig().getBoolean("allow-drop.collection", false);
 
     static {
         if (CAN_DROP)
-            Skript.registerEffect(
-                EffDropMongoCollection.class,
-                "drop [the] mongo[(sk|db)] collection %mongoskcollection%"
-            );
+            fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.EFFECT, org.skriptlang.skript.registration.SyntaxInfo.builder(EffDropMongoCollection.class).addPatterns("drop [the] mongo[(sk|db)] collection %mongoskcollection%").build());
     }
 
     private Expression<MongoSKCollection> exprMongoSKCollection;

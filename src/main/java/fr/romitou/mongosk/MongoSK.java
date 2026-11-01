@@ -1,8 +1,7 @@
 package fr.romitou.mongosk;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.SkriptAddon;
-import ch.njol.skript.lang.parser.ParserInstance;
+import org.skriptlang.skript.addon.SkriptAddon;
 import com.mongodb.reactivestreams.client.MongoClient;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import fr.romitou.mongosk.elements.MongoSKServer;
@@ -12,7 +11,6 @@ import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,8 +22,9 @@ public class MongoSK extends JavaPlugin {
     private static MongoSK instance;
     private static PluginManager pluginManager;
     private static Plugin skriptPlugin;
+    private static SkriptAddon skriptAddon;
 
-    public Boolean canLoad() {
+    public boolean canLoad() {
         // Make some safe checks to be sure Skript is installed, enabled, and ready to register this addon.
         LoggerHelper.info("Checking the availability of Skript...");
 
@@ -78,13 +77,17 @@ public class MongoSK extends JavaPlugin {
         // Register the SkriptAddon and try to load classes.
         LoggerHelper.info("Registration of the MongoSK syntaxes...");
         try {
-            SkriptAddon skriptAddon = Skript.registerAddon(this);
-            skriptAddon.loadClasses(
-                "fr.romitou.mongosk.skript",
-                "conditions", "effects", "events", "expressions", (isUsingNewSections() ? "sections" : "legacySections")
-            );
+            // Skript.getAddonInstance() returns the addon of Skript itself, not ours: MongoSK must register its own
+            // addon, otherwise its classes are searched in the Skript jar and no syntax is registered.
+            ch.njol.skript.SkriptAddon legacyAddon = ch.njol.skript.Skript.registerAddon(this);
+            skriptAddon = legacyAddon;
+            // The types must be registered before the syntaxes which use them.
             new SkriptTypes();
-        } catch (IOException e) {
+            legacyAddon.loadClasses(
+                "fr.romitou.mongosk.skript",
+                "conditions", "effects", "events", "expressions", "sections"
+            );
+        } catch (IOException | LinkageError e) {
             LoggerHelper.severe("MongoSK could not load and register some syntax elements.",
                 "Try to update your version of Skript and MongoSK, and try again only with these two plugins.",
                 "If the problem persists, please open an issue on GitHub.",
@@ -147,26 +150,12 @@ public class MongoSK extends JavaPlugin {
         mongoSKServers.add(mongoSKServer);
     }
 
-    public static @NotNull Boolean isUsingNewParser() {
-        try {
-            ParserInstance.class.getDeclaredMethod("get");
-            return true;
-        } catch (NoSuchMethodException ignored) {
-            return false;
-        }
-    }
-
-    public static @NotNull Boolean isUsingNewSections() {
-        try {
-            Class.forName("ch.njol.skript.expressions.base.SectionExpression");
-            return true;
-        } catch (ClassNotFoundException ignored) {
-            return false;
-        }
-    }
-
     public static MongoSK getInstance() {
         return instance;
+    }
+
+    public static SkriptAddon getAddonInstance() {
+        return skriptAddon;
     }
 
 }

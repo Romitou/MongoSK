@@ -1,6 +1,5 @@
 package fr.romitou.mongosk.skript.conditions;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -28,10 +27,7 @@ import javax.annotation.Nonnull;
 public class CondMongoDocIsEmpty extends Condition {
 
     static {
-        Skript.registerCondition(
-            CondMongoDocIsEmpty.class,
-            "mongo[(sk|db)] document[s] %mongoskdocuments% (is|are)[(1¦(n't| not))] empty"
-        );
+        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.CONDITION, org.skriptlang.skript.registration.SyntaxInfo.builder(CondMongoDocIsEmpty.class).addPatterns("mongo[(sk|db)] document[s] %mongoskdocuments% (is|are)[(1¦(n't| not))] empty").build());
     }
 
     private Expression<MongoSKDocument> exprMongoSKDocument;

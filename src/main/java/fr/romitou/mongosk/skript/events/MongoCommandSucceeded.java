@@ -1,9 +1,6 @@
 package fr.romitou.mongosk.skript.events;
 
-import ch.njol.skript.Skript;
-import ch.njol.skript.lang.util.SimpleEvent;
-import ch.njol.skript.registrations.EventValues;
-import ch.njol.skript.util.Getter;
+import fr.romitou.mongosk.compat.EventRegistration;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import fr.romitou.mongosk.elements.MongoSKDocument;
 import fr.romitou.mongosk.elements.MongoSKServer;
@@ -12,43 +9,15 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-
 public class MongoCommandSucceeded extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
     static {
-        Skript.registerEvent(
-            "Mongo command succeeded",
-            SimpleEvent.class,
-            MongoCommandSucceeded.class,
-            "mongo[(db|sk)] command (success|succeeded)"
-        );
-
-        EventValues.registerEventValue(MongoCommandSucceeded.class, MongoSKServer.class, new Getter<MongoSKServer, MongoCommandSucceeded>() {
-            @Nonnull
-            @Override
-            public MongoSKServer get(@Nonnull MongoCommandSucceeded event) {
-                return event.getMongoSKServer();
-            }
-        }, 0);
-
-        EventValues.registerEventValue(MongoCommandSucceeded.class, MongoSKDocument.class, new Getter<MongoSKDocument, MongoCommandSucceeded>() {
-            @Nonnull
-            @Override
-            public MongoSKDocument get(@Nonnull MongoCommandSucceeded event) {
-                return event.getCommand();
-            }
-        }, 0);
-
-        EventValues.registerEventValue(MongoCommandSucceeded.class, Long.class, new Getter<Long, MongoCommandSucceeded>() {
-            @Nonnull
-            @Override
-            public Long get(@Nonnull MongoCommandSucceeded event) {
-                return event.getElapsedTime();
-            }
-        }, 0);
+        EventRegistration.registerEvent("Mongo command succeeded", MongoCommandSucceeded.class, "mongo[(db|sk)] command (success|succeeded)");
+        EventRegistration.registerEventValue(MongoCommandSucceeded.class, MongoSKServer.class, event -> event.getMongoSKServer());
+        EventRegistration.registerEventValue(MongoCommandSucceeded.class, MongoSKDocument.class, event -> event.getCommand());
+        EventRegistration.registerEventValue(MongoCommandSucceeded.class, Long.class, event -> event.getElapsedTime());
     }
 
     private final MongoSKServer mongoSKServer;

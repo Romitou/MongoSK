@@ -1,12 +1,13 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import ch.njol.skript.Skript;
+import org.skriptlang.skript.registration.DefaultSyntaxInfos;
+import ch.njol.skript.lang.ExpressionType;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
@@ -15,7 +16,6 @@ import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.SubscriberHelpers;
 import fr.romitou.mongosk.adapters.MongoDeserializers;
 import fr.romitou.mongosk.elements.MongoSKCollection;
-import fr.romitou.mongosk.elements.MongoSKDocument;
 import fr.romitou.mongosk.elements.MongoSKFilter;
 import org.bson.BsonValue;
 import org.bukkit.event.Event;
@@ -34,21 +34,16 @@ import java.util.List;
     "broadcast \"Unique names: %{_distinctNames::*}%\""
 })
 @Since("2.2.1")
-public class ExprMongoDisctinctResult extends SimpleExpression<Object> {
+public class ExprMongoDistinctResult extends SimpleExpression<Object> {
 
     static {
-        Skript.registerExpression(
-            ExprMongoDisctinctResult.class,
-            Object.class,
-            ExpressionType.COMBINED,
-            "(1¦first|2¦all) mongo[(sk|db)] field[s] distincted by [field] %string% [(with|by) [filter] %-mongoskfilter%] (of|from) collection %mongoskcollection%"
-        );
+        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoDistinctResult.class, Object.class).addPatterns("(1¦first|2¦all) mongo[(sk|db)] field[s] distincted by [field] %string% [(with|by) [filter] %-mongoskfilter%] (of|from) collection %mongoskcollection%").priority(ExpressionType.SIMPLE.priority()).build());
     }
 
     private Expression<String> exprDistinctedBy;
     private Expression<MongoSKFilter> exprMongoSKFilter;
     private Expression<MongoSKCollection> exprMongoSKCollection;
-    private Boolean isFirstDocument;
+    private boolean isFirstDocument;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -96,8 +91,8 @@ public class ExprMongoDisctinctResult extends SimpleExpression<Object> {
 
     @Override
     @Nonnull
-    public Class<? extends MongoSKDocument> getReturnType() {
-        return MongoSKDocument.class;
+    public Class<?> getReturnType() {
+        return Object.class;
     }
 
     @Override

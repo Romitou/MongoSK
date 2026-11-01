@@ -1,12 +1,12 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import ch.njol.skript.Skript;
+import org.skriptlang.skript.registration.DefaultSyntaxInfos;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
@@ -33,13 +33,8 @@ import java.util.Arrays;
 public class ExprMongoJoinedFilters extends SimpleExpression<MongoSKFilter> {
 
     static {
-        Skript.registerExpression(
-            ExprMongoJoinedFilters.class,
-            MongoSKFilter.class,
-            ExpressionType.COMBINED,
-            "mongo[(sk|db)] joined filters %mongoskfilter% (1¦and|2¦or|3¦nor) %mongoskfilter%",
-            "mongo[(sk|db)] joined filters %mongoskfilters% with (1¦and|2¦or|3¦nor) [join] mode"
-        );
+        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoJoinedFilters.class, MongoSKFilter.class).addPatterns("mongo[(sk|db)] joined filters %mongoskfilter% (1¦and|2¦or|3¦nor) %mongoskfilter%",
+            "mongo[(sk|db)] joined filters %mongoskfilters% with (1¦and|2¦or|3¦nor) [join] mode").build());
     }
 
     private Expression<MongoSKFilter> exprFirstFilter, exprSecondFilter;

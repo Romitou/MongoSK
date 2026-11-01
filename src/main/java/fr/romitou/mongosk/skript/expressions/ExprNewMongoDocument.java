@@ -1,12 +1,13 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import ch.njol.skript.Skript;
+import org.skriptlang.skript.registration.DefaultSyntaxInfos;
+import ch.njol.skript.lang.ExpressionType;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
@@ -29,12 +30,7 @@ import javax.annotation.Nullable;
 public class ExprNewMongoDocument extends SimpleExpression<MongoSKDocument> {
 
     static {
-        Skript.registerExpression(
-            ExprNewMongoDocument.class,
-            MongoSKDocument.class,
-            ExpressionType.SIMPLE,
-            "[[a] new] mongo[(sk|db)] [empty] document"
-        );
+        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprNewMongoDocument.class, MongoSKDocument.class).addPatterns("[[a] new] mongo[(sk|db)] [empty] document").priority(ExpressionType.SIMPLE.priority()).build());
     }
 
     @Override

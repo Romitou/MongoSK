@@ -1,12 +1,13 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import ch.njol.skript.Skript;
+import org.skriptlang.skript.registration.DefaultSyntaxInfos;
+import ch.njol.skript.lang.ExpressionType;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
@@ -31,12 +32,7 @@ import javax.annotation.Nullable;
 public class ExprMongoDatabase extends SimpleExpression<MongoSKDatabase> {
 
     static {
-        Skript.registerExpression(
-            ExprMongoDatabase.class,
-            MongoSKDatabase.class,
-            ExpressionType.COMBINED,
-            "[the] mongo[(sk|db)] database [named] %string% (of|from) %mongoskserver%"
-        );
+        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoDatabase.class, MongoSKDatabase.class).addPatterns("[the] mongo[(sk|db)] database [named] %string% (of|from) %mongoskserver%").priority(ExpressionType.SIMPLE.priority()).build());
     }
 
     private Expression<String> exprDatabaseName;

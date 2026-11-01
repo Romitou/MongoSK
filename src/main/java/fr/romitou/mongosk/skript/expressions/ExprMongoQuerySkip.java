@@ -6,6 +6,7 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
+import ch.njol.skript.lang.ExpressionType;
 import ch.njol.util.coll.CollectionUtils;
 import fr.romitou.mongosk.elements.MongoSKQuery;
 import org.bukkit.event.Event;
@@ -25,12 +26,8 @@ import javax.annotation.Nonnull;
 public class ExprMongoQuerySkip extends SimplePropertyExpression<MongoSKQuery, Number> {
 
     static {
-        register(
-            ExprMongoQuerySkip.class,
-            Number.class,
-            "mongo[(db|sk)] skip",
-            "mongoskqueries"
-        );
+        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.EXPRESSION, org.skriptlang.skript.registration.DefaultSyntaxInfos.Expression.builder(ExprMongoQuerySkip.class, Number.class).addPatterns(ch.njol.skript.expressions.base.PropertyExpression.getPatterns("mongo[(db|sk)] skip",
+            "mongoskqueries")).priority(ExpressionType.PROPERTY.priority()).build());
     }
 
     @Nonnull

@@ -1,9 +1,6 @@
 package fr.romitou.mongosk.skript.events;
 
-import ch.njol.skript.Skript;
-import ch.njol.skript.lang.util.SimpleEvent;
-import ch.njol.skript.registrations.EventValues;
-import ch.njol.skript.util.Getter;
+import fr.romitou.mongosk.compat.EventRegistration;
 import fr.romitou.mongosk.adapters.MongoSKAdapter;
 import fr.romitou.mongosk.elements.MongoSKDocument;
 import fr.romitou.mongosk.elements.MongoSKServer;
@@ -12,43 +9,15 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-
 public class MongoCommandStarted extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
     static {
-        Skript.registerEvent(
-            "Mongo command started",
-            SimpleEvent.class,
-            MongoCommandStarted.class,
-            "mongo[(db|sk)] command start[ed]"
-        );
-
-        EventValues.registerEventValue(MongoCommandStarted.class, MongoSKServer.class, new Getter<MongoSKServer, MongoCommandStarted>() {
-            @Nonnull
-            @Override
-            public MongoSKServer get(@Nonnull MongoCommandStarted event) {
-                return event.getMongoSKServer();
-            }
-        }, 0);
-
-        EventValues.registerEventValue(MongoCommandStarted.class, MongoSKDocument.class, new Getter<MongoSKDocument, MongoCommandStarted>() {
-            @Nonnull
-            @Override
-            public MongoSKDocument get(@Nonnull MongoCommandStarted event) {
-                return event.getCommand();
-            }
-        }, 0);
-
-        EventValues.registerEventValue(MongoCommandStarted.class, String.class, new Getter<String, MongoCommandStarted>() {
-            @Nonnull
-            @Override
-            public String get(@Nonnull MongoCommandStarted event) {
-                return event.getDatabaseName();
-            }
-        }, 0);
+        EventRegistration.registerEvent("Mongo command started", MongoCommandStarted.class, "mongo[(db|sk)] command start[ed]");
+        EventRegistration.registerEventValue(MongoCommandStarted.class, MongoSKServer.class, event -> event.getMongoSKServer());
+        EventRegistration.registerEventValue(MongoCommandStarted.class, MongoSKDocument.class, event -> event.getCommand());
+        EventRegistration.registerEventValue(MongoCommandStarted.class, String.class, event -> event.getDatabaseName());
     }
 
     private final MongoSKServer mongoSKServer;

@@ -1,6 +1,5 @@
 package fr.romitou.mongosk.skript.conditions;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -31,10 +30,7 @@ import javax.annotation.Nonnull;
 public class CondMongoDocHasValue extends Condition {
 
     static {
-        Skript.registerCondition(
-            CondMongoDocHasValue.class,
-            "mongo[(sk|db)] document[s] %mongoskdocuments% (1¦(has|contains)|2¦doesn't (have|contain)) value %integer/number/string/boolean/mongoskdocument%"
-        );
+        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.CONDITION, org.skriptlang.skript.registration.SyntaxInfo.builder(CondMongoDocHasValue.class).addPatterns("mongo[(sk|db)] document[s] %mongoskdocuments% (1¦(has|contains)|2¦doesn't (have|contain)) value %integer/number/string/boolean/mongoskdocument%").build());
     }
 
     private Expression<MongoSKDocument> exprMongoSKDocument;

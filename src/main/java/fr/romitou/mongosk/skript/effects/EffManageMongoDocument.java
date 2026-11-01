@@ -1,6 +1,5 @@
 package fr.romitou.mongosk.skript.effects;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -49,10 +48,7 @@ import com.mongodb.client.model.WriteModel;
 public class EffManageMongoDocument extends Effect {
 
     static {
-        Skript.registerEffect(
-            EffManageMongoDocument.class,
-            "(1¦insert|2¦(replace|update)|3¦remove|4¦upsert) mongo[(sk|db)] doc[ument][s] %mongoskdocuments% (in[to]|of|from) [collection] %mongoskcollection%"
-        );
+        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.EFFECT, org.skriptlang.skript.registration.SyntaxInfo.builder(EffManageMongoDocument.class).addPatterns("(1¦insert|2¦(replace|update)|3¦remove|4¦upsert) mongo[(sk|db)] doc[ument][s] %mongoskdocuments% (in[to]|of|from) [collection] %mongoskcollection%").build());
     }
 
     private Expression<MongoSKDocument> exprMongoSKDocument;

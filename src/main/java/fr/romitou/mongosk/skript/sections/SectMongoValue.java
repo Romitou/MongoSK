@@ -1,6 +1,5 @@
 package fr.romitou.mongosk.skript.sections;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -32,11 +31,7 @@ import java.util.List;
 public class SectMongoValue extends Effect {
 
     static {
-        if (MongoSK.isUsingNewSections())
-            Skript.registerEffect(
-                SectMongoValue.class,
-                "mongo[(sk|db)] [(1¦(field|value)|2¦(array|list))] %string%\\: %objects%"
-            );
+        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.EFFECT, org.skriptlang.skript.registration.SyntaxInfo.builder(SectMongoValue.class).addPatterns("mongo[(sk|db)] [(1¦(field|value)|2¦(array|list))] %string%\\: %objects%").build());
     }
 
     private Expression<String> exprKey;

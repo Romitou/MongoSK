@@ -1,12 +1,13 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import ch.njol.skript.Skript;
+import org.skriptlang.skript.registration.DefaultSyntaxInfos;
+import ch.njol.skript.lang.ExpressionType;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.VariableString;
 import ch.njol.skript.lang.util.SimpleExpression;
@@ -45,12 +46,7 @@ public class ExprMongoServer extends SimpleExpression<MongoSKServer> {
     private final Integer READ_TIMEOUT = MongoSK.getInstance().getConfig().getInt("timeouts.read", 10000);
 
     static {
-        Skript.registerExpression(
-            ExprMongoServer.class,
-            MongoSKServer.class,
-            ExpressionType.COMBINED,
-            "[[a] new] mongo[(sk|db)] (client|server) (with|from) [connection (string|uri|address)] %string%"
-        );
+        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoServer.class, MongoSKServer.class).addPatterns("[[a] new] mongo[(sk|db)] (client|server) (with|from) [connection (string|uri|address)] %string%").priority(ExpressionType.SIMPLE.priority()).build());
     }
 
     private Expression<?> exprRawConnectionString;

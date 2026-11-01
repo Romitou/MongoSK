@@ -6,6 +6,7 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
+import ch.njol.skript.lang.ExpressionType;
 import ch.njol.util.coll.CollectionUtils;
 import fr.romitou.mongosk.elements.MongoSKCollection;
 import fr.romitou.mongosk.elements.MongoSKQuery;
@@ -26,12 +27,8 @@ import javax.annotation.Nonnull;
 public class ExprMongoQueryCollection extends SimplePropertyExpression<MongoSKQuery, MongoSKCollection> {
 
     static {
-        register(
-            ExprMongoQueryCollection.class,
-            MongoSKCollection.class,
-            "mongo[(db|sk)] collection",
-            "mongoskqueries"
-        );
+        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.EXPRESSION, org.skriptlang.skript.registration.DefaultSyntaxInfos.Expression.builder(ExprMongoQueryCollection.class, MongoSKCollection.class).addPatterns(ch.njol.skript.expressions.base.PropertyExpression.getPatterns("mongo[(db|sk)] collection",
+            "mongoskqueries")).priority(ExpressionType.PROPERTY.priority()).build());
     }
 
     @Nonnull

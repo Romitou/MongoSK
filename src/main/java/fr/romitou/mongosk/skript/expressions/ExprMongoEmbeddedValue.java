@@ -1,13 +1,14 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import ch.njol.skript.Skript;
+import org.skriptlang.skript.registration.DefaultSyntaxInfos;
+import ch.njol.skript.lang.ExpressionType;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
@@ -45,17 +46,12 @@ import java.util.List;
 public class ExprMongoEmbeddedValue extends SimpleExpression<Object> {
 
     static {
-        Skript.registerExpression(
-            ExprMongoEmbeddedValue.class,
-            Object.class,
-            ExpressionType.COMBINED,
-            "mongo[(sk|db)] embedded (1¦(field|value)|2¦(array|list)) [with path] %string% of %mongoskdocument%"
-        );
+        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoEmbeddedValue.class, Object.class).addPatterns("mongo[(sk|db)] embedded (1¦(field|value)|2¦(array|list)) [with path] %string% of %mongoskdocument%").priority(ExpressionType.SIMPLE.priority()).build());
     }
 
     private Expression<String> exprFieldName;
     private Expression<MongoSKDocument> exprMongoSKDocument;
-    private Boolean isSingle;
+    private boolean isSingle;
 
     @SuppressWarnings("unchecked")
     @Override

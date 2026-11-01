@@ -1,6 +1,5 @@
 package fr.romitou.mongosk.skript.effects;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -29,10 +28,7 @@ import javax.annotation.Nullable;
 public class EffCreateMongoCollection extends Effect {
 
     static {
-        Skript.registerEffect(
-            EffCreateMongoCollection.class,
-            "create [a] mongo[(sk|db)] collection [named] %string% in %mongoskdatabase%"
-        );
+        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.EFFECT, org.skriptlang.skript.registration.SyntaxInfo.builder(EffCreateMongoCollection.class).addPatterns("create [a] mongo[(sk|db)] collection [named] %string% in %mongoskdatabase%").build());
     }
 
     private Expression<String> exprCollectionName;

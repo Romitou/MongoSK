@@ -1,12 +1,13 @@
 package fr.romitou.mongosk.skript.expressions;
 
-import ch.njol.skript.Skript;
+import org.skriptlang.skript.registration.DefaultSyntaxInfos;
+import ch.njol.skript.lang.ExpressionType;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
@@ -31,12 +32,7 @@ import javax.annotation.Nullable;
 public class ExprMongoSort extends SimpleExpression<MongoSKSort> {
 
     static {
-        Skript.registerExpression(
-            ExprMongoSort.class,
-            MongoSKSort.class,
-            ExpressionType.SIMPLE,
-            "[[a] new] mongo[(db|sk)] (1¦asc[ending]|2¦desc[ending]) sort[ing] [by] field[s] %strings%"
-        );
+        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(ExprMongoSort.class, MongoSKSort.class).addPatterns("[[a] new] mongo[(db|sk)] (1¦asc[ending]|2¦desc[ending]) sort[ing] [by] field[s] %strings%").priority(ExpressionType.SIMPLE.priority()).build());
     }
 
     private Expression<String> exprFields;

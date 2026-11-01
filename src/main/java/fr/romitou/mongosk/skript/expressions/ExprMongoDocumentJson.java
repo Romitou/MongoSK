@@ -6,6 +6,7 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
+import ch.njol.skript.lang.ExpressionType;
 import ch.njol.util.coll.CollectionUtils;
 import fr.romitou.mongosk.LoggerHelper;
 import fr.romitou.mongosk.elements.MongoSKDocument;
@@ -31,12 +32,8 @@ import javax.annotation.Nullable;
 public class ExprMongoDocumentJson extends SimplePropertyExpression<MongoSKDocument, String> {
 
     static {
-        register(
-            ExprMongoDocumentJson.class,
-            String.class,
-            "mongo[(db|sk)] json",
-            "mongoskdocuments"
-        );
+        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(org.skriptlang.skript.registration.SyntaxRegistry.EXPRESSION, org.skriptlang.skript.registration.DefaultSyntaxInfos.Expression.builder(ExprMongoDocumentJson.class, String.class).addPatterns(ch.njol.skript.expressions.base.PropertyExpression.getPatterns("mongo[(db|sk)] json",
+            "mongoskdocuments")).priority(ExpressionType.PROPERTY.priority()).build());
     }
 
     @Override

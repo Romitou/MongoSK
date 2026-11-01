@@ -1,6 +1,8 @@
 package fr.romitou.mongosk.skript.sections;
 
-import ch.njol.skript.Skript;
+import org.skriptlang.skript.registration.DefaultSyntaxInfos;
+import ch.njol.skript.lang.ExpressionType;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -8,7 +10,6 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SectionExpression;
 import ch.njol.skript.lang.*;
-import ch.njol.skript.util.Version;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
 import fr.romitou.mongosk.MongoSK;
@@ -39,13 +40,7 @@ import java.util.List;
 @Since("2.1.0") // New class from 2.3.0, but section backported for older versions :)
 public class SectMongoDocument extends SectionExpression<MongoSKDocument> {
     static {
-        if (MongoSK.isUsingNewSections())
-            Skript.registerExpression(
-                SectMongoDocument.class,
-                MongoSKDocument.class,
-                ExpressionType.SIMPLE,
-                "[a] new mongo[(db|sk)] document with"
-            );
+        fr.romitou.mongosk.MongoSK.getAddonInstance().syntaxRegistry().register(SyntaxRegistry.EXPRESSION, DefaultSyntaxInfos.Expression.builder(SectMongoDocument.class, MongoSKDocument.class).addPatterns("[a] new mongo[(db|sk)] document with").priority(ExpressionType.SIMPLE.priority()).build());
     }
 
     protected static class EvtCreateMongoDocument extends Event {
@@ -69,22 +64,13 @@ public class SectMongoDocument extends SectionExpression<MongoSKDocument> {
             return false;
         }
 
-        if (Skript.getVersion().isSmallerThan(new Version(2, 11, 3))) {
-            this.trigger = this.loadCode(
-                sectionNode,
-                "create mongo document",
-                () -> {},
-                EvtCreateMongoDocument.class
-            );
-        } else {
-            this.trigger = this.loadCode(
-                sectionNode,
-                "create mongo document",
-                () -> {},
-                () -> {},
-                EvtCreateMongoDocument.class
-            );
-        }
+        // This overload is available in all the supported versions of Skript.
+        this.trigger = loadCode(
+            sectionNode,
+            "create mongo document",
+            () -> {},
+            EvtCreateMongoDocument.class
+        );
         return true;
     }
 
