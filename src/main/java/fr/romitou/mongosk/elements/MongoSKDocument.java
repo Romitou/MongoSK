@@ -129,16 +129,18 @@ public class MongoSKDocument {
                 }
                 List<Object> list = (List<Object>) current;
                 int idx = element.getIndex();
+                if (isLast && value == null) {
+                    // Removing an element that doesn't exist: there is nothing to do.
+                    if (idx >= 0 && idx < list.size())
+                        list.remove(idx);
+                    return;
+                }
                 int diff = idx - list.size() + 1;
                 if (diff > 0) {
                     list.addAll(Collections.nCopies(diff, null));
                 }
                 if (isLast) {
-                    if (value == null) {
-                        list.remove(idx);
-                    } else {
-                        list.set(idx, value);
-                    }
+                    list.set(idx, value);
                 } else {
                     Object next = list.get(idx);
                     if (next == null) {

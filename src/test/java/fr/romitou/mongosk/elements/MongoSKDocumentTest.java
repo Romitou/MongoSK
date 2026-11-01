@@ -88,4 +88,17 @@ public class MongoSKDocumentTest {
         assertEquals(empty1, empty2);
         assertEquals(empty1.hashCode(), empty2.hashCode());
     }
+
+    @Test
+    public void testRemoveListElement() {
+        java.util.List<Object> list = new java.util.ArrayList<>(java.util.Arrays.asList("a", "b"));
+        MongoSKDocument doc = new MongoSKDocument(new Document("list", list));
+
+        // Removing an index out of range must leave the list untouched.
+        doc.setEmbeddedValue(fr.romitou.mongosk.utils.MongoPathParser.parse("list[5]"), null);
+        assertEquals(java.util.Arrays.asList("a", "b"), doc.getBsonDocument().get("list"));
+
+        doc.setEmbeddedValue(fr.romitou.mongosk.utils.MongoPathParser.parse("list[0]"), null);
+        assertEquals(java.util.Collections.singletonList("b"), doc.getBsonDocument().get("list"));
+    }
 }
