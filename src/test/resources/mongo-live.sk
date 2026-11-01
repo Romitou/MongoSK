@@ -1,3 +1,6 @@
+# Note: this test script was enhanced by Gemini.
+# Reviewed, modified, and integrated by Romitou.
+
 test "mongo-live-query":
     set {_client} to a new mongosk client from connection string "mongodb://localhost:27017"
     set {_db} to mongo database "testdb" of {_client}
@@ -5,7 +8,10 @@ test "mongo-live-query":
 
     # Test exact match
     set {_filter} to a new mongosk filter where field "playerName" is "Notch"
-    set {_docs::*} to all mongo documents with filter {_filter} of collection {_collection}
+    set {_query} to a new mongo query with:
+        collection: {_collection}
+        filter: {_filter}
+    execute mongo query {_query} and store the results in {_docs::*}
     assert size of {_docs::*} is 1 with "Should find exactly 1 document for Notch"
     set {_doc} to first element of {_docs::*}
     assert mongo value "coins" of {_doc} is 1000 with "Notch should have 1000 coins"
@@ -13,7 +19,10 @@ test "mongo-live-query":
 
     # Test multiple results
     set {_filter} to a new mongosk filter where field "coins" is greater than or equal to 500
-    set {_docs::*} to all mongo documents with filter {_filter} of collection {_collection}
+    set {_query} to a new mongo query with:
+        collection: {_collection}
+        filter: {_filter}
+    execute mongo query {_query} and store the results in {_docs::*}
     assert size of {_docs::*} is 2 with "Should find 2 documents with coins >= 500"
 
 test "mongo-live-insert":
@@ -30,7 +39,10 @@ test "mongo-live-insert":
 
     # Verify insertion
     set {_filter} to a new mongosk filter where field "playerName" is "Steve"
-    set {_docs::*} to all mongo documents with filter {_filter} of collection {_collection}
+    set {_query} to a new mongo query with:
+        collection: {_collection}
+        filter: {_filter}
+    execute mongo query {_query} and store the results in {_docs::*}
     assert size of {_docs::*} is 1 with "Should find exactly 1 document for Steve after insertion"
     set {_insertedDoc} to first element of {_docs::*}
     assert mongo value "coins" of {_insertedDoc} is 250 with "Steve should have 250 coins"
@@ -42,7 +54,10 @@ test "mongo-live-update":
 
     # Update a player
     set {_filter} to a new mongosk filter where field "playerName" is "Jeb"
-    set {_docs::*} to all mongo documents with filter {_filter} of collection {_collection}
+    set {_query} to a new mongo query with:
+        collection: {_collection}
+        filter: {_filter}
+    execute mongo query {_query} and store the results in {_docs::*}
     assert size of {_docs::*} is 1 with "Should find exactly 1 document for Jeb"
 
     set {_updateDoc} to first element of {_docs::*}
@@ -52,7 +67,10 @@ test "mongo-live-update":
 
     # Verify update
     set {_filter} to a new mongosk filter where field "playerName" is "Jeb"
-    set {_docs::*} to all mongo documents with filter {_filter} of collection {_collection}
+    set {_query} to a new mongo query with:
+        collection: {_collection}
+        filter: {_filter}
+    execute mongo query {_query} and store the results in {_docs::*}
     set {_updatedDoc} to first element of {_docs::*}
     assert mongo value "coins" of {_updatedDoc} is 1500 with "Jeb should have 1500 coins after update"
     assert mongo value "rank" of {_updatedDoc} is "admin" with "Jeb should be admin after update"
@@ -64,7 +82,10 @@ test "mongo-live-delete":
 
     # Delete a player
     set {_filter} to a new mongosk filter where field "playerName" is "Dinnerbone"
-    set {_docs::*} to all mongo documents with filter {_filter} of collection {_collection}
+    set {_query} to a new mongo query with:
+        collection: {_collection}
+        filter: {_filter}
+    execute mongo query {_query} and store the results in {_docs::*}
     assert size of {_docs::*} is 1 with "Should find exactly 1 document for Dinnerbone"
 
     set {_deleteDoc} to first element of {_docs::*}
@@ -72,7 +93,10 @@ test "mongo-live-delete":
 
     # Verify deletion
     set {_filter} to a new mongosk filter where field "playerName" is "Dinnerbone"
-    set {_docs::*} to all mongo documents with filter {_filter} of collection {_collection}
+    set {_query} to a new mongo query with:
+        collection: {_collection}
+        filter: {_filter}
+    execute mongo query {_query} and store the results in {_docs::*}
     assert size of {_docs::*} is 0 with "Should find 0 documents for Dinnerbone after deletion"
 
 test "mongo-live-upsert-without-id":
@@ -87,7 +111,10 @@ test "mongo-live-upsert-without-id":
     assert mongo value "_id" of {_newDoc} is set with "Upserted document should have received an ID"
 
     set {_filter} to a new mongosk filter where field "playerName" is "Alex"
-    set {_docs::*} to all mongo documents with filter {_filter} of collection {_collection}
+    set {_query} to a new mongo query with:
+        collection: {_collection}
+        filter: {_filter}
+    execute mongo query {_query} and store the results in {_docs::*}
     assert size of {_docs::*} is 1 with "Should find exactly 1 document for Alex after upsert"
 
 test "mongo-live-distinct":
@@ -95,8 +122,103 @@ test "mongo-live-distinct":
     set {_db} to mongo database "testdb" of {_client}
     set {_collection} to mongo collection "players" of {_db}
 
-    set {_ranks::*} to all mongo fields distincted by field "rank" of collection {_collection}
+    set {_query} to a new mongo query with:
+        collection: {_collection}
+    execute mongo distinct on field "rank" of query {_query} and store the values in {_ranks::*}
     assert {_ranks::*} contains "admin" with "Distinct ranks should contain admin"
+
+test "mongo-live-count":
+    set {_client} to a new mongosk client from connection string "mongodb://localhost:27017"
+    set {_db} to mongo database "testdb" of {_client}
+    set {_collection} to mongo collection "players" of {_db}
+
+    set {_query} to a new mongo query with:
+        collection: {_collection}
+        filter: a new mongosk filter where field "playerName" is "Notch"
+    count mongo documents of query {_query} and store the result in {_count}
+    assert {_count} is 1 with "Should count exactly 1 document for Notch"
+
+    count estimated mongo documents of collection {_collection} and store the result in {_estimation}
+    assert {_estimation} is greater than 0 with "The estimated count should be positive"
+
+test "mongo-live-count-limit-skip":
+    set {_client} to a new mongosk client from connection string "mongodb://localhost:27017"
+    set {_db} to mongo database "testdb" of {_client}
+    set {_collection} to mongo collection "countOptions" of {_db}
+
+    set {_all} to a new mongo query with:
+        collection: {_collection}
+    delete all mongo documents of query {_all}
+
+    set {_first} to a new mongo document
+    set {_second} to a new mongo document
+    set {_third} to a new mongo document
+    insert mongo documents {_first}, {_second} and {_third} into collection {_collection}
+
+    set {_query} to a new mongo query with:
+        collection: {_collection}
+        limit: 2
+    count mongo documents of query {_query} and store the result in {_count}
+    assert {_count} is 2 with "The limit of the query should apply to the count"
+
+    set {_query} to a new mongo query with:
+        collection: {_collection}
+        skip: 2
+    count mongo documents of query {_query} and store the result in {_count}
+    assert {_count} is 1 with "The skip of the query should apply to the count"
+
+    delete all mongo documents of query {_all}
+
+test "mongo-live-single-result":
+    set {_client} to a new mongosk client from connection string "mongodb://localhost:27017"
+    set {_db} to mongo database "testdb" of {_client}
+    set {_collection} to mongo collection "players" of {_db}
+
+    set {_query} to a new mongo query with:
+        collection: {_collection}
+        filter: a new mongosk filter where field "playerName" is "Notch"
+        limit: 5
+        comment: "single result test"
+    execute mongo query {_query} and store the result in {_doc}
+    assert mongo value "playerName" of {_doc} is "Notch" with "A single variable should receive the first document"
+
+    # A previous value must not survive a request without result
+    set {_query} to a new mongo query with:
+        collection: {_collection}
+        filter: a new mongosk filter where field "playerName" is "Nobody"
+    execute mongo query {_query} and store the result in {_doc}
+    assert {_doc} is not set with "A request without result should clear the variable"
+
+test "mongo-live-query-write":
+    set {_client} to a new mongosk client from connection string "mongodb://localhost:27017"
+    set {_db} to mongo database "testdb" of {_client}
+    set {_collection} to mongo collection "queryWrites" of {_db}
+
+    set {_query} to a new mongo query with:
+        collection: {_collection}
+        filter: a new mongosk filter where field "kind" is "temporary"
+    delete all mongo documents of query {_query}
+
+    set {_first} to a new mongo document
+    set mongo value "kind" of {_first} to "temporary"
+    set {_second} to a new mongo document
+    set mongo value "kind" of {_second} to "temporary"
+    insert mongo documents {_first} and {_second} into collection {_collection}
+
+    set {_replacement} to a new mongo document
+    set mongo value "kind" of {_replacement} to "temporary"
+    set mongo value "replaced" of {_replacement} to true
+    replace first mongo document of query {_query} with {_replacement}
+    execute mongo query {_query} and store the results in {_docs::*}
+    assert size of {_docs::*} is 2 with "Replacing a document should keep the 2 documents"
+
+    delete first mongo document of query {_query}
+    execute mongo query {_query} and store the results in {_docs::*}
+    assert size of {_docs::*} is 1 with "Should find 1 document after deleting the first one"
+
+    delete all mongo documents of query {_query}
+    execute mongo query {_query} and store the results in {_docs::*}
+    assert size of {_docs::*} is 0 with "Should find no document after deleting all of them"
 
 test "mongo-live-close":
     set {_client} to a new mongosk client from connection string "mongodb://localhost:27017/?appName=closeTest"
@@ -104,8 +226,10 @@ test "mongo-live-close":
 
     # A new client must be opened once the previous one is closed
     set {_client} to a new mongosk client from connection string "mongodb://localhost:27017/?appName=closeTest"
-    set {_databases::*} to all mongo databases of {_client}
+    list mongo databases of {_client} and store the results in {_databases::*}
     assert size of {_databases::*} is greater than 0 with "A reopened client should be usable"
+    list mongo collections of {_databases::1} and store the results in {_collections::*}
+    assert last mongo error is not set with "Listing the collections should not fail"
     close mongo client {_client}
 
 test "mongo-live-last-error":
@@ -113,8 +237,16 @@ test "mongo-live-last-error":
     set {_db} to mongo database "testdb" of {_client}
     set {_collection} to mongo collection "players" of {_db}
 
-    set {_results::*} to results of mongo command "{""unknownMongoSKCommand"": 1}" in database {_db}
+    execute mongo command "{""unknownMongoSKCommand"": 1}" in database {_db} and store the results in {_results::*}
     assert last mongo error is set with "An unknown command should set the last mongo error"
+    assert size of {_results::*} is 0 with "A failed request should have no result"
 
-    set {_docs::*} to all mongo documents of collection {_collection}
+    execute mongo command "not a json" in database {_db} and store the results in {_results::*}
+    assert last mongo error is set with "An invalid JSON should set the last mongo error"
+
+    execute mongo command "{""ping"": 1}" in database {_db} and store the result in {_result}
     assert last mongo error is not set with "A successful request should reset the last mongo error"
+
+    set {_query} to a new mongosk query
+    execute mongo query {_query} and store the results in {_docs::*}
+    assert last mongo error is set with "A query without collection should set the last mongo error"
